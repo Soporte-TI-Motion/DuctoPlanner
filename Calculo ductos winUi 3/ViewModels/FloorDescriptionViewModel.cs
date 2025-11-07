@@ -8,6 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
+using Calculo_ductos_winUi_3.Services;
+using System.Threading.Tasks;
 
 namespace Calculo_ductos_winUi_3.ViewModels
 {
@@ -29,9 +31,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
         #region Constructor
 
-        public FloorDescriptionViewModel()
+        public FloorDescriptionViewModel(BusyService busyService)
         {
             _floorList = new ObservableCollection<FloorDescription>();
+            Busy = busyService;
             _floorDescription = new FloorDescription
             {
                 //Uuid = Guid.NewGuid(),
@@ -90,7 +93,6 @@ namespace Calculo_ductos_winUi_3.ViewModels
         #region Properties
         public ObservableCollection<CatalogRowModel> AllDoorType { get; set; }
         public ObservableCollection<CatalogRowModel> AvailableDoorTypes { get; set; } = new();
-       
         public ObservableCollection<FloorDescription> FloorList
         {
             get => _floorList;
@@ -251,8 +253,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
         }
         public string Description => _floorDescription.Description;
-        
-
+        public BusyService Busy{get;set;}
         #endregion
 
         #region Commands
@@ -267,21 +268,32 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
         #region Methods
 
-        public void AddFloor()
+        public async void AddFloor()
         {
-            _floorList.Add(new FloorDescription
+            var validations = new List<string>();
+            if (_floorDescription.FloorCount == 0)
+                validations.Add("No se puede agregar una descripción de piso con cantidad 0, por favor revisalo");
+            if (_floorDescription.FloorHeight == 0m)
+                validations.Add("No se puede agregar una descripción de piso con altura 0, por favor revisalo");
+
+            if (validations.Count() > 0)
+                await ShowEmptyDataDialog(string.Join(Environment.NewLine, validations));
+            else
             {
-                Uuid = Guid.NewGuid(),
-                FloorCount = _floorDescription.FloorCount,
-                NeedGate = _floorDescription.NeedGate,
-                NeedChimney = _floorDescription.NeedChimney,
-                NeedAntiImpact = _floorDescription.NeedAntiImpact,
-                FloorHeight = _floorDescription.FloorHeight,
-                Type = _floorDescription.Type,
-                Discharge = _floorDescription.Discharge,
-                TypeDoor = _floorDescription.TypeDoor
-            });
-            OnPropertyChanged();
+                _floorList.Add(new FloorDescription
+                {
+                    Uuid = Guid.NewGuid(),
+                    FloorCount = _floorDescription.FloorCount,
+                    NeedGate = _floorDescription.NeedGate,
+                    NeedChimney = _floorDescription.NeedChimney,
+                    NeedAntiImpact = _floorDescription.NeedAntiImpact,
+                    FloorHeight = _floorDescription.FloorHeight,
+                    Type = _floorDescription.Type,
+                    Discharge = _floorDescription.Discharge,
+                    TypeDoor = _floorDescription.TypeDoor
+                });
+                OnPropertyChanged();
+            }
         }
 
         public void RemoveFloor(Guid floorUuid)
@@ -307,7 +319,6 @@ namespace Calculo_ductos_winUi_3.ViewModels
         //}
         public void LoadCatalogs(List<CatalogRowModel> catalogo)
         {
-            
             AllDoorType = new ObservableCollection<CatalogRowModel>(catalogo);
         }
 
@@ -325,6 +336,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             if (!AvailableDoorTypes.Contains(TypeDoorSelected))
                 TypeDoorSelected = AvailableDoorTypes.FirstOrDefault();
         }
+       
         #endregion
 
         #region INotifyPropertyChanged
@@ -333,6 +345,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private async Task ShowEmptyDataDialog(string message, int seconds = 5000)
+        {
+            Busy.IsBusy = true;
+            Busy.StatusMessage = message;
+            await Task.Delay(seconds);
+            Busy.IsBusy = false;
         }
 
         #endregion

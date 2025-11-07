@@ -2,23 +2,749 @@
 <Page
     x:Class="Calculo_ductos_winUi_3.Views.CalculateIndirects"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    x:Name="IndirectRoot"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Calculo_ductos_winUi_3.Views"
+    xmlns:localState="using:Calculo_ductos_winUi_3.ViewModels"
+    xmlns:model="using:Calculo_ductos_winUi_3.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid CornerRadius="8">
+    <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <!-- 1 parte -->
-            <ColumnDefinition Width="6*"/>
-            <ColumnDefinition Width="3*"/>
-            <!-- 3 partes -->
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="10*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+            Text="Indirectos" 
+            Style="{StaticResource TitleTextBlockStyle}"
+            Padding="36,40,36,0"
+            />
+            
+        </Grid>
+
+        <Grid x:Name="Left"
+            Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <SelectorBar x:Name="SelectorLeftSubPage" 
+             Grid.Row="0" 
+             SelectionChanged="SelectorLeftSubPage_SelectionChanged" 
+             Margin="36,36,36,0"
+             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+             CornerRadius="8">
+                <SelectorBarItem x:Name="SelectorBarDuct" Text="Datos generales" IsSelected="True"  />
+                <SelectorBarItem x:Name="SelectorBarFloor" Text="Otros viaticos"  />
+            </SelectorBar>
+            <Frame x:Name="contentLeftsubPage" Grid.Row="1"  CornerRadius="8,0,0,0"/>
+        </Grid>
+        <Grid x:Name="Right"
+            Grid.Row="1" 
+            Grid.Column="1"
+            CornerRadius="8"
+            Margin="8,36,36,36"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Instaladores" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Margin="0,16,0,0" Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+            <TextBlock Text="Supervisor" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,16,0,0" Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+            <TextBlock Text="Encargado de seguridad" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" Margin="0,16,0,0" Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+            <TextBlock Text="Visita técnica" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="0,16,0,0" Style="{StaticResource SubtitleTextBlockStyle}"></TextBlock>
+            <Grid x:Name="InstallersTable"
+                 BorderBrush="Gray" 
+                 BorderThickness="1"
+                 CornerRadius="8" 
+                 Grid.Column="0"
+                 Grid.Row="1"
+                 Margin="16,16,8,16"
+                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="5*"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Margin="16" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Concepto" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Cantidad" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Precio unitario" Grid.Column="2" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Costo total" Grid.Column="3" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                            Margin ="16,16,0,8"
+                            Text="Herramienta menor"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="1"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.MinorTool, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                            Tag="0"
+                                            Stroke="Gray"
+                                            StrokeThickness="0.5"
+                                            Data="M 0,0 L 1,0" 
+                                            Grid.ColumnSpan="4"
+                                            Margin="74,0,48,0"
+                                            Grid.Row="0"
+                                            Stretch="Fill" 
+                                            VerticalAlignment="Bottom"
+                                            StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Grid.Row="2" 
+                                   Margin ="16,16,0,8"
+                            Text="Herramienta mayor"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="3"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.MajorTool, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                            Tag="0"
+                                            Stroke="Gray"
+                                            StrokeThickness="0.5"
+                                            Data="M 0,0 L 1,0" 
+                                            Grid.ColumnSpan="4"
+                                            Margin="74,0,48,0"
+                                            Grid.Row="0"
+                                            Stretch="Fill" 
+                                            VerticalAlignment="Bottom"
+                                            StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Grid.Row="4" 
+                                   Margin ="16,16,0,8"
+                                   Text="Presupuesto estimado de viaje"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="5"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.IndirectsInstallers, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                            Tag="0"
+                                            Stroke="Gray"
+                                            StrokeThickness="0.5"
+                                            Data="M 0,0 L 1,0" 
+                                            Grid.ColumnSpan="4"
+                                            Margin="74,0,48,0"
+                                            Grid.Row="0"
+                                            Stretch="Fill" 
+                                            VerticalAlignment="Bottom"
+                                            StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl  Grid.Row="6"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.OtherIndirectsInstaller, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Grid.Column="4"
+                                            Content="Eliminar"
+                                            Padding="2"
+                                            VerticalAlignment="Center" 
+                                            HorizontalAlignment="Left"
+                                                Margin="-15,0,5,0"
+                                            Command="{Binding DataContext.IndirectsVM.RemoveIndirectCommand, ElementName=IndirectRoot}"
+                                            CommandParameter="{x:Bind Uuid}" />
+                                        <Path 
+                                            Tag="0"
+                                            Stroke="Gray"
+                                            StrokeThickness="0.5"
+                                            Data="M 0,0 L 1,0" 
+                                            Grid.ColumnSpan="4"
+                                            Margin="74,0,48,0"
+                                            Grid.Row="0"
+                                            Stretch="Fill" 
+                                            VerticalAlignment="Bottom"
+                                            StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+
+                </ScrollViewer>
+                <Path 
+        Tag="0"
+        Stroke="Gray"
+        StrokeThickness="0.75"
+        Data="M 0,0 L 1,0" 
+        Grid.ColumnSpan="7"
+        Margin="12,8,12,0"
+        Grid.Row="2"
+        Stretch="Fill" 
+        VerticalAlignment="Top" />
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" 
+                       Grid.ColumnSpan="3" 
+                       Margin="5" 
+                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"></TextBlock>
+                    <TextBlock Text="{x:Bind stateApp.IndirectsVM.SubTotalCostInstallers, Mode=OneWay}" 
+                       Grid.Column="3" 
+                       Margin="5" 
+                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"></TextBlock>
+                </Grid>
 
 
-        <Image Source="ms-appx:///Assets/Construction.png"  Grid.Column="1"/>
+            </Grid>
+            <Grid x:Name="SupervisorTable"
+         BorderBrush="Gray" 
+         BorderThickness="1"
+         CornerRadius="8" 
+         Grid.Column="1"
+         Grid.Row="1"
+         Margin="16,16,8,16"
+         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="5*"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Margin="16" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Concepto" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Cantidad" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Precio unitario" Grid.Column="2" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Costo total" Grid.Column="3" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="4" 
+                           Margin ="16,16,0,8"
+                           Text="Presupuesto estimado de viaje"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="5"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.IndirectsSupervisor, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl  Grid.Row="6"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.OtherIndirectsSupervisor, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Grid.Column="4"
+                                    Content="Eliminar"
+                                    Padding="2"
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Left"
+                                        Margin="-15,0,5,0"
+                                    Command="{Binding DataContext.IndirectsVM.RemoveIndirectCommand, ElementName=IndirectRoot}"
+                                    CommandParameter="{x:Bind Uuid}" />
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+
+                </ScrollViewer>
+                <Path 
+Tag="0"
+Stroke="Gray"
+StrokeThickness="0.75"
+Data="M 0,0 L 1,0" 
+Grid.ColumnSpan="7"
+Margin="12,8,12,0"
+Grid.Row="2"
+Stretch="Fill" 
+VerticalAlignment="Top" />
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" 
+               Grid.ColumnSpan="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                    <TextBlock Text="{x:Bind stateApp.IndirectsVM.SubTotalCostSupervisor, Mode=OneWay}" 
+               Grid.Column="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                </Grid>
+
+
+            </Grid>
+            <Grid x:Name="SecurityTable"
+         BorderBrush="Gray" 
+         BorderThickness="1"
+         CornerRadius="8" 
+         Grid.Column="0"
+         Grid.Row="3"
+         Margin="16,16,8,16"
+         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="5*"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Margin="16" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Concepto" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Cantidad" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Precio unitario" Grid.Column="2" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Costo total" Grid.Column="3" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="4" 
+                           Margin ="16,16,0,8"
+                           Text="Presupuesto estimado de viaje"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="5"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.IndirectsSecurity, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl  Grid.Row="6"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.OtherIndirectsSecurity, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Grid.Column="4"
+                                    Content="Eliminar"
+                                    Padding="2"
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Left"
+                                        Margin="-15,0,5,0"
+                                    Command="{Binding DataContext.IndirectsVM.RemoveIndirectCommand, ElementName=IndirectRoot}"
+                                    CommandParameter="{x:Bind Uuid}" />
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+
+                </ScrollViewer>
+                <Path 
+Tag="0"
+Stroke="Gray"
+StrokeThickness="0.75"
+Data="M 0,0 L 1,0" 
+Grid.ColumnSpan="7"
+Margin="12,8,12,0"
+Grid.Row="2"
+Stretch="Fill" 
+VerticalAlignment="Top" />
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" 
+               Grid.ColumnSpan="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                    <TextBlock Text="{x:Bind stateApp.IndirectsVM.SubTotalCostSecurity, Mode=OneWay}" 
+               Grid.Column="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                </Grid>
+
+
+            </Grid>
+            <Grid x:Name="VisitTable"
+         BorderBrush="Gray" 
+         BorderThickness="1"
+         CornerRadius="8" 
+         Grid.Column="1"
+         Grid.Row="3"
+         Margin="16,16,8,16"
+         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="5*"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Margin="16" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Concepto" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Cantidad" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Precio unitario" Grid.Column="2" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                    <TextBlock Text="Costo total" Grid.Column="3" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="1"></TextBlock>
+                </Grid>
+                <ScrollViewer Grid.Row="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="4" 
+                           Margin ="16,16,0,8"
+                           Text="Presupuesto estimado de viaje"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
+                        <ItemsControl  Grid.Row="5"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.IndirectsVisit, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl  Grid.Row="6"
+                    ItemsSource="{x:Bind stateApp.IndirectsVM.OtherIndirectsVisit, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="model:IndirectsModel">
+                                    <Grid x:Name="Body">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" TextWrapping="Wrap" Text="{x:Bind Concepto}" TextAlignment="Left" Margin="16,5,5,5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{x:Bind Cantidad}" TextAlignment="Center" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" TextWrapping="Wrap" Text="{x:Bind PrecioUnitario}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap" Text="{x:Bind CostoToal}" TextAlignment="Center" Margin="1,1,15,1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Grid.Column="4"
+                                    Content="Eliminar"
+                                    Padding="2"
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Left"
+                                        Margin="-15,0,5,0"
+                                    Command="{Binding DataContext.IndirectsVM.RemoveIndirectCommand, ElementName=IndirectRoot}"
+                                    CommandParameter="{x:Bind Uuid}" />
+                                        <Path 
+                                    Tag="0"
+                                    Stroke="Gray"
+                                    StrokeThickness="0.5"
+                                    Data="M 0,0 L 1,0" 
+                                    Grid.ColumnSpan="4"
+                                    Margin="74,0,48,0"
+                                    Grid.Row="0"
+                                    Stretch="Fill" 
+                                    VerticalAlignment="Bottom"
+                                    StrokeDashArray="8,12" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+
+                </ScrollViewer>
+                <Path 
+Tag="0"
+Stroke="Gray"
+StrokeThickness="0.75"
+Data="M 0,0 L 1,0" 
+Grid.ColumnSpan="7"
+Margin="12,8,12,0"
+Grid.Row="2"
+Stretch="Fill" 
+VerticalAlignment="Top" />
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total" 
+               Grid.ColumnSpan="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                    <TextBlock Text="{x:Bind stateApp.IndirectsVM.SubTotalCostVisit, Mode=OneWay}" 
+               Grid.Column="3" 
+               Margin="5" 
+               Style="{StaticResource BodyStrongTextBlockStyle}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"></TextBlock>
+                </Grid>
+
+
+            </Grid>
+
+        </Grid>
+
     </Grid>
 </Page>

@@ -20,12 +20,14 @@ namespace CotizadorVerticalApi.Services
         private readonly IQuoteRepository _quoteRepository;
         private readonly IFreightRepository _freightRepository;
         private readonly IManPowerRepository _manPowerRepository;
+        private readonly IIndirectsRepository _indirectsRepository;
 
         public QuoterService() 
         {
             _quoteRepository = new QuoteRepository();
             _freightRepository = new FreightRepository();
             _manPowerRepository = new ManPowerRepository();
+            _indirectsRepository = new IndirectRepository();
         }
         public async Task<Response> GetLastQuotes()
         {
@@ -55,10 +57,15 @@ namespace CotizadorVerticalApi.Services
             {
                 var detail = _quoteRepository.GetQuoteById(cotizacionId);
                 var manpowerQuery = _manPowerRepository.GetManPower(cotizacionId);
+                var travelExpenseQuery = _indirectsRepository.GetIndirect(cotizacionId);
                 List<HumanResource> manpower = new List<HumanResource>();
+                List<Viatico> travelExpense = new List<Viatico>();
 
                 if (manpowerQuery.Success) { manpower = (List<HumanResource>)manpowerQuery.Data; }
                 else { log.Error(manpowerQuery.Message); }
+
+                if (travelExpenseQuery.Success) { travelExpense = (List<Viatico>)travelExpenseQuery.Data; }
+                else { log.Error(travelExpenseQuery.Message); }
 
                 var quote = new
                 {
@@ -77,6 +84,8 @@ namespace CotizadorVerticalApi.Services
                     MunicipioId = detail.FirstOrDefault().MunicipioId,
                     LocalidadId = detail.FirstOrDefault().LocalidadId,
                     RentabilidadMOId = detail.FirstOrDefault().RentabilidadMOId,
+                    NecesitaIzaje = detail.FirstOrDefault().NecesitaIzaje,
+                    ZonaId = detail.FirstOrDefault().ZonaId,
                     Niveles = detail.Select(d=> new {
                         TipoNivelId = d.TipoNivelId,
                         Cantidad = d.Cantidad,
@@ -87,7 +96,8 @@ namespace CotizadorVerticalApi.Services
                         TipoPuertaId = d.TipoPuertaId,
                         TipoDescargaId = d.TipoDescargaId
                     }).ToList(),
-                    ManoDeObra = manpower
+                    ManoDeObra = manpower,
+                    Viaticos = travelExpense
 
                 };
                 response.Data = quote;
@@ -108,6 +118,7 @@ namespace CotizadorVerticalApi.Services
             var response = new Response();
             try
             {
+                
                 var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
                 log.Debug($"Conexión usada: {connectionString}");
                 //log.Debug($"Coneccion usada: {connectionString}");
@@ -130,17 +141,32 @@ namespace CotizadorVerticalApi.Services
                             _quoteRepository.InsertLevels(connection, transaction, quote);
                             log.Debug($"Insert Levels ejecutado");
 
-                            resultOperation = _freightRepository.InsertFreight(connection,transaction,quote.LocalidadId,quote.CotizacionId);
-                            if (resultOperation.Success)
-                                log.Debug($"InsertFreight ejecutado");
-                            else 
-                                log.Debug(resultOperation.Message);
+                            if (quote.LocalidadId != 0)
+                            {       
+                                resultOperation = _freightRepository.InsertFreight(connection, transaction, quote.LocalidadId, quote.CotizacionId);
+                                if (resultOperation.Success)
+                                    log.Debug($"InsertFreight ejecutado");
+                                else
+                                    log.Debug(resultOperation.Message);
+                            }
 
-                            resultOperation = _manPowerRepository.InsertManPower(connection,transaction,quote.ManoDeObra,quote.CotizacionId);
-                            if(resultOperation.Success)
-                                log.Debug($"InsertManPower ejecutado");
-                            else
-                                log.Error(resultOperation.Message);
+                            if (quote.ManoDeObra.Count > 0)
+                            { 
+                                resultOperation = _manPowerRepository.InsertManPower(connection,transaction,quote.ManoDeObra,quote.CotizacionId);
+                                if(resultOperation.Success)
+                                    log.Debug($"InsertManPower ejecutado");
+                                else
+                                    log.Error(resultOperation.Message);
+                            }
+
+                            if (quote.Viaticos.Count > 0)
+                            {
+                                resultOperation = _indirectsRepository.InsertIndirect(connection, transaction, quote.Viaticos, quote.CotizacionId);
+                                if (resultOperation.Success)
+                                    log.Debug($"InsertIndirect ejecutado");
+                                else
+                                    log.Error(resultOperation.Message);
+                            }
 
                             transaction.Commit();
 

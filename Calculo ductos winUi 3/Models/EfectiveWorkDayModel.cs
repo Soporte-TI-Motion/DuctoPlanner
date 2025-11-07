@@ -24,6 +24,7 @@ namespace Calculo_ductos_winUi_3.Models
             _WorkDayForeign = 0;
             _WorkDaysExtraFloors = 0;
             _WorkDaysDobleFloors = 0;
+            _NoWorkDays = 0;
             _WorkDayDueDate = 1;
         }
         #endregion

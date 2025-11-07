@@ -53,6 +53,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             var newFreight = new FreightModel();
             newFreight.ImagePath = "ms-appx:///Assets/Trailer.png";
             Freight = newFreight;
+            
         }
         #endregion
         #region Properties
@@ -113,9 +114,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 //OnPropertyChanged(nameof(Freight));
             }
         }
+        public string TotalPriceFormatted => $"Precio: $ {Freight.TotalPrice:N2}";
+        public string SubTotalPriceFormatted => $"Costo: $ {Freight.SubTotalPrice:N2}";
 
         #endregion
-        
+
 
         #region Public Methods      
         public void LoadCatalogs(List<CatalogRowEntityModel> entitiesList, List<CatalogRowEntityModel> municipalitiesList, List<CatalogRowEntityModel> localitiesList,List<CatalogRowTruckTypeModel> truckList)
@@ -140,10 +143,14 @@ namespace Calculo_ductos_winUi_3.ViewModels
             if (!AvailableMunicipalities.Contains(SelectedMunicipality))
                 SelectedMunicipality = AvailableMunicipalities.FirstOrDefault();
         }
-        public async Task CalculateFreight(List<DuctModel> ductList)
+        public async Task CalculateFreight(List<DuctModel> ductList, CatalogRentabilityModel rentability )
         {
             var truck = GetTruckNeeded(ductList);
             await LoadFreight(SelectedLocality.Id,truck);
+            RecalculateRentability(rentability);
+        }
+        public void RecalculateRentability(CatalogRentabilityModel rentability) {
+            Freight.TotalPrice = Freight.SubTotalPrice * rentability.Rentability;
         }
         public void FilterLocalities(int stateId)
         {
@@ -198,6 +205,15 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 {
                     freight.ImagePath = GetImagePath(freight.TruckTypeId);
                     freight.HandlingCost = truckType.HandlingCost;
+                    Freight = freight;
+                }
+                else {
+                    freight = new FreightModel();
+                    freight.ImagePath = GetImagePath(truckType.Id);
+                    freight.HandlingCost = truckType.HandlingCost;
+                    freight.TruckDescription = truckType.Description;
+                    freight.EntityName = SelectedState.Name;
+                    freight.LocalityName = SelectedLocality.Name;
                     Freight = freight;
                 }
             }

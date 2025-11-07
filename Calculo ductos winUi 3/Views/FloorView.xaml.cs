@@ -1,4 +1,4 @@
-using Calculo_ductos_winUi_3.Models;
+﻿using Calculo_ductos_winUi_3.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -65,10 +65,35 @@ namespace Calculo_ductos_winUi_3.Views
             lblNeedAntiImpact.Visibility = cbxTipo.SelectedIndex == 0 && cbxDischargeType.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
         public async void CalculateDucts_Click(object sender, RoutedEventArgs e)
-        {
-            await stateApp.CalculateDucts(sender, e);
+        { 
+            if(await ValidateResume(sender))
+                await stateApp.CalculateDucts(sender, e);
         }
 
+        public async Task<bool> ValidateResume(object sender) {
+            var success = true;
+            var countFirstLevel = stateApp.FloorVM.FloorList.Where(f => f.Type == Floor.TypeFloor.discharge).Sum(f=>f.FloorCount);
+            var countLastLevel = stateApp.FloorVM.FloorList.Where(f => f.Type == Floor.TypeFloor.last).Sum(f=>f.FloorCount);
+            var validations = new List<string>();
+            
+            if (countFirstLevel > 1)
+                validations.Add("Se tiene mas de un piso de descarga, por favor revisalo");
+
+            if (countLastLevel > 1)
+                validations.Add("Se tiene mas de un piso de ventilación, por favor revisalo");
+
+            if (countFirstLevel == 0)
+                validations.Add("No se tiene un piso de descarga, por favor revisalo");
+
+            if (countLastLevel == 0)
+                validations.Add("No se tiene un piso de ventilación, por favor revisalo");
+
+            success = validations.Count == 0;
+            if(!success)
+                await stateApp.ShowEmptyDataDialog(string.Join(Environment.NewLine, validations));
+
+            return success;
+        }
 
     }
 }

@@ -31,9 +31,11 @@ namespace Calculo_ductos_winUi_3.Models
         public int MunicipioId { get; set; } = 0;
         public int LocalidadId { get; set; } = 0;
         public int RentabilidadMOId { get; set; } = 1;
+        public bool NecesitaIzaje { get; set; } = true;
+        public int ZonaId { get; set; } = 1;
         public List<FloorDetailModel> Niveles { get; set; }
         public List<HumanResource> ManoDeObra { get; set; }
-
+        public List<Viatico> Viaticos { get; set; }
 
     }
     public class FloorDetailModel
@@ -51,5 +53,13 @@ namespace Calculo_ductos_winUi_3.Models
     { 
         public int RecursoId { get; set; }
         public int TipoRecursoId { get; set; }
+    }
+    public class Viatico
+    {
+        public string Concepto { get; set; } = string.Empty;
+        public int Cantidad { get; set; } = 0;
+        public decimal PrecioUnitario { get; set; } = 0;
+        public int PoliticaViaticosId {get;set;} = 0;
+
     }
 }

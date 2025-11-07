@@ -22,6 +22,7 @@ namespace Calculo_ductos_winUi_3.Models
         private bool _IsSelected;
         private string _ImagePath;
         private int _EstimatedTimeArrival;
+        private decimal _TotalPrice;
 
         public FreightModel()
         {
@@ -38,7 +39,7 @@ namespace Calculo_ductos_winUi_3.Models
             _IsSelected=false;
             _ImagePath=string.Empty;
             _EstimatedTimeArrival=0;
-
+            _TotalPrice=0;
 
         }
         public int FreightId { get=> _FreightId; set=>SetProperty(ref _FreightId,value); }
@@ -54,8 +55,9 @@ namespace Calculo_ductos_winUi_3.Models
         public string ImagePath { get=>_ImagePath; set=>SetProperty(ref _ImagePath,value); } 
         public int EstimatedTimeArrival { get=>_EstimatedTimeArrival; set=>SetProperty(ref _EstimatedTimeArrival,value); }
 
-        public decimal TotalPrice { 
+        public decimal SubTotalPrice { 
             get => Price + HandlingCost;
         }
+        public decimal TotalPrice { get => _TotalPrice; set => SetProperty(ref _TotalPrice, value); }
     }
 }

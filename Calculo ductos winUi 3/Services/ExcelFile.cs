@@ -102,48 +102,49 @@ namespace Calculo_ductos_winUi_3.Services
             KitCollection dataTemplate = await LoadKitsFromJsonAsync();
 
             // Escribir listas de kits
-            WriteKitList(dataTemplate.Ducts, worksheet, ref currentRow);
+            //WriteKitList(dataTemplate.Ducts, worksheet, ref currentRow);
+            WriteKitList(worksheet, ref currentRow);
 
-            currentRow++;
-            currentRow++;
+            //currentRow++;
+            //currentRow++;
 
-            // Escribir títulos de columna
-            worksheet.Cells[currentRow, 0].PutValue("Kit");           // Columna A
-            worksheet.Cells[currentRow, 1].PutValue("Descripcion");   // Columna B
-            worksheet.Cells[currentRow, 8].PutValue("Cantidad");      // Columna I
-            worksheet.Cells[currentRow, 9].PutValue("Total");         // Columna J
+            //// Escribir títulos de columna
+            //worksheet.Cells[currentRow, 0].PutValue("Kit");           // Columna A
+            //worksheet.Cells[currentRow, 1].PutValue("Descripcion");   // Columna B
+            //worksheet.Cells[currentRow, 8].PutValue("Cantidad");      // Columna I
+            //worksheet.Cells[currentRow, 9].PutValue("Total");         // Columna J
 
-            // Combinar celdas de B hasta H (índices 1 a 7)
-            worksheet.Cells.Merge(currentRow, 1, 1, 7);
+            //// Combinar celdas de B hasta H (índices 1 a 7)
+            //worksheet.Cells.Merge(currentRow, 1, 1, 7);
 
-            // Estilizar desde A hasta J (índices 0 a 9)
-            var range = worksheet.Cells.CreateRange(currentRow, 0, 1, 10);
-            Style style = worksheet.Workbook.CreateStyle();
-            style.Font.Color = System.Drawing.ColorTranslator.FromHtml("#00B0AC");
-            style.Font.IsBold = true;
+            //// Estilizar desde A hasta J (índices 0 a 9)
+            //var range = worksheet.Cells.CreateRange(currentRow, 0, 1, 10);
+            //Style style = worksheet.Workbook.CreateStyle();
+            //style.Font.Color = System.Drawing.ColorTranslator.FromHtml("#00B0AC");
+            //style.Font.IsBold = true;
 
-            StyleFlag flag = new StyleFlag { FontColor = true, FontBold = true };
-            range.ApplyStyle(style, flag);
+            //StyleFlag flag = new StyleFlag { FontColor = true, FontBold = true };
+            //range.ApplyStyle(style, flag);
 
-            currentRow++;
-            //basura
-            if (_state.CompleteDuctVm.PurposeId == 1)
-            {
-                // Escribir más listas
-                WriteKitList(dataTemplate.Guillotine, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
+            //currentRow++;
+            ////basura
+            //if (_state.CompleteDuctVm.PurposeId == 1)
+            //{
+            //    // Escribir más listas
+            //    WriteKitList(dataTemplate.Guillotine, worksheet, ref currentRow, TextAlignmentType.Left);
+            //    currentRow++;
 
-                WriteKitList(dataTemplate.Container, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
+            //    WriteKitList(dataTemplate.Container, worksheet, ref currentRow, TextAlignmentType.Left);
+            //    currentRow++;
 
-                WriteKitList(dataTemplate.General, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-            }
-            //ropa
-            else {
-                WriteKitList(dataTemplate.Clothes, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-            }
+            //    WriteKitList(dataTemplate.General, worksheet, ref currentRow, TextAlignmentType.Left);
+            //    currentRow++;
+            //}
+            ////ropa
+            //else {
+            //    WriteKitList(dataTemplate.Clothes, worksheet, ref currentRow, TextAlignmentType.Left);
+            //    currentRow++;
+            //}
 
             // Pie de página
             WriteFooters(worksheet, ref currentRow);
@@ -315,7 +316,8 @@ namespace Calculo_ductos_winUi_3.Services
         private static void WriteHeaders(Worksheet worksheet, out int currentRow)
         {
             // Primera fila
-            worksheet.Cells[0, 0].PutValue("DUCTO DE BASURA");
+            var proporsito = _state.CompleteDuctVm.PurposeId == 0 ? "BASURA" : "ROPA SUCIA";
+            worksheet.Cells[0, 0].PutValue($"DUCTO DE {proporsito}");
             worksheet.Cells.CreateRange(0, 0, 1, 10).Merge();
             var range = worksheet.Cells.CreateRange(0, 0, 1, 10);
             range.SetStyle(greenBackground, true);
@@ -401,6 +403,40 @@ namespace Calculo_ductos_winUi_3.Services
             worksheet.Cells[5, 14].PutValue("TOTAL");
 
             currentRow = 7;
+        }
+        public static void WriteKitList(Worksheet sheet, ref int currentRow, TextAlignmentType alignmentType = TextAlignmentType.Center)
+        {
+            TextAlignmentType alignmentTypeB = TextAlignmentType.Center;
+            foreach (CatalogKitModel kit in _state.CompleteDuctVm.AvailableKits)
+            {
+                var kitCount = GetElementCount(kit.Item);
+                if (kitCount > 0)
+                {
+                    sheet.Cells[currentRow, 0].PutValue(kit.Item);          // Columna A
+                    sheet.Cells[currentRow, 0].SetStyle(defaultStyle);          // Columna A
+                    sheet.Cells[currentRow, 1].PutValue(kit.Description);  // Columna B
+                    sheet.Cells[currentRow, 1].SetStyle(defaultStyle);          // Columna A
+                    sheet.Cells.Merge(currentRow, 1, 1, 7);                  // Bx:Hx
+                    defaultStyle.HorizontalAlignment = alignmentType;
+                    sheet.Cells.CreateRange(currentRow, 1, 1, 7).SetStyle(defaultStyle);                  // Bx:Hx
+
+                    defaultStyle.HorizontalAlignment = alignmentTypeB;
+
+                    //sheet.Cells[currentRow, 8].PutValue(item.Count);        // Columna I
+                    //sheet.Cells[currentRow, 8].PutValue(GetElementCount(item.Kit));        // Columna I
+                    sheet.Cells[currentRow, 8].PutValue(kitCount);        // Columna I
+                    sheet.Cells[currentRow, 8].SetStyle(defaultStyle);          // Columna A
+                    sheet.Cells[currentRow, 9].Formula = $"=I{currentRow + 1}"; // Jx
+                    sheet.Cells[currentRow, 9].SetStyle(defaultStyle);          // Columna A
+
+                    sheet.Cells[currentRow, 13].PutValue(0); // N
+                    sheet.Cells[currentRow, 13].SetStyle(defaultStyle);          // Columna A
+                    sheet.Cells[currentRow, 14].Formula = $"=J{currentRow + 1}*N{currentRow + 1}"; // O
+                    sheet.Cells[currentRow, 14].SetStyle(yellowBackgroundBorder); // O
+
+                    currentRow++;
+                }
+            }
         }
         private static void WriteKitList(List<KitModel> list, Worksheet sheet, ref int currentRow, TextAlignmentType alignmentType = TextAlignmentType.Center)
         {
@@ -601,28 +637,42 @@ namespace Calculo_ductos_winUi_3.Services
                 switch (kit)
                 {
                     //DUCTS
-                    case "B603118": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.A2).FirstOrDefault().Count; break;
-                    case "B603121": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2).FirstOrDefault().Count; break;
-                    case "B603120": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3).FirstOrDefault().Count; break;
-                    case "B101114": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4).FirstOrDefault().Count; break;
-                    case "B603115": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.S4).FirstOrDefault().Count; break;
-                    case "B872615": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4F).FirstOrDefault().Count; break;
-                    case "B872614": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3F).FirstOrDefault().Count; break;
-                    case "B872613": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2F).FirstOrDefault().Count; break;
+                    case "B872523":
+                    case "B603118": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.A2).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872526":
+                    case "B603121": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872525":
+                    case "B603120": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872524":
+                    case "B101114": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872521":
+                    case "B603115": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.S4).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872633":
+                    case "B872615": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4F).FirstOrDefault()?.Count ?? 0; break;
+                    case "B903058":
+                    case "B872614": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3F).FirstOrDefault()?.Count ?? 0; break;
+                    case "B903057":
+                    case "B872613": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2F).FirstOrDefault()?.Count ?? 0; break;
                     //COMPONENTS
-                    case "B603001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Sprinkler).FirstOrDefault().Count; break;
-                    case "B601001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.DisinfectionSystem).FirstOrDefault().Count; break;
-                    case "B1010241": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XN).FirstOrDefault().Count; break;
-                    case "B101130": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XNF).FirstOrDefault().Count; break;
-                    case "B701190": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Chimney).FirstOrDefault().Count; break;
-                    case "B101118": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.TVA).FirstOrDefault().Count; break;
-                    case "B602103": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault().Count; break;
-                    case "B602002": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Discharge).FirstOrDefault().Count; break;
+                    case "B603001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Sprinkler).FirstOrDefault()?.Count ?? 0; break;
+                    case "B601001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.DisinfectionSystem).FirstOrDefault()?.Count ?? 0; break;
+                    case "B101024":
+                    case "B1010241": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XN).FirstOrDefault()?.Count ?? 0; break;
+                    case "B101130": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XNF).FirstOrDefault()?.Count ?? 0; break;
+                    case "B603128":
+                    case "B701190": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Chimney).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872527":
+                    case "B101118": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.TVA).FirstOrDefault()?.Count ?? 0; break;
+                    case "B602103": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault()?.Count ?? 0; break;
+                    case "B602002": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Discharge).FirstOrDefault()?.Count ?? 0; break;
+                    case "B50200054": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Container).FirstOrDefault()?.Count ?? 0; break;
+                    case "B601032": count = _state.DuctsVM.DuctDetailList.Count >= 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
+                    case "B903068": count = _state.DuctsVM.DuctDetailList.Count < 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
 
 
                 }
-                var gatesCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Gate).FirstOrDefault().Count;
-                var c4Count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).FirstOrDefault().Count;
+                var gatesCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Gate).FirstOrDefault()?.Count ?? 0;
+                var c4Count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).FirstOrDefault()?.Count ?? 0;
                 //Default para ropa
                 if (_state.CompleteDuctVm.PurposeId == 0)
                 {
@@ -630,7 +680,7 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit) 
                     {
                         //ropa c4
-                        case "B101111": count = c4Count; break;
+                        case "B872520": count = c4Count; break;
                         ////puerta UL derecha
                         case "B301057": 
                         ////puerta UL izquierda 

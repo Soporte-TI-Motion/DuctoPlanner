@@ -177,6 +177,7 @@
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Data\CatalogRepository.cs" />
     <Compile Include="Data\FreightRepository.cs" />
+    <Compile Include="Data\IndirectRepository.cs" />
     <Compile Include="Data\ManPowerRepository.cs" />
     <Compile Include="Data\QuoteRepository.cs" />
     <Compile Include="Facades\ICatalogFacade.cs" />

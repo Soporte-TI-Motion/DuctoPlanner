@@ -65,5 +65,44 @@
         public decimal Rentabilidad { get; set; }
         public string Descripcion { get; set; }
     }
+    public class IndirectsCatalog
+    {
+        public int PoliticaViaticosId { get; set; }
+        public string Concepto { get; set; }
+        public int ZonaId { get; set; }
+        public string Zona { get; set; }
+        public int UnidadMedidaId { get; set; }
+        public string Medida { get; set; }
+        public decimal Monto { get; set; }
+        public bool EsObligatorio { get; set; }
+    }
+    public class ZoneCatalog
+    {
+        public int ZonaId { get; set; }
+        public string Descripcion { get; set; }
+    }
+    public class KitCatalog
+    { 
+        public int KitId { get; set; }
+        public string Descripcion { get;set;}
+        public string Item { get; set; }
+        public int TipoKitId { get; set; }
+        public string TipoKit { get; set; }
+        public int PropositoId { get; set; }
+        public string Proposito { get; set; }
+        public decimal Precio { get; set; }
+        public string Moneda { get; set; }
+        public decimal TipoCambio { get; set; }
+
+    }
+    public class ToolCatalog
+    {
+        public int HerramientaId { get; set; }
+        public string Descripcion { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public bool EsObligatorio { get; set; }
+        public int Grupo { get; set; }
+        public string Periodicidad { get; set; }
+    }
 
 }

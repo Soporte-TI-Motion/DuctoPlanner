@@ -21,7 +21,10 @@ namespace CotizadorApiVertical.Models
         public List<CatalogResourceModel> Resources { get; set; }
         public List<CatalogResourceTypeModel> ResourceTypes { get; set; }
         public List<CatalogRentabilityModel> Rentabilities { get; set; }
-
+        public List<CatalogIndirectModel> Indirects { get; set; }
+        public List<CatalogZoneModel> Zones { get; set; }
+        public List<CatalogKitModel> Kits { get; set; }
+        public List<CatalogTool> Tools { get; set; }
     }
     public class CatalogRowModel
     {
@@ -69,5 +72,44 @@ namespace CotizadorApiVertical.Models
         public int Id { get; set; }
         public decimal Rentability { get; set; }
         public string Description { get; set; }
+    }
+    public class CatalogIndirectModel
+    {
+        public int Id { get; set; }
+        public string Concept { get; set; }
+        public int ZoneId { get; set; }
+        public string Zone { get; set; }
+        public int UnitId { get; set; }
+        public string Unit { get; set; }
+        public decimal Cost { get; set; }
+        public bool IsMandatory { get; set; }
+    }
+    public class CatalogZoneModel
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+    }
+    public class CatalogKitModel
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public string Item { get; set; }
+        public int TypeKitId { get; set; }
+        public string TypeKit { get; set; }
+        public int PurposeId { get; set; }
+        public string Purpose { get; set; }
+        public decimal Price { get; set; }
+        public string Currency { get; set; }
+        public decimal ExchangeRate { get; set; }
+    }
+    public class CatalogTool
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set;}
+        public bool IsMandatory { get; set; }
+        public int Group { get; set; }
+        public string Periodicity { get; set; }
+
     }
 }

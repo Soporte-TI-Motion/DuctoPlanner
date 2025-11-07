@@ -254,7 +254,7 @@
                                        />
                             <TextBlock Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" 
                                        Margin="8,8,8,8"
-                                       Text="{x:Bind stateApp.FreightVM.Freight.TotalPrice,Mode=OneWay}" 
+                                       Text="{x:Bind stateApp.FreightVM.Freight.SubTotalPrice,Mode=OneWay}" 
                                        />               
                         </Grid>
                     </Grid>

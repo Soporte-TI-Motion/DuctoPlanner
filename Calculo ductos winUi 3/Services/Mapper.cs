@@ -79,6 +79,9 @@ namespace Calculo_ductos_winUi_3.Services
                         NecesitaAspersor = stateApp.CompleteDuctVm.NeedSprinkler,
                         NecesitaSistemaDD = stateApp.CompleteDuctVm.NeedDesinfectionSystem,
                         LocalidadId = stateApp.FreightVM.SelectedLocality.Id,
+                        RentabilidadMOId = stateApp.CompleteDuctVm.SelectedRentability.Id,
+                        NecesitaIzaje = stateApp.IndirectsVM.SelectedIzaje.Id == 1,
+                        ZonaId = stateApp.IndirectsVM.SelectedZone.Id,
                         Niveles = stateApp.FloorVM.FloorList.Select(
                             floor => new FloorDetailModel
                             {
@@ -96,7 +99,15 @@ namespace Calculo_ductos_winUi_3.Services
                             resource => new HumanResource{
                                 RecursoId = resource.Recurso.Id,
                                 TipoRecursoId = resource.TipoRecurso.Id
-                            }).ToList()
+                            }).ToList(),
+                        //por el momento se toma solo de uno ya que actualmente la logica de negocio agrega lo mismo a todos
+                        Viaticos = stateApp.IndirectsVM.OtherIndirectsInstaller.Select(
+                            viatico=> new Viatico { 
+                                Concepto = viatico.Concepto, 
+                                Cantidad = viatico.Cantidad, 
+                                PrecioUnitario = viatico.PrecioUnitario, 
+                                PoliticaViaticosId = viatico.PoliticaViaticosId
+                            }).ToList(),
                     };
             }
             catch (Exception ex)
@@ -130,12 +141,13 @@ namespace Calculo_ductos_winUi_3.Services
         public static ObservableCollection<HumanResourceModel> MapQuoteDetailManPower(this QuoteDetailModel quote,ManPowerViewModel manPowerVm)
         {
             ObservableCollection<HumanResourceModel> map = new ObservableCollection<HumanResourceModel>();
+            
             var humaResourceList = quote.ManoDeObra.Select(resource =>
                 new HumanResourceModel { 
                     Uuid = new Guid(),
                     Recurso = manPowerVm.AvailableResources.Where(x => x.Id == resource.RecursoId).FirstOrDefault(),
                     TipoRecurso = manPowerVm.AvailableResourceTypes.Where(x => x.Id ==resource.TipoRecursoId).FirstOrDefault(),
-                    JornadasEfectivas = manPowerVm.EfectiveWorkDays.TotalWorkDays,
+                    JornadasEfectivas = resource.RecursoId == 1 ? manPowerVm.EfectiveWorkDays.TotalWorkDays : manPowerVm.EfectiveWorkDays.TotalWorkDays + 3,
                     DiasNoLaborales = manPowerVm.AvailableResourceTypes.Where(x => x.Id == resource.TipoRecursoId).FirstOrDefault().Id == 1 ? manPowerVm.EfectiveWorkDays.TotalWorkDays / 7 : 0
                 }
                 ).ToList();
@@ -144,5 +156,21 @@ namespace Calculo_ductos_winUi_3.Services
             return map;
         }
 
+        public static ObservableCollection<IndirectsModel> MapQuoteDetailToIndirects(this QuoteDetailModel quote)
+        { 
+            ObservableCollection<IndirectsModel> map = new ObservableCollection<IndirectsModel>();
+            var indirectsList = quote.Viaticos.Select(viatico =>
+                    new IndirectsModel
+                    { 
+                        Uuid = Guid.NewGuid(),
+                        Concepto = viatico.Concepto,
+                        Cantidad = viatico.Cantidad,
+                        PrecioUnitario = viatico.PrecioUnitario,
+                    }
+                ).ToList();
+            foreach(var indirect in indirectsList)
+                map.Add(indirect);
+            return map;
+        }
     }
 }
