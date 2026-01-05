@@ -116,6 +116,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public string TotalPriceFormatted => $"Precio: $ {Freight.TotalPrice:N2}";
         public string SubTotalPriceFormatted => $"Costo: $ {Freight.SubTotalPrice:N2}";
+        public string SubtotalPriceAddedPercent => $"$ {Freight.SubTotalPrice:N2} (+10%)";
 
         #endregion
 
@@ -200,6 +201,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
             try
             {
                 var freight = await Client.GetAsync<FreightModel>($"Freight?idLocalidad={localityId}&idTipoCamion={truckType.Id}");
+                    freight.EntityName = SelectedState.Name;
+                    freight.LocalityName = SelectedLocality.Name;
+                    freight.MunicipalityName = SelectedMunicipality.Name;
 
                 if (freight != null)
                 {
@@ -212,15 +216,12 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     freight.ImagePath = GetImagePath(truckType.Id);
                     freight.HandlingCost = truckType.HandlingCost;
                     freight.TruckDescription = truckType.Description;
-                    freight.EntityName = SelectedState.Name;
-                    freight.LocalityName = SelectedLocality.Name;
                     Freight = freight;
                 }
             }
             catch (Exception ex)
             {
                 Trace.WriteLine($"[Freight Load Error]: {ex.Message}");
-
             }
         }
         private int GetLocations(List<DuctModel> ductList)

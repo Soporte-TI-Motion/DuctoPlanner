@@ -30,6 +30,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private decimal _TotalPriceStore;
         private decimal _SubTotalPriceWC;
         private decimal _SubTotalPriceStore;
+        private decimal _SubTotalCostTool;
+        private decimal _TotalCostTool;
         private ManPowerViewModel _ManPowerVm;
         private CatalogZoneModel _SelectedZone;
         private Opcion _SelectedIzaje;
@@ -80,6 +82,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
             _SubTotalPriceStore = 0m;
             _SubTotalPriceWC = 0m;
             _unitCost = 0m;
+            _SubTotalCostTool=0m;
+            _TotalCostTool = 0m;
             _TotalEvents = 0;
             _TotalForeingResourceInstaller = 0;
             _TotalResourceInstaller = 0;
@@ -111,6 +115,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalCostSecurity = 0m;
             SubTotalCostVisit = 0m;
             TotalCostVisit = 0m;
+            SubTotalCostTool = 0m;
+            TotalCostTool=0m;
             selectedUnitCost = "0";
             TotalEvents = 0;
             TotalForeingResourceInstaller = 0;
@@ -166,6 +172,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public int TotalNoWorkDaysSupervisor { get => _TotalNoworkDaysSupervisor; set {SetProperty(ref _TotalNoworkDaysSupervisor, value); } }
         public int TotalWeeks { get => _TotalWeeks; set {SetProperty(ref _TotalWeeks, value); } }
         public int TotalFloors { get => _TotalFloors; set {SetProperty(ref _TotalFloors, value); } }
+        public decimal SubTotalCostTool { get { return _SubTotalCostTool; } set { SetProperty(ref _SubTotalCostTool, value); } }
+        public decimal TotalCostTool { get { return _TotalCostTool; } set { SetProperty(ref _TotalCostTool, value); } }
+        public decimal TotalPriceIndirects => TotalCostInstallers + TotalCostSupervisor + TotalCostSecurity + TotalCostVisit + TotalPriceWC + TotalPriceStore;
+        public decimal SubTotalPriceIndirects => SubTotalCostInstallers + SubTotalCostSupervisor + SubTotalCostSecurity + SubTotalCostVisit + SubTotalPriceWC + SubTotalPriceStore;
         public string TotalPriceInstallersFormatted => $"Precio: $ {TotalCostInstallers:N2}";
         public string SubTotalPriceInstallersFormatted => $"Costo: $ {SubTotalCostInstallers:N2}";
         public string TotalPriceSupervisorFormatted => $"Precio: $ {TotalCostSupervisor:N2}";
@@ -328,6 +338,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
             SumIndirect(2, OtherIndirectsSupervisor);
             SumIndirect(3, OtherIndirectsSecurity);
             SumIndirect(4, OtherIndirectsVisit);
+
+            SubTotalCostTool = MinorTool.Sum(x => x.CostoToal) + MajorTool.Sum(x=>x.CostoToal);
            
             TotalCostInstallers = SubTotalCostInstallers * rentability.Rentability;
             TotalCostSupervisor = SubTotalCostSupervisor * rentability.Rentability;
@@ -335,6 +347,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalCostVisit = SubTotalCostVisit * rentability.Rentability;
             TotalPriceWC = SubTotalPriceWC * rentability.Rentability;
             TotalPriceStore = SubTotalPriceStore * rentability.Rentability;
+            TotalCostTool = SubTotalCostTool * rentability.Rentability;
         }
         public void RecalculateRentability(CatalogRentabilityModel rentability)
         {
