@@ -16,5 +16,9 @@ namespace CotizadorApiVertical.Interfaces
         IEnumerable<ResourceCatalog> GetResourceCatalog();
         IEnumerable<ResourceTypeCatalog> GetResourceTypeCatalog();
         IEnumerable<RentabilitiesCatalog> GetRentabilitiesCatalog();
+        IEnumerable<IndirectsCatalog> GetIndirectsCatalog();
+        IEnumerable<ZoneCatalog> GetZonesCatalog();
+        IEnumerable<KitCatalog> GetKitsCatalog();
+        IEnumerable<ToolCatalog> GetToolCatalog();
     }
 }

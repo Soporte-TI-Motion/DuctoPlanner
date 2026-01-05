@@ -19,8 +19,11 @@ namespace CotizadorApiVertical.Params
         public bool NecesitaSistemaDD { get; set; } = false;
         public int LocalidadId { get; set; } = 0;
         public int RentabilidadMOId { get; set; } = 0;
+        public bool NecesitaIzaje { get; set; } = true;
+        public int ZonaId { get; set; } = 1;
         public List<LevelParam> Niveles { get; set; }
         public List<HumanResource> ManoDeObra { get; set; }
+        public List<Viatico> Viaticos { get; set; }
     }
     public class LevelParam 
     {
@@ -38,6 +41,14 @@ namespace CotizadorApiVertical.Params
     {
         public int RecursoId { get; set; } = 0;
         public int TipoRecursoId { get; set; } = 0;
+
+    }
+    public class Viatico 
+    {
+        public string Concepto { get; set; } = string.Empty;
+        public int Cantidad { get; set; } = 0;
+        public decimal PrecioUnitario { get; set; } = 0;
+        public int PoliticaViaticosId { get; set; } = 0;
 
     }
 }

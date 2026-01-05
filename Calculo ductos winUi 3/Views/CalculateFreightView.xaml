@@ -73,13 +73,13 @@
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid x:Name="txtEntity" 
-                              Grid.Row="0"
+                              Grid.Row="1"
                               Margin="32">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -94,7 +94,7 @@
                             </ComboBox>
                         </Grid>
                         <Grid x:Name="txtMunicipality"  
-                              Grid.Row="1"
+                              Grid.Row="2"
                               Margin="32">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -109,9 +109,8 @@
                             </ComboBox>
                         </Grid>
                         <Grid x:Name="txtLocality"
-                              Grid.Row="2"
-                              Margin="32">
-                               
+                              Grid.Row="3"
+                              Margin="32" Visibility="Collapsed">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -124,7 +123,7 @@
                                 DisplayMemberPath="Name">        
                             </ComboBox>
                         </Grid>
-                        <Button x:Name="btnCalculateFreight" Grid.Row="3"
+                        <Button x:Name="btnCalculateFreight" Grid.Row="4"
                                 Margin="32" 
                                 Click="CalculateFreight_Click">Calcular Flete</Button>
                     </Grid>
@@ -200,6 +199,7 @@
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -216,7 +216,7 @@
                                        Grid.Column="0" 
                                        Grid.Row="1"
                                        Margin="8,8,8,8"/>
-                            <TextBlock Text="Ciudad:" 
+                            <TextBlock Text="Municipio:" 
                                        Grid.Column="0" 
                                        Grid.Row="2" 
                                        Margin="8,8,8,8"/>
@@ -229,9 +229,13 @@
                                        Grid.Row="4" 
                                        Margin="8,8,8,8" 
                                        TextWrapping="Wrap"/>
-                            <TextBlock Text="Costo Total:" 
+                            <TextBlock Text="Subtotal:" 
                                        Grid.Column="0" 
                                        Grid.Row="5" 
+                                       Margin="8,8,8,8"/>
+                            <TextBlock Text="Costo Total:" 
+                                       Grid.Column="0" 
+                                       Grid.Row="6" 
                                        Margin="8,8,8,8"/>
                             <!--<TextBlock Grid.Column="1" Grid.Row="1"
                                        Margin="0,0,30,0" 
@@ -245,7 +249,7 @@
                                         Text="{x:Bind stateApp.FreightVM.Freight.EntityName,Mode=OneWay}" />
                             <TextBlock Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"
                                        Margin="8,8,8,8"
-                                        Text="{x:Bind stateApp.FreightVM.Freight.LocalityName,Mode=OneWay}" />
+                                        Text="{x:Bind stateApp.FreightVM.Freight.MunicipalityName,Mode=OneWay}" />
                             <TextBlock Grid.Column="1" Grid.Row="3" Margin="8,8,8,8"
                                        Text="{x:Bind stateApp.FreightVM.Freight.Price,Mode=OneWay}" />
                             <TextBlock Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" 
@@ -254,7 +258,11 @@
                                        />
                             <TextBlock Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" 
                                        Margin="8,8,8,8"
-                                       Text="{x:Bind stateApp.FreightVM.Freight.TotalPrice,Mode=OneWay}" 
+                                       Text="{x:Bind stateApp.FreightVM.Freight.FirstSubTotalPrice,Mode=OneWay}" 
+                                       />
+                            <TextBlock Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" 
+                                       Margin="8,8,8,8"
+                                       Text="{x:Bind stateApp.FreightVM.SubtotalPriceAddedPercent,Mode=OneWay}" 
                                        />               
                         </Grid>
                     </Grid>

@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System.Diagnostics;
 using Calculo_ductos_winUi_3.Models;
+using Aspose.Cells;
+using Calculo_ductos.Params;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -69,6 +71,7 @@ namespace Calculo_ductos_winUi_3
             new NavLink() { Type = NavLink.TypeMenu.freight ,Label = "Calcular fletes", ImageSource  = "ms-appx:///Assets/camioneta2.png" },
             new NavLink() { Type = NavLink.TypeMenu.manpower ,Label = "Calcular mano de obra", ImageSource  = "ms-appx:///Assets/mo.png" },
             new NavLink() { Type = NavLink.TypeMenu.indirect ,Label = "Calcular indirectos", ImageSource  = "ms-appx:///Assets/maletin.png" },
+            new NavLink() { Type = NavLink.TypeMenu.totalprice ,Label = "Costos Totales", ImageSource  = "ms-appx:///Assets/TotalPrice.png" },
             
         };
         public ObservableCollection<NavLink> NavLinks
@@ -78,7 +81,13 @@ namespace Calculo_ductos_winUi_3
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if(AppHasData())
+
+            var validations = ValidateState();
+            var successValidate = validations.Count == 0;
+            if (!successValidate)
+                await ShowEmptyDataDialog(sender, string.Join(Environment.NewLine, validations), "Validaciones");
+
+            if (AppHasData() && successValidate)
                 await StateApp.Save();
             else
                 await ShowEmptyDataDialog(sender, "No hay datos para guardar.");
@@ -94,6 +103,7 @@ namespace Calculo_ductos_winUi_3
                 case NavLink.TypeMenu.freight: contentPage.Navigate(typeof(CalculateFreightView));break;
                 case NavLink.TypeMenu.manpower: contentPage.Navigate(typeof(CalculateManPower));break;
                 case NavLink.TypeMenu.indirect: contentPage.Navigate(typeof(CalculateIndirects));break;
+                case NavLink.TypeMenu.totalprice: contentPage.Navigate(typeof(ShowTotalPrice));break;
             }
             
         }
@@ -136,12 +146,14 @@ namespace Calculo_ductos_winUi_3
                     // Aquí puedes ejecutar el guardado
                     StateApp.Save(); // o lo que uses para guardar
                     StateApp.New();
+                    contentPage.Navigate(typeof(CalculateDuctsView));
                 }
                 else if (result == ContentDialogResult.Secondary)
                 {
                     // El usuario hizo clic en "No"
                     // Puedes continuar sin guardar
                     StateApp.New();
+                    contentPage.Navigate(typeof(CalculateDuctsView));
                 }
                 else
                 {
@@ -150,9 +162,9 @@ namespace Calculo_ductos_winUi_3
                 }
                 return;
             }
-            
 
-            
+            contentPage.Navigate(typeof(CalculateDuctsView));
+
         }
         public async Task<string> GetSaveFilePathAsync()
         {
@@ -210,13 +222,13 @@ namespace Calculo_ductos_winUi_3
 
             OpenButton.Flyout = flyout;
         }
-        private async Task ShowEmptyDataDialog(object sender, string message)
+        private async Task ShowEmptyDataDialog(object sender, string message, string title = "Sin datos")
         {
                 var frameworkElement = sender as FrameworkElement;
 
                 var dialog = new ContentDialog
                 {
-                    Title = "Sin datos",
+                    Title = title,
                     Content = message,
                     CloseButtonText = "Aceptar",
                     XamlRoot = frameworkElement.XamlRoot // 👈 Esto sí es válido siempre
@@ -246,10 +258,47 @@ namespace Calculo_ductos_winUi_3
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
             appWindow.SetIcon(iconPath);
         }
+        private List<string> ValidateState()
+        {
+            var validations = new List<string>();
+            var countFirstLevel = StateApp.FloorVM.FloorList.Where(f => f.Type == Floor.TypeFloor.discharge).Sum(f => f.FloorCount);
+            var countLastLevel = StateApp.FloorVM.FloorList.Where(f => f.Type == Floor.TypeFloor.last).Sum(f => f.FloorCount);
+
+            if (countFirstLevel > 1)
+                validations.Add("Se tiene mas de un piso de descarga, por favor revísalo.");
+
+            if (countLastLevel > 1)
+                validations.Add("Se tiene mas de un piso de ventilación, por favor revísalo.");
+
+            if (StateApp.CompleteDuctVm.ExecutiveName == null || StateApp.CompleteDuctVm.ExecutiveName.Length == 0)
+                validations.Add("Agrega un nombre de ejecutivo, por favor revísalo.");
+
+            if (StateApp.CompleteDuctVm.PT == null)
+                validations.Add("Agrega un numero de estimacion, por favor revísalo.");
+
+            if (StateApp.FreightVM.SelectedLocality == null)
+                validations.Add("No se ha seleccionado un destino para el flete, por favor revísalo.");
+
+            if (StateApp.ManPowerVM.ManPower.Count == 0)
+                validations.Add("No se ha agregado recursos para mano de obra, por favor revísalo.");
+
+            if (StateApp.IndirectsVM.IndirectsInstallers.Count == 0)
+                validations.Add("No se ha calculado viaticos, por favor revísalo.");
+
+            if (StateApp.IndirectsVM.SelectedZone == null)
+                validations.Add("No se ha seleccionado zona para indirectos, por favor revísalo.");
+
+            if (StateApp.IndirectsVM.SelectedIzaje == null)
+                validations.Add("No se ha seleccionado izaje, por favor revísalo.");
+
+            
+
+            return validations;
+        }
     }
     public class NavLink
     {
-        public enum TypeMenu {duct, freight , manpower, indirect }
+        public enum TypeMenu {duct, freight , manpower, indirect, totalprice }
         public TypeMenu Type {  get; set; }
         public string Label { get; set; }
         public Symbol? Symbol { get; set; } // Puede seguir usándose

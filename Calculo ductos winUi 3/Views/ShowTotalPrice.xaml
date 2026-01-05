@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Calculo_ductos_winUi_3.Views.ShowTotalPrice"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Calculo_ductos_winUi_3.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="0,0,0,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="TopGrid"
+            Grid.ColumnSpan="3"
+            Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0"
+                Text="Costo del proyecto" 
+                Style="{StaticResource TitleTextBlockStyle}"
+                Padding="36,40,0,0"
+                />
+        </Grid>
+        <Grid x:Name="ExchangeRate"
+              CornerRadius="15"
+              Grid.Row="1"
+              Grid.Column="0"
+              Margin="32,32,16,0"
+              Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Tipo de cambio" 
+               Foreground="{StaticResource TextFillColorPrimaryBrush}"
+               FontWeight="Bold"
+               FontSize="17"
+               Margin="0,16,0,0"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"/>
+            <TextBlock Text="{x:Bind stateApp.CompleteDuctVm.ExchangeRateFormatted, Mode=OneWay}" 
+                Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                Margin="0,0,0,16"
+                Grid.Row="1"
+                TextAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Grid>
+        <Grid x:Name="DuctGrid"
+              CornerRadius="15"
+              Grid.Row="2"
+              Grid.RowSpan="2"
+              Grid.Column="0"
+              Margin="32,66,16,48"
+              Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                    Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#662196F3" Offset="0.0"/>
+                        <GradientStop Color="#CC1976D2" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Despiece" 
+                   Foreground="{StaticResource TextFillColorInverseBrush}"
+                   FontWeight="Bold"
+                   FontSize="17"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                FontWeight="Bold"
+                FontSize="19"
+                BorderThickness="0"
+                Grid.Row="1"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Center"
+                UseSystemFocusVisuals="False"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                FontSize="15"
+                BorderThickness="0"
+                Visibility="Collapsed"
+                Grid.Row="2"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Top"
+                UseSystemFocusVisuals="False"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>     
+        </Grid>
+        <Grid x:Name="FreightGrid"
+          CornerRadius="15"
+          Grid.Row="4"
+          Grid.RowSpan="2"
+          Grid.Column="0"
+          Margin="32,0,16,114"
+          Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+            Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#997E57C2" Offset="0.0"/>
+                        <GradientStop Color="#CC512DA8" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Flete" 
+           Foreground="{StaticResource TextFillColorInverseBrush}"
+           FontWeight="Bold"
+           FontSize="17"
+           VerticalAlignment="Center"
+           HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.FreightVM.TotalPriceFormatted, Mode=OneWay}" 
+        Background="Transparent" 
+        Foreground="{StaticResource TextFillColorPrimaryBrush}"
+        FontWeight="Bold"
+        FontSize="19"
+        BorderThickness="0"
+        Grid.Row="1"
+        IsReadOnly="True"
+        TextAlignment="Center"
+        VerticalAlignment="Bottom"
+        UseSystemFocusVisuals="False"
+        FocusVisualPrimaryThickness="0"
+        FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.FreightVM.SubTotalPriceFormatted, Mode=OneWay}" 
+        Background="Transparent" 
+        Foreground="{StaticResource TextFillColorPrimaryBrush}"
+        FontSize="15"
+        BorderThickness="0"
+        Grid.Row="2"
+        IsReadOnly="True"
+                     
+        TextAlignment="Center"
+        VerticalAlignment="Top"
+        UseSystemFocusVisuals="False"
+        FocusVisualPrimaryThickness="0"
+        FocusVisualSecondaryThickness="0"/>
+        </Grid>
+        
+        <Grid x:Name="ManPowerGridTotal"
+            CornerRadius="15"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="16,32,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
+                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Mano de obra (Total)" 
+                 Foreground="{StaticResource TextFillColorInverseBrush}"
+                 FontWeight="Bold"
+                 FontSize="17"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceFormatted, Mode=OneWay}" 
+              Background="Transparent" 
+              Foreground="{StaticResource TextFillColorPrimaryBrush}"
+              FontWeight="Bold"
+              FontSize="19"
+              BorderThickness="0"
+              Grid.Row="1"
+              IsReadOnly="True"
+              TextAlignment="Center"
+              VerticalAlignment="Bottom"
+              UseSystemFocusVisuals="False"
+              FocusVisualPrimaryThickness="0"
+              FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceFormatted, Mode=OneWay}" 
+              Background="Transparent" 
+              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+              FontSize="15"
+              BorderThickness="0"
+              Grid.Row="2"
+              IsReadOnly="True"
+              TextAlignment="Center"
+              VerticalAlignment="Top"
+              UseSystemFocusVisuals="False"
+              Padding="0,0,0,8"
+              FocusVisualPrimaryThickness="0"
+              FocusVisualSecondaryThickness="0"/>
+        </Grid>
+        <Grid x:Name="ManPowerGridInstaller"
+            CornerRadius="15"
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
+                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Mano de obra (Instaladores)" 
+                     Foreground="{StaticResource TextFillColorInverseBrush}"
+                     FontWeight="Bold"
+                     FontSize="17"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceInstallerFormatted, Mode=OneWay}" 
+                  Background="Transparent" 
+                  Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                  FontWeight="Bold"
+                  FontSize="17"
+                  BorderThickness="0"
+                  Grid.Row="1"
+                  IsReadOnly="True"
+                  TextAlignment="Center"
+                  VerticalAlignment="Center"
+                  UseSystemFocusVisuals="False"
+                  FocusVisualPrimaryThickness="0"
+                  FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceInstallerFormatted, Mode=OneWay}" 
+                  Background="Transparent" 
+                  Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                  FontSize="15"
+                  BorderThickness="0"
+                  Grid.Row="2"
+                  IsReadOnly="True"
+                  TextAlignment="Center"
+                  Padding="0,0,0,8"
+                  UseSystemFocusVisuals="False"
+                  FocusVisualPrimaryThickness="0"
+                  FocusVisualSecondaryThickness="0"/>
+           
+        </Grid>
+        <Grid x:Name="ManPowerGridSupervisor"
+            CornerRadius="15"
+            Grid.Row="3"                  
+            Grid.Column="1"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
+                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Mano de obra (Supervisor)" 
+             Foreground="{StaticResource TextFillColorInverseBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             VerticalAlignment="Center"
+             HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceSupervisorFormatted, Mode=OneWay}" 
+              Background="Transparent" 
+              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+              FontWeight="Bold"
+              FontSize="17"
+              BorderThickness="0"
+              Grid.Row="1"
+              IsReadOnly="True"
+              TextAlignment="Center"
+              VerticalAlignment="Bottom"
+              UseSystemFocusVisuals="False"
+              FocusVisualPrimaryThickness="0"
+              FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceSupervisorFormatted, Mode=OneWay}" 
+              Background="Transparent" 
+              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+              FontSize="15"
+              BorderThickness="0"
+              Grid.Row="2"
+              IsReadOnly="True"
+              TextAlignment="Center"
+              VerticalAlignment="Top"
+              Padding="0,0,0,8"
+              UseSystemFocusVisuals="False"
+              FocusVisualPrimaryThickness="0"
+              FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="ManPowerGridSecurity"
+            CornerRadius="15"
+            Grid.Row="4"
+                  
+            Grid.Column="1"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
+                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Mano de obra (Segurista)" 
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceSecurityFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                BorderThickness="0"
+                Grid.Row="1"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Bottom"
+                UseSystemFocusVisuals="False"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceSecurityFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                FontSize="15"
+                BorderThickness="0"
+                Grid.Row="2"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Top"
+                UseSystemFocusVisuals="False"
+                Padding="0,0,0,8"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>
+        </Grid>
+        <Grid x:Name="ManPowerGridVisit"
+            CornerRadius="15"
+            Grid.Row="5"   
+            Grid.Column="1"
+            Margin="16,16,16,8"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
+                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Mano de obra (Visita técnica)" 
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceVisitFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                BorderThickness="0"
+                Grid.Row="1"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Bottom"
+                UseSystemFocusVisuals="False"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceVisitFormatted, Mode=OneWay}" 
+                Background="Transparent" 
+                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                FontSize="15"
+                BorderThickness="0"
+                Grid.Row="2"
+                IsReadOnly="True"
+                TextAlignment="Center"
+                VerticalAlignment="Top"
+                UseSystemFocusVisuals="False"
+                Padding="0,0,0,8"
+                FocusVisualPrimaryThickness="0"
+                FocusVisualSecondaryThickness="0"/>
+        </Grid>
+
+
+        <Grid x:Name="IndirectsGridTotal"
+            CornerRadius="15"
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="16,32,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Total)" 
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             FontWeight="Bold"
+             FontSize="19"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+                
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridInstaller"
+            CornerRadius="15"
+            Grid.Row="2"
+            Grid.Column="2"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Instaladores)" 
+                    Foreground="{StaticResource TextFillColorInverseBrush}"
+                    FontWeight="Bold"
+                    FontSize="17"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceInstallersFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceInstallersFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             Padding="0,0,0,8"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridSupervisor"
+            CornerRadius="15"
+            Grid.Row="3"
+            Grid.Column="2"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+            Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Supervisor)" 
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceSupervisorFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceSupervisorFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             Padding="0,0,0,8"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridSecurity"
+            CornerRadius="15"
+            Grid.Row="4"
+            Grid.Column="2"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+            Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Segurista)" 
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceSecurityFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceSecurityFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             UseSystemFocusVisuals="False"
+             Padding="0,0,0,8"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridVisit"
+            CornerRadius="15"
+            Grid.Row="5"
+            Grid.Column="2"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Visita técnica)" 
+                    Foreground="{StaticResource TextFillColorInverseBrush}"
+                    FontWeight="Bold"
+                    FontSize="17"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceVisitFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceVisitFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             Padding="0,0,0,8"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridWC"
+            CornerRadius="15"
+            Grid.Row="3"       
+            Grid.Column="3"
+            Margin="16,16,16,0"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Sanitarios)" 
+                    Foreground="{StaticResource TextFillColorInverseBrush}"
+                    FontWeight="Bold"
+                    FontSize="17"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceWCFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             FontWeight="Bold"
+             FontSize="17"
+             BorderThickness="0"
+             Grid.Row="1"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Bottom"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceWCFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             Padding="0,0,0,8"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        <Grid x:Name="IndirectsGridStore"
+       CornerRadius="15"
+       Grid.Row="4"
+       
+       Grid.Column="3"
+       Margin="16,16,16,0"
+       Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+ Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#9981C784" Offset="0.0"/>
+                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Indirectos (Bodega)" 
+Foreground="{StaticResource TextFillColorInverseBrush}"
+FontWeight="Bold"
+FontSize="17"
+VerticalAlignment="Center"
+HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceStoreFormatted, Mode=OneWay}" 
+                 Background="Transparent" 
+                 Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                 FontWeight="Bold"
+                 FontSize="17"
+                 BorderThickness="0"
+                 Grid.Row="1"
+                 IsReadOnly="True"
+                 TextAlignment="Center"
+                 VerticalAlignment="Bottom"
+                 UseSystemFocusVisuals="False"
+                 FocusVisualPrimaryThickness="0"
+                 FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceStoreFormatted, Mode=OneWay}" 
+             Background="Transparent" 
+             Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             FontSize="15"
+             BorderThickness="0"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextAlignment="Center"
+             VerticalAlignment="Top"
+             Padding="0,0,0,8"
+             UseSystemFocusVisuals="False"
+             FocusVisualPrimaryThickness="0"
+             FocusVisualSecondaryThickness="0"/>
+
+        </Grid>
+        
+        <Grid x:Name="ProjectGrid"
+            CornerRadius="15"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="3"
+            Margin="16,32,32,64"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border  
+                Grid.Row="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#99FFD54F" Offset="0.0"/>
+                        <GradientStop Color="#CCFFC107" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="Total del proyecto" 
+                     Foreground="{StaticResource TextFillColorInverseBrush}"
+                     FontWeight="Bold"
+                     FontSize="17"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"/>
+            </Border>
+            <TextBox Text="{x:Bind stateApp.TotalPriceFormatted, Mode=OneWay}" 
+                  Background="Transparent" 
+                  Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                  FontWeight="Bold"
+                  FontSize="20"
+                  BorderThickness="0"
+                  Grid.Row="1"
+                  IsReadOnly="True"
+                  TextAlignment="Center"
+                  VerticalAlignment="Bottom"
+                  UseSystemFocusVisuals="False"
+                  FocusVisualPrimaryThickness="0"
+                  FocusVisualSecondaryThickness="0"/>
+            <TextBox Text="{x:Bind stateApp.SubTotalPriceFormatted, Mode=OneWay}" 
+                  Background="Transparent" 
+                  Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                  FontSize="17"
+                  BorderThickness="0"
+                  Grid.Row="2"
+                  IsReadOnly="True"
+                  TextAlignment="Center"
+                  VerticalAlignment="Top"
+                  UseSystemFocusVisuals="False"
+                  FocusVisualPrimaryThickness="0"
+                  FocusVisualSecondaryThickness="0"/>
+        </Grid>
+    </Grid>
+</Page>

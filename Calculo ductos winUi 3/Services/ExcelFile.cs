@@ -3,15 +3,16 @@ using Aspose.Cells.Drawing;
 using Calculo_ductos.Params;
 using Calculo_ductos_winUi_3.Models;
 using Calculo_ductos_winUi_3.ViewModels;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using supporExcel = ClosedXML;
@@ -42,15 +43,16 @@ namespace Calculo_ductos_winUi_3.Services
                 _state = state;
                 using var workbook = new Workbook();
                 //var worksheet = workbook.Worksheets.Add("DUCTO 1");
+                var indirectppto = GetIndirectPpto();
                 var worksheet = workbook.Worksheets[0];
-
                 worksheet.Name = "DUCTO 1";
-                await CreateTemplateSheet(worksheet);
+                await CreateDuctTemplateSheet(worksheet);
+                worksheet = workbook.Worksheets.Add("Inidirectos");
+                await CreateIndirectTemplateSheet(worksheet, indirectppto);
                 workbook.Save(filePath, SaveFormat.Xlsx);
             }
             catch (Exception ex)
             {
-
                 var message = ex.Message;
                 Console.WriteLine(message); 
             }
@@ -84,7 +86,7 @@ namespace Calculo_ductos_winUi_3.Services
             }
             
         }
-        public static async Task CreateTemplateSheet(Worksheet worksheet)
+        public static async Task CreateDuctTemplateSheet(Worksheet worksheet)
         {
             // Alineación horizontal centrada a toda la hoja
             Style styleCenter = worksheet.Cells.Rows[0].GetStyle();
@@ -92,7 +94,6 @@ namespace Calculo_ductos_winUi_3.Services
             styleCenter.IsTextWrapped = true;
             worksheet.Cells.SetColumnWidth(0, _widthCoulmnA);
             worksheet.Cells.ApplyStyle(styleCenter, new StyleFlag { HorizontalAlignment = true, WrapText = true });
-
 
             SetStyles(ref worksheet);
             // Encabezados
@@ -102,48 +103,7 @@ namespace Calculo_ductos_winUi_3.Services
             KitCollection dataTemplate = await LoadKitsFromJsonAsync();
 
             // Escribir listas de kits
-            WriteKitList(dataTemplate.Ducts, worksheet, ref currentRow);
-
-            currentRow++;
-            currentRow++;
-
-            // Escribir títulos de columna
-            worksheet.Cells[currentRow, 0].PutValue("Kit");           // Columna A
-            worksheet.Cells[currentRow, 1].PutValue("Descripcion");   // Columna B
-            worksheet.Cells[currentRow, 8].PutValue("Cantidad");      // Columna I
-            worksheet.Cells[currentRow, 9].PutValue("Total");         // Columna J
-
-            // Combinar celdas de B hasta H (índices 1 a 7)
-            worksheet.Cells.Merge(currentRow, 1, 1, 7);
-
-            // Estilizar desde A hasta J (índices 0 a 9)
-            var range = worksheet.Cells.CreateRange(currentRow, 0, 1, 10);
-            Style style = worksheet.Workbook.CreateStyle();
-            style.Font.Color = System.Drawing.ColorTranslator.FromHtml("#00B0AC");
-            style.Font.IsBold = true;
-
-            StyleFlag flag = new StyleFlag { FontColor = true, FontBold = true };
-            range.ApplyStyle(style, flag);
-
-            currentRow++;
-            //basura
-            if (_state.CompleteDuctVm.PurposeId == 1)
-            {
-                // Escribir más listas
-                WriteKitList(dataTemplate.Guillotine, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-
-                WriteKitList(dataTemplate.Container, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-
-                WriteKitList(dataTemplate.General, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-            }
-            //ropa
-            else {
-                WriteKitList(dataTemplate.Clothes, worksheet, ref currentRow, TextAlignmentType.Left);
-                currentRow++;
-            }
+            WriteKitList(worksheet, ref currentRow);
 
             // Pie de página
             WriteFooters(worksheet, ref currentRow);
@@ -153,6 +113,50 @@ namespace Calculo_ductos_winUi_3.Services
             worksheet.AutoFitRows();
         }
 
+        public static async Task CreateIndirectTemplateSheet(Worksheet worksheet, IndirectPpto indirectppto) 
+        {
+            // Alineación horizontal centrada a toda la hoja
+            Style styleCenter = worksheet.Cells.Rows[0].GetStyle();
+            styleCenter.HorizontalAlignment = TextAlignmentType.Center;
+            styleCenter.IsTextWrapped = true;
+            worksheet.Cells.SetColumnWidth(0, _widthCoulmnA);
+            worksheet.Cells.ApplyStyle(styleCenter, new StyleFlag { HorizontalAlignment = true, WrapText = true });
+            int currentRow = 0;
+
+            Style title = worksheet.Workbook.CreateStyle();
+            
+            title.Pattern = BackgroundType.Solid;
+            title.Font.Color = Color.White;
+            title.Font.IsBold = true;
+            title.Font.Size = 20;
+            title.ForegroundColor = Color.Black;
+            title.VerticalAlignment = TextAlignmentType.Center;
+            title.HorizontalAlignment = TextAlignmentType.Center;
+            title.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.TopBorder].Color = Color.Black;
+            title.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.LeftBorder].Color = Color.Black;
+            title.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.RightBorder].Color = Color.Black;
+            title.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.BottomBorder].Color = Color.Black;
+
+            worksheet.Cells[currentRow, 2].PutValue($"PPTO INDIRECTOS");
+            var range = worksheet.Cells.CreateRange(currentRow, 0, 2, 17);
+            range.SetStyle(title);
+            range.Merge();
+            //worksheet.Cells.Merge(currentRow, 1, 2, 14);
+
+
+            currentRow += 3;
+            WriteElement(worksheet, ref currentRow, indirectppto.Installer.budget,indirectppto.Installer.price);
+            WriteElement(worksheet, ref currentRow, indirectppto.Visit.budget,indirectppto.Visit.price);
+            WriteElement(worksheet, ref currentRow, indirectppto.Security.budget,indirectppto.Security.price);
+            WriteElement(worksheet, ref currentRow, indirectppto.Supervisor.budget,indirectppto.Supervisor.price);
+            WriteElement(worksheet, ref currentRow, indirectppto.WC.budget,indirectppto.WC.price);
+            WriteElement(worksheet, ref currentRow, indirectppto.Store.budget,indirectppto.Store.price);  
+
+        }
         private static void SetStyles(ref Worksheet worksheet)
         {
             Color green = ColorTranslator.FromHtml("#00B0AC");
@@ -315,7 +319,8 @@ namespace Calculo_ductos_winUi_3.Services
         private static void WriteHeaders(Worksheet worksheet, out int currentRow)
         {
             // Primera fila
-            worksheet.Cells[0, 0].PutValue("DUCTO DE BASURA");
+            var proporsito = _state.CompleteDuctVm.PurposeId == 0 ? "BASURA" : "ROPA SUCIA";
+            worksheet.Cells[0, 0].PutValue($"DUCTO DE {proporsito}");
             worksheet.Cells.CreateRange(0, 0, 1, 10).Merge();
             var range = worksheet.Cells.CreateRange(0, 0, 1, 10);
             range.SetStyle(greenBackground, true);
@@ -402,18 +407,17 @@ namespace Calculo_ductos_winUi_3.Services
 
             currentRow = 7;
         }
-        private static void WriteKitList(List<KitModel> list, Worksheet sheet, ref int currentRow, TextAlignmentType alignmentType = TextAlignmentType.Center)
+        public static void WriteKitList(Worksheet sheet, ref int currentRow, TextAlignmentType alignmentType = TextAlignmentType.Center)
         {
-          
             TextAlignmentType alignmentTypeB = TextAlignmentType.Center;
-            foreach (KitModel item in list)
+            foreach (CatalogKitModel kit in _state.CompleteDuctVm.AvailableKits)
             {
-                var kitCount = GetElementCount(item.Kit);
+                var kitCount = GetElementCount(kit.Item);
                 if (kitCount > 0)
                 {
-                    sheet.Cells[currentRow, 0].PutValue(item.Kit);          // Columna A
+                    sheet.Cells[currentRow, 0].PutValue(kit.Item);          // Columna A
                     sheet.Cells[currentRow, 0].SetStyle(defaultStyle);          // Columna A
-                    sheet.Cells[currentRow, 1].PutValue(item.Description);  // Columna B
+                    sheet.Cells[currentRow, 1].PutValue(kit.Description);  // Columna B
                     sheet.Cells[currentRow, 1].SetStyle(defaultStyle);          // Columna A
                     sheet.Cells.Merge(currentRow, 1, 1, 7);                  // Bx:Hx
                     defaultStyle.HorizontalAlignment = alignmentType;
@@ -428,7 +432,7 @@ namespace Calculo_ductos_winUi_3.Services
                     sheet.Cells[currentRow, 9].Formula = $"=I{currentRow + 1}"; // Jx
                     sheet.Cells[currentRow, 9].SetStyle(defaultStyle);          // Columna A
 
-                    sheet.Cells[currentRow, 13].PutValue(item.InstalationTime); // N
+                    sheet.Cells[currentRow, 13].PutValue(0); // N
                     sheet.Cells[currentRow, 13].SetStyle(defaultStyle);          // Columna A
                     sheet.Cells[currentRow, 14].Formula = $"=J{currentRow + 1}*N{currentRow + 1}"; // O
                     sheet.Cells[currentRow, 14].SetStyle(yellowBackgroundBorder); // O
@@ -439,12 +443,6 @@ namespace Calculo_ductos_winUi_3.Services
         }
         private static void WriteFooters(Worksheet worksheet, ref int currentRow)
         {
-            // Colores en Aspose.Cells (No es necesario usar ColorTranslator)
-            //Style greenBackground = worksheet.Workbook.CreateStyle();
-            //greenBackground.ForegroundColor = ColorTranslator.FromHtml("#00B0AC");
-            //greenBackground.Pattern = BackgroundType.Solid;
-            //greenBackground.Font.Color = Color.White;
-            //greenBackground.Font.IsBold = true;
             var fontColor = redWordsBlackBorder.Font.Color;
             redWordsBlackBorder.Font.Color = Color.Black;
             // Notas importantes
@@ -601,28 +599,42 @@ namespace Calculo_ductos_winUi_3.Services
                 switch (kit)
                 {
                     //DUCTS
-                    case "B603118": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.A2).FirstOrDefault().Count; break;
-                    case "B603121": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2).FirstOrDefault().Count; break;
-                    case "B603120": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3).FirstOrDefault().Count; break;
-                    case "B101114": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4).FirstOrDefault().Count; break;
-                    case "B603115": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.S4).FirstOrDefault().Count; break;
-                    case "B872615": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4F).FirstOrDefault().Count; break;
-                    case "B872614": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3F).FirstOrDefault().Count; break;
-                    case "B872613": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2F).FirstOrDefault().Count; break;
+                    case "B872523":
+                    case "B603118": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.A2).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872526":
+                    case "B603121": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872525":
+                    case "B603120": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872524":
+                    case "B101114": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872521":
+                    case "B603115": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.S4).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872633":
+                    case "B872615": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B4F).FirstOrDefault()?.Count ?? 0; break;
+                    case "B903058":
+                    case "B872614": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B3F).FirstOrDefault()?.Count ?? 0; break;
+                    case "B903057":
+                    case "B872613": count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.B2F).FirstOrDefault()?.Count ?? 0; break;
                     //COMPONENTS
-                    case "B603001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Sprinkler).FirstOrDefault().Count; break;
-                    case "B601001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.DisinfectionSystem).FirstOrDefault().Count; break;
-                    case "B1010241": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XN).FirstOrDefault().Count; break;
-                    case "B101130": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XNF).FirstOrDefault().Count; break;
-                    case "B701190": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Chimney).FirstOrDefault().Count; break;
-                    case "B101118": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.TVA).FirstOrDefault().Count; break;
-                    case "B602103": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault().Count; break;
-                    case "B602002": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Discharge).FirstOrDefault().Count; break;
+                    case "B603001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Sprinkler).FirstOrDefault()?.Count ?? 0; break;
+                    case "B601001": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.DisinfectionSystem).FirstOrDefault()?.Count ?? 0; break;
+                    case "B101024":
+                    case "B1010241": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XN).FirstOrDefault()?.Count ?? 0; break;
+                    case "B101130": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.XNF).FirstOrDefault()?.Count ?? 0; break;
+                    case "B603128":
+                    case "B701190": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Chimney).FirstOrDefault()?.Count ?? 0; break;
+                    case "B872527":
+                    case "B101118": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.TVA).FirstOrDefault()?.Count ?? 0; break;
+                    case "B602103": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault()?.Count ?? 0; break;
+                    case "B602002": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Discharge).FirstOrDefault()?.Count ?? 0; break;
+                    case "B50200054": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Container).FirstOrDefault()?.Count ?? 0; break;
+                    case "B601032": count = _state.DuctsVM.DuctDetailList.Count >= 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
+                    case "B903068": count = _state.DuctsVM.DuctDetailList.Count < 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
 
 
                 }
-                var gatesCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Gate).FirstOrDefault().Count;
-                var c4Count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).FirstOrDefault().Count;
+                var gatesCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Gate).FirstOrDefault()?.Count ?? 0;
+                var c4Count = _state.DuctsVM.DucList.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).FirstOrDefault()?.Count ?? 0;
                 //Default para ropa
                 if (_state.CompleteDuctVm.PurposeId == 0)
                 {
@@ -630,7 +642,7 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit) 
                     {
                         //ropa c4
-                        case "B101111": count = c4Count; break;
+                        case "B872520": count = c4Count; break;
                         ////puerta UL derecha
                         case "B301057": 
                         ////puerta UL izquierda 
@@ -715,5 +727,417 @@ namespace Calculo_ductos_winUi_3.Services
             return count;
         }
 
+        private static void WriteElement(Worksheet sheet, ref int currentRow, BudgetModel budget, BudgetModel price, TextAlignmentType alignmentType = TextAlignmentType.Center)
+        {
+            Color green = ColorTranslator.FromHtml("#09B31D");
+            Style title = sheet.Workbook.CreateStyle();
+
+            title.Pattern = BackgroundType.Solid;
+            title.Font.Color = Color.White;
+            title.Font.IsBold = true;
+            title.Font.Size = 12;
+            title.ForegroundColor = green;
+            title.VerticalAlignment = TextAlignmentType.Center;
+            title.HorizontalAlignment = TextAlignmentType.Center;
+            title.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.TopBorder].Color = Color.Black;
+            title.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.LeftBorder].Color = Color.Black;
+            title.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.RightBorder].Color = Color.Black;
+            title.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Thin;
+            title.Borders[BorderType.BottomBorder].Color = Color.Black;
+
+            sheet.Cells.SetRowHeight(currentRow, 22);
+            sheet.Cells.SetColumnWidth(0, 2);
+            sheet.Cells.SetColumnWidth(16, 2);
+            sheet.Cells.SetColumnWidth(1, 2);
+            sheet.Cells.SetColumnWidth(7, 2);
+            sheet.Cells.SetColumnWidth(9, 2);
+            sheet.Cells.SetColumnWidth(15, 2);
+            sheet.Cells.SetColumnWidth(2, 12);
+            sheet.Cells.SetColumnWidth(3, 12);
+            sheet.Cells.SetColumnWidth(4, 12);
+            sheet.Cells.SetColumnWidth(5, 12);
+            sheet.Cells.SetColumnWidth(6, 12);
+            sheet.Cells.SetColumnWidth(10, 12);
+            sheet.Cells.SetColumnWidth(11, 12);
+            sheet.Cells.SetColumnWidth(12, 12);
+            sheet.Cells.SetColumnWidth(13, 12);
+            sheet.Cells.SetColumnWidth(14, 12);
+
+            sheet.Cells[currentRow, 1].PutValue($"{budget.Title.ToUpper()}");
+            //sheet.Cells.Merge(currentRow, 1, 1, 6);
+            var range = sheet.Cells.CreateRange(currentRow, 1, 1, 7);
+            range.SetStyle(title);
+            range.Merge();
+            //sheet.Cells[currentRow, 0].SetStyle(defaultStyle);          
+            sheet.Cells[currentRow, 9].PutValue($"{price.Title.ToUpper()}"); 
+            //sheet.Cells.Merge(currentRow, 8, 1, 6);
+            range = sheet.Cells.CreateRange(currentRow, 9, 1, 7);
+            range.SetStyle(title);
+            range.Merge();
+            //sheet.Cells[currentRow, 1].SetStyle(defaultStyle);    
+            currentRow +=3;
+            WriteRow(currentRow, sheet, budget.Description, $"{budget.Amount}", price.Description, $"{price.Amount}",true,44);
+            currentRow+=3;
+            WriteRow(currentRow, sheet,"Jornadas Laborales", budget.EfectiveWorkDays.ToString(), "Jornadas Laborales", price.EfectiveWorkDays.ToString());
+            currentRow++;
+            WriteRow(currentRow, sheet,"Jornadas NO Laborales", budget.NoWorkDays.ToString(), "Jornadas NO Laborales", price.NoWorkDays.ToString());
+            currentRow++;
+            WriteRow(currentRow, sheet,"Total de días", budget.TotalDays.ToString(), "Total de días", price.TotalDays.ToString());
+            currentRow+=2;
+
+
+            WriteRowOnlyColumn(currentRow, sheet,"Mano de Obra",2, Color.White, Color.Black, false, true,1,4,CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet,$"{budget.MOAmount}",6,Color.White,Color.Black,false,false,1,1,CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Dotted,44);
+            WriteRowOnlyColumn(currentRow, sheet,"Mano de Obra",10,Color.White,Color.Black,false, true,1,4, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet,$"{price.MOAmount}",14,Color.White,Color.Black,false, false,1,1, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Dotted,44);
+            currentRow++;
+            WriteRowOnlyColumn(currentRow, sheet,"Viáticos",2, Color.White, Color.Black, false, true,1,4, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet,$"{budget.TravelExpensesAmount}",6,Color.White,Color.Black,false, false,1,1, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Dotted,44);
+            WriteRowOnlyColumn(currentRow, sheet,"Viáticos",10,Color.White,Color.Black,false, true,1,4, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet,$"{price.TravelExpensesAmount}",14,Color.White,Color.Black,false, false,1,1, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Dotted,44);
+            currentRow++;
+            WriteRowOnlyColumn(currentRow, sheet,"Herramienta",2, Color.White, Color.Black, false, true,1,4, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet, $"{budget.ToolsAmount}",6,Color.White,Color.Black,false, false, 1,1,CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Dotted,44);
+            WriteRowOnlyColumn(currentRow, sheet,"Herramienta",10,Color.White,Color.Black,false, true,1,4, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Dotted);
+            WriteRowOnlyColumn(currentRow, sheet, $"{price.ToolsAmount}",14,Color.White,Color.Black,false, false, 1,1,CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Dotted,44);
+            currentRow++;
+            WriteRowOnlyColumn(currentRow, sheet,"Fletes",2,Color.White,Color.Black,false,true,1,4,CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium);
+            WriteRowOnlyColumn(currentRow, sheet, $"{budget.FreightAmount}",6,Color.White,Color.Black,false,false,1,1,CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Medium,44);
+            WriteRowOnlyColumn(currentRow, sheet,"Fletes",10, Color.White, Color.Black, false, true,1,4, CellBorderType.Medium, CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium);
+            WriteRowOnlyColumn(currentRow, sheet, $"{price.FreightAmount}",14,Color.White,Color.Black,false, false, 1,1,CellBorderType.Dotted, CellBorderType.Dotted, CellBorderType.Medium, CellBorderType.Medium,44);
+            currentRow++;
+            WriteRowOnlyColumn(currentRow, sheet,"Total",4,Color.DarkBlue,Color.White,true, true, 1,2,CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium);
+            WriteRowOnlyColumn(currentRow, sheet, $"{budget.TotalAmount}",6,Color.LightBlue,Color.Black,true,false,1,1,CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium,44);
+            WriteRowOnlyColumn(currentRow, sheet,"Total",12, Color.DarkBlue, Color.White, true, true,1,2, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium);
+            WriteRowOnlyColumn(currentRow, sheet, $"{price.TotalAmount}",14, Color.LightBlue, Color.Black, true, false, 1,1,CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium, CellBorderType.Medium,44);
+            currentRow+=3;
+        }
+        private static void WriteRow(int currentRow, Worksheet sheet, string firstLabel, string firstValue, string secondLabel,string secondValue, bool isRange = false , int styleNumber = 49) 
+        {
+            Style cell = sheet.Workbook.CreateStyle();
+            Color darkBlue = ColorTranslator.FromHtml("#002060");
+            
+            cell.Pattern = BackgroundType.Solid;
+            cell.Font.Color = Color.Black;
+            //cell.Font.IsBold = true;
+            cell.Font.Size = 10;
+            //cell.ForegroundColor = green;
+            cell.VerticalAlignment = TextAlignmentType.Center;
+            //cell.HorizontalAlignment = TextAlignmentType.Center;
+            cell.Borders[BorderType.TopBorder].LineStyle = CellBorderType.Medium;
+            cell.Borders[BorderType.TopBorder].Color = darkBlue;
+            cell.Borders[BorderType.LeftBorder].LineStyle = CellBorderType.Medium;
+            cell.Borders[BorderType.LeftBorder].Color = darkBlue;
+            cell.Borders[BorderType.RightBorder].LineStyle = CellBorderType.Medium;
+            cell.Borders[BorderType.RightBorder].Color = darkBlue;
+            cell.Borders[BorderType.BottomBorder].LineStyle = CellBorderType.Medium;
+            cell.Borders[BorderType.BottomBorder].Color = darkBlue;
+            cell.IsTextWrapped = true;
+            
+
+            sheet.Cells[currentRow, 2].PutValue($"{firstLabel}");
+            //sheet.Cells[currentRow, 6].PutValue($"{firstValue}");
+            if (decimal.TryParse(firstValue, out decimal number))
+            {
+                // Es número → escribir como decimal
+                sheet.Cells[currentRow, 6].PutValue(number);
+            }
+            else
+            {
+                // No es número → escribir como texto
+                sheet.Cells[currentRow, 6].PutValue(firstValue);
+            }
+
+
+            sheet.Cells[currentRow, 10].PutValue($"{secondLabel}");
+            //sheet.Cells[currentRow, 14].PutValue($"{secondValue}");
+            if (decimal.TryParse(secondValue, out number))
+            {
+                // Es número → escribir como decimal
+                sheet.Cells[currentRow, 14].PutValue(number);
+            }
+            else
+            {
+                // No es número → escribir como texto
+                sheet.Cells[currentRow, 14].PutValue(secondValue);
+            }
+
+            if (isRange)
+            {
+                MergeCells(currentRow, 2, 2, 4,ref sheet,cell);
+                MergeCells(currentRow, 10, 2, 4,ref sheet,cell);
+                cell.HorizontalAlignment = TextAlignmentType.Center;
+                cell.Number = styleNumber;
+                MergeCells(currentRow, 6, 2, 1,ref sheet,cell);
+                MergeCells(currentRow, 14, 2, 1, ref sheet, cell);
+            }
+            else
+            { 
+                MergeCells(currentRow, 2, 1, 4,ref sheet,cell);
+                MergeCells(currentRow, 10, 1, 4,ref sheet,cell);
+                cell.HorizontalAlignment = TextAlignmentType.Center;
+                cell.Number = styleNumber;
+                sheet.Cells[currentRow, 6].SetStyle(cell);
+                sheet.Cells[currentRow, 14].SetStyle(cell);
+            }
+        }
+        private static void WriteRowOnlyColumn(
+            int currentRow, 
+            Worksheet sheet, 
+            string stringValue, 
+            int column, 
+            Color foreGColor, 
+            Color fontColor, 
+            bool fontIsBold = false,
+            bool isRange = false,
+            int rowRange=1,
+            int columnRange =1, 
+            CellBorderType left = CellBorderType.Medium, 
+            CellBorderType top = CellBorderType.Medium,
+            CellBorderType right = CellBorderType.Medium, 
+            CellBorderType bottom = CellBorderType.Medium,
+            int styleNumber = 49,
+            TextAlignmentType alignmentType = TextAlignmentType.Center)
+        {
+            Style cell = sheet.Workbook.CreateStyle();
+            Color darkBlue = ColorTranslator.FromHtml("#002060");
+
+            cell.Pattern = BackgroundType.Solid;
+            cell.Font.Color = fontColor;
+            cell.Font.IsBold = fontIsBold;
+            cell.Font.Size = 10;
+            cell.ForegroundColor = foreGColor;
+            cell.VerticalAlignment = TextAlignmentType.Center;
+            cell.HorizontalAlignment = alignmentType;
+            cell.Borders[BorderType.TopBorder].LineStyle = top;
+            cell.Borders[BorderType.TopBorder].Color = darkBlue;
+            cell.Borders[BorderType.LeftBorder].LineStyle = left;
+            cell.Borders[BorderType.LeftBorder].Color = darkBlue;
+            cell.Borders[BorderType.RightBorder].LineStyle = right;
+            cell.Borders[BorderType.RightBorder].Color = darkBlue;
+            cell.Borders[BorderType.BottomBorder].LineStyle = bottom;
+            cell.Borders[BorderType.BottomBorder].Color = darkBlue;
+            cell.Number = styleNumber;
+
+
+            //sheet.Cells[currentRow, column].PutValue($"{stringValue}");
+            if (decimal.TryParse(stringValue, out decimal number))
+            {
+                // Es número → escribir como decimal
+                sheet.Cells[currentRow, column].PutValue(number);
+            }
+            else
+            {
+                // No es número → escribir como texto
+                sheet.Cells[currentRow, column].PutValue(stringValue);
+            }
+
+            if (isRange)
+            {
+                MergeCells(currentRow, column, rowRange, columnRange, ref sheet, cell);
+            }
+            else
+            {
+                MergeCells(currentRow, column, 1, 1, ref sheet, cell);
+            }
+        }
+        private static IndirectPpto GetIndirectPpto() 
+        {
+            var result = new IndirectPpto();
+            result.Installer = InitElement("installer");
+            result.Visit = InitElement("visit");
+            result.Security = InitElement("security");
+            result.Supervisor = InitElement("supervisor");
+            result.WC = InitElement("wc");
+            result.Store = InitElement("store");
+            return result;
+        }
+        private static ElementModel InitElement(string type)
+        {
+            var element = new ElementModel();
+            var budgettitle = string.Empty;
+            var budgetDescription = string.Empty;
+            var budgetAmount = 0m;
+            var budgetEfectiveWorkDays = 0;
+            var budgetNoWorkDays = 0;
+            var budgetMOAmount = 0m;
+            var budgetTravelExpensesAmount = 0m;
+            var budgetToolsAmount = 0m;
+            var budgetFreightAmount = 0m;
+
+            var pricetitle = string.Empty;
+            var priceDescription = string.Empty;
+            var priceAmount = 0m;
+            var priceEfectiveWorkDays = 0;
+            var priceNoWorkDays = 0;
+            var priceMOAmount = 0m;
+            var priceTravelExpensesAmount = 0m;
+            var priceToolsAmount = 0m;
+            var priceFreightAmount = 0m;
+
+            switch (type)
+            {
+                case "installer": {
+                        budgettitle = $"COSTO DE SUMINISTRO E INSTALACION";
+                        budgetDescription =$"Subtotal costo teórico de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount =_state.ManPowerVM.SubTotalPriceManPowerInstaller + _state.IndirectsVM.SubTotalCostInstallers+_state.FreightVM.Freight.SubTotalPrice;
+                        budgetEfectiveWorkDays =_state.ManPowerVM.EfectiveWorkDays.TotalWorkDays;
+                        budgetNoWorkDays =_state.ManPowerVM.EfectiveWorkDays.NoWorkDays;
+                        budgetMOAmount = _state.ManPowerVM.SubTotalPriceManPowerInstaller ;
+                        budgetTravelExpensesAmount = _state.IndirectsVM.SubTotalCostInstallers - _state.IndirectsVM.SubTotalCostTool;
+                        budgetToolsAmount = _state.IndirectsVM.SubTotalCostTool;
+                        budgetFreightAmount = _state.FreightVM.Freight.SubTotalPrice;
+
+                        pricetitle = $"PRECIO DE SUMINISTRO E INSTALACION";
+                        priceDescription =$"Subtotal precio de venta{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount =_state.ManPowerVM.TotalPriceManPowerInstaller + _state.IndirectsVM.TotalCostInstallers + _state.FreightVM.Freight.TotalPrice;
+                        priceEfectiveWorkDays = _state.ManPowerVM.EfectiveWorkDays.TotalWorkDays;
+                        priceNoWorkDays = _state.ManPowerVM.EfectiveWorkDays.NoWorkDays;
+                        priceMOAmount = _state.ManPowerVM.TotalPriceManPowerInstaller ;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalCostInstallers - _state.IndirectsVM.TotalCostTool;
+                        priceToolsAmount = _state.IndirectsVM.TotalCostTool;
+                        priceFreightAmount = _state.FreightVM.Freight.TotalPrice;
+                            } ;break;
+                case "visit": {
+                        budgettitle = $"COSTO DE VISITA TECNICA";
+                        budgetDescription = $"Subtotal costo minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount = _state.ManPowerVM.SubTotalPriceManPowerVisit + _state.IndirectsVM.SubTotalCostVisit;
+                        budgetEfectiveWorkDays = 1;
+                        budgetNoWorkDays = 0;
+                        budgetMOAmount = _state.ManPowerVM.SubTotalPriceManPowerVisit;
+                        budgetTravelExpensesAmount = _state.IndirectsVM.SubTotalCostVisit;
+                        budgetToolsAmount = 0m;
+                        budgetFreightAmount = 0m;
+
+                        pricetitle = $"PRECIO DE VISITA TECNICA";
+                        priceDescription = $"Subtotal precio minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount = _state.ManPowerVM.TotalPriceManPowerVisit + _state.IndirectsVM.TotalCostVisit;
+                        priceEfectiveWorkDays = 1;
+                        priceNoWorkDays = 0;
+                        priceMOAmount = _state.ManPowerVM.TotalPriceManPowerVisit;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalCostVisit;
+                        priceToolsAmount = 0m;
+                        priceFreightAmount = 0m;
+                    };break;
+                case "security": {
+                        budgettitle = $"COSTO DE SEGURISTA";
+                        budgetDescription = $"Subtotal costo minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount = _state.ManPowerVM.SubTotalPriceManPowerSecurity + _state.IndirectsVM.SubTotalCostSecurity;
+                        budgetEfectiveWorkDays = _state.ManPowerVM.EfectiveWorkDays.TotalWorkDays + 3;
+                        budgetNoWorkDays = budgetEfectiveWorkDays / 7;
+                        budgetMOAmount = _state.ManPowerVM.SubTotalPriceManPowerSecurity ;
+                        budgetTravelExpensesAmount = _state.IndirectsVM.SubTotalCostSecurity;
+                        budgetToolsAmount = 0m;
+                        budgetFreightAmount = 0m;
+
+                        pricetitle = $"PRECIO DE SEGURISTA";
+                        priceDescription = $"Subtotal precio minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount = _state.ManPowerVM.TotalPriceManPowerSecurity + _state.IndirectsVM.TotalCostSecurity;
+                        priceEfectiveWorkDays = _state.ManPowerVM.EfectiveWorkDays.TotalWorkDays + 3;
+                        priceNoWorkDays = budgetEfectiveWorkDays / 7;
+                        priceMOAmount = _state.ManPowerVM.TotalPriceManPowerSecurity ;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalCostSecurity;
+                        priceToolsAmount = 0m;
+                        priceFreightAmount = 0m;
+                    };break;
+                case "supervisor": { 
+                        budgettitle = $"COSTO DE SUPERVISOR";
+                        budgetDescription = $"Subtotal costo minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount = _state.ManPowerVM.SubTotalPriceManPowerSupervisor + _state.IndirectsVM.SubTotalCostSupervisor;
+                        budgetEfectiveWorkDays = _state.ManPowerVM.EfectiveWorkDays.TotalWorkDays + 3;
+                        budgetNoWorkDays = budgetEfectiveWorkDays / 7;
+                        budgetMOAmount = _state.ManPowerVM.SubTotalPriceManPowerSupervisor ;
+                        budgetTravelExpensesAmount = _state.IndirectsVM.SubTotalCostSupervisor;
+                        budgetToolsAmount = 0m;
+                        budgetFreightAmount = 0m;
+
+                        pricetitle = $"PRECIO DE SUPERVISOR";
+                        priceDescription = $"Subtotal precio minimo de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount = _state.ManPowerVM.TotalPriceManPowerSupervisor + _state.IndirectsVM.TotalCostSupervisor;
+                        priceEfectiveWorkDays = _state.ManPowerVM.EfectiveWorkDays.TotalWorkDays + 3;
+                        priceNoWorkDays = budgetEfectiveWorkDays / 7;
+                        priceMOAmount = _state.ManPowerVM.TotalPriceManPowerSupervisor ;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalCostSupervisor;
+                        priceToolsAmount = 0m;
+                        priceFreightAmount = 0m;
+                    };break;
+                case "wc": { 
+                        budgettitle = $"COSTO DE BAÑO";
+                        budgetDescription = $"Subtotal costo teórico de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount = _state.IndirectsVM.SubTotalPriceWC;
+                        budgetEfectiveWorkDays = _state.IndirectsVM.TotalWeeks * 7;
+                        budgetNoWorkDays = 0;
+                        budgetMOAmount = 0m;
+                        budgetTravelExpensesAmount = 0m;
+                        budgetToolsAmount = _state.IndirectsVM.SubTotalPriceWC;
+                        budgetFreightAmount = 0m;
+
+                        pricetitle = $"PRECIO DE BAÑO";
+                        priceDescription = $"Subtotal precio de venta{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount = _state.IndirectsVM.TotalPriceWC;
+                        priceEfectiveWorkDays = _state.IndirectsVM.TotalWeeks * 7;
+                        priceNoWorkDays = 0;
+                        priceMOAmount = 0m;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalPriceWC;
+                        priceToolsAmount = 0m;
+                        priceFreightAmount = 0m;
+                    };break;
+                case "store": { 
+                        budgettitle = $"COSTO DE BODEGA";
+                        budgetDescription = $"Subtotal costo teórico de instalación{Environment.NewLine}(La información expresada en moneda nacional)";
+                        budgetAmount = _state.IndirectsVM.SubTotalPriceStore;
+                        budgetEfectiveWorkDays = 30;
+                        budgetNoWorkDays = 0;
+                        budgetMOAmount = 0m;
+                        budgetTravelExpensesAmount = 0m;
+                        budgetToolsAmount = _state.IndirectsVM.SubTotalPriceStore;
+                        budgetFreightAmount = 0m;
+
+                        pricetitle = $"PRECIO DE BODEGA";
+                        priceDescription = $"Subtotal precio de venta{Environment.NewLine}(La información expresada en moneda nacional)";
+                        priceAmount = _state.IndirectsVM.TotalPriceStore;
+                        priceEfectiveWorkDays = 30;
+                        priceNoWorkDays = 0;
+                        priceMOAmount = 0m;
+                        priceTravelExpensesAmount = _state.IndirectsVM.TotalPriceStore;
+                        priceToolsAmount = 0m;
+                        priceFreightAmount = 0m;
+                    };break;
+            }
+
+            element.budget = new BudgetModel
+            {
+                Title = budgettitle,
+                Description = budgetDescription,
+                Amount = budgetAmount,
+                EfectiveWorkDays = budgetEfectiveWorkDays,
+                NoWorkDays = budgetNoWorkDays,
+                MOAmount = budgetMOAmount,
+                TravelExpensesAmount = budgetTravelExpensesAmount,
+                ToolsAmount = budgetToolsAmount,
+                FreightAmount=budgetFreightAmount
+            };
+            element.price = new BudgetModel {
+                Title = pricetitle,
+                Description=priceDescription,
+                Amount=priceAmount,
+                EfectiveWorkDays=priceEfectiveWorkDays,
+                NoWorkDays=priceNoWorkDays,
+                MOAmount=priceMOAmount,
+                TravelExpensesAmount=priceTravelExpensesAmount,
+                ToolsAmount=priceToolsAmount,
+                FreightAmount=priceFreightAmount,
+            };
+            return element;
+        }
+        private static void MergeCells(int currentRow,int currentColumn,int countRows,int countColumns,ref Worksheet sheet,Style cell)
+        {
+            var range = sheet.Cells.CreateRange(currentRow, currentColumn, countRows, countColumns);
+            range.SetStyle(cell);
+            range.Merge();
+        }
     }
 }

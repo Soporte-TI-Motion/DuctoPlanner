@@ -36,13 +36,17 @@
     <None Remove="Assets\RabonM.png" />
     <None Remove="Assets\Torton.png" />
     <None Remove="Assets\TortonM.png" />
+    <None Remove="Assets\TotalPrice.png" />
     <None Remove="Assets\Trailer.png" />
     <None Remove="Assets\Trailer48M.png" />
     <None Remove="Assets\Trailer53M.png" />
     <None Remove="Views\CalculateDuctsView.xaml" />
     <None Remove="Views\CalculateIndirects.xaml" />
+    <None Remove="Views\CalculateIndirectsGeneralSubView.xaml" />
+    <None Remove="Views\CalculateIndirectsOthersSubview.xaml" />
     <None Remove="Views\CalculateManPower.xaml" />
     <None Remove="Views\CalculateManPowerSubPageDetail.xaml" />
+    <None Remove="Views\ShowTotalPrice.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -151,6 +155,9 @@
     <Content Update="Assets\TortonM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\TotalPrice.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\Trailer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -188,6 +195,21 @@
     <Content Update="Assets\3MTonM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\ShowTotalPrice.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CalculateIndirectsOthersSubview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CalculateIndirectsGeneralSubView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CalculateManPowerSubPageDetail.xaml">

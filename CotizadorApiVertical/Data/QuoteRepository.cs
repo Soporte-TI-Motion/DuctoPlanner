@@ -32,6 +32,8 @@ namespace CotizadorVerticalApi.Data
             parameters.Add("@NecesitaAspersor", quote.NecesitaAspersor);
             parameters.Add("@NecesitaSistemaDD", quote.NecesitaSistemaDD);
             parameters.Add("@RentabilidadMOId", quote.RentabilidadMOId);
+            parameters.Add("@NecesitaIzaje", quote.NecesitaIzaje);
+            parameters.Add("@ZonaId", quote.ZonaId);
 
             var quoteResult = connection.Query<QuoteInsertionResultModel>(
                 "Insertar_Cotizacion",

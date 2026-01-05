@@ -1,5 +1,5 @@
-﻿using Calculo_ductos_winUi_3.Models;
-using DocumentFormat.OpenXml.Drawing.Charts;
+﻿using Calculo_ductos.Params;
+using Calculo_ductos_winUi_3.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,6 +20,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private int _QuoteVersion;
         private bool _NeedSprinkler;
         private bool _NeedDesinfectionSystem;
+        private decimal _SubtotalPrice;
+        private decimal _TotalPrice;
+        private int _totalDoubleLevels;
+        private decimal _exchangeRate;
+        private CatalogRentabilityModel _SelectedRentability;
         private ObservableCollection<QuoteModel> _Quotes { get; set; }
         //private int _DischargeTypeId;
         
@@ -28,8 +33,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
             PurposeId = 1;
             ExecutiveName = string.Empty;
             SheetTypeId = 0;
+            _exchangeRate = 0;
             NeedSprinklerValue = 1;
             NeedDesinfetionSystemValue = 1;
+            _totalDoubleLevels = 0;
+            _SelectedRentability = new CatalogRentabilityModel();
         }
         public void New() {
             PurposeId = 1;
@@ -37,13 +45,36 @@ namespace Calculo_ductos_winUi_3.ViewModels
             PT = string.Empty;
             SheetTypeId = 0;
             QuoteVersion = 0;
+            TotalDoubleLevels = 0;
+            TotalPrice = 0;
+            SubTotalPrice = 0;
+            _SelectedRentability = new CatalogRentabilityModel();
         }
+
+
+        public ObservableCollection<CatalogKitModel> AllKits { get; set; } = new();
+        public ObservableCollection<CatalogKitModel> AvailableKits { get; set; } = new();
+        public CatalogRentabilityModel SelectedRentability
+        {
+            get => _SelectedRentability;
+            set
+            {
+                if (_SelectedRentability != value)
+                {
+                    _SelectedRentability = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public ObservableCollection<CatalogRentabilityModel> AvailableRentabilities { get; set; }
+
         public int PurposeId 
         {
             get => _PurposeId;
             set {
                 _PurposeId = value;
                 OnPropertyChanged();
+                FilterKits();
             }
         }
         public string ExecutiveName 
@@ -137,6 +168,46 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 }
             }
         }
+        public decimal SubTotalPrice 
+        {
+            get => _SubtotalPrice;
+            set {
+                if (_SubtotalPrice != value)
+                {
+                    _SubtotalPrice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public decimal TotalPrice
+        {
+            get => _TotalPrice;
+            set
+            {
+                if (_TotalPrice != value)
+                {
+                    _TotalPrice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string TotalPriceFormatted => $"Precio: $ {TotalPrice:N2}";
+        public string SubTotalPriceFormatted => $"Precio: $ {SubTotalPrice:N2}";
+        public int TotalDoubleLevels
+        {
+            get => _totalDoubleLevels; set
+            {
+                if (_totalDoubleLevels != value)
+                {
+                    _totalDoubleLevels = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public decimal ExchangeRate { get => _exchangeRate; set { if (_exchangeRate != value) { _exchangeRate = value; OnPropertyChanged(); } } }
+        public string ExchangeRateFormatted => $"1 USD = ${ExchangeRate:N2} MXN";
+
+        //public string SubTotalPriceFormatted => string.Format("{0:N2}", SubTotalPrice);
         public ObservableCollection<QuoteModel> Quotes
         {
             get => _Quotes;
@@ -146,12 +217,79 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 OnPropertyChanged();
             }
         }
-        
-
+        public void LoadCatalogs(List<CatalogKitModel> kits, List<CatalogRentabilityModel> rentabilities)
+        {
+            AllKits = new ObservableCollection<CatalogKitModel>(kits);
+            AvailableRentabilities = new ObservableCollection<CatalogRentabilityModel>(rentabilities);
+            FilterKits();
+        }
+        public void CalculatePrice(DuctsViewModel ductVm, ComponentsViewModel componentVm, FloorDescriptionViewModel floorVm) {
+            SetExchangeRate();
+            CalculateSubTotalPrice(ductVm,componentVm,floorVm);
+            RecalculateRentability();
+        }
+        public void RecalculateRentability() {
+            TotalPrice = SubTotalPrice * SelectedRentability.Rentability;
+        }
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        private void FilterKits()
+        {
+            AvailableKits.Clear();
+            var filtrados = AllKits.Where(p => p.PurposeId == PurposeId).ToList();
+
+            foreach (var item in filtrados)
+                AvailableKits.Add(item);
+        }
+        private void CalculateSubTotalPrice(DuctsViewModel ductVm, ComponentsViewModel componentVm, FloorDescriptionViewModel floorVm) {
+            SubTotalPrice = 0;
+            //Ductos
+            foreach (var duct in ductVm.DucList)
+            {
+                var kit = AvailableKits.Where(k => k.TypeKit.Equals(duct.Type.ToString())).FirstOrDefault();
+                if (kit != null)
+                    SubTotalPrice += (kit.Price*kit.ExchangeRate*duct.Count);
+            }
+            //Componentes
+            foreach (var component in componentVm.ComponentList)
+            {
+                
+                if (component.Type == Calculo_ductos.Params.Component.TypeComponent.Gate)
+                {
+                    var kits = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).ToList();
+                    foreach(var kit in kits)
+                    if (kit != null)
+                        SubTotalPrice += (kit.Price * kit.ExchangeRate * GetDoorCount(kit.Item, floorVm));
+                }
+                else 
+                {
+                    var kit = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).FirstOrDefault();
+                    if (kit != null)
+                        SubTotalPrice += (kit.Price * kit.ExchangeRate * component.Count);
+                }
+            }
+        }
+        private void SetExchangeRate() {
+            ExchangeRate = AvailableKits.FirstOrDefault().ExchangeRate;
+        }
+        private int GetDoorCount(string kit, FloorDescriptionViewModel floorVm)
+        {
+            var count = 0;
+            try
+            {
+                count = floorVm.FloorList
+                    .Where(floor => floor.TypeDoor.IdSyteLine == kit && floor.NeedGate && floor.Type != Floor.TypeFloor.discharge)
+                    .Sum(floor => floor.FloorCount);
+            }
+            catch (Exception ex)
+            {
+                count = 0;
+            }
+            return count;
+        }
+
     }
 }
