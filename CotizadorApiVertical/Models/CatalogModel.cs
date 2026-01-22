@@ -83,6 +83,7 @@ namespace CotizadorApiVertical.Models
         public string Unit { get; set; }
         public decimal Cost { get; set; }
         public bool IsMandatory { get; set; }
+        public bool IsOptionalMandatory { get; set; }
     }
     public class CatalogZoneModel
     {

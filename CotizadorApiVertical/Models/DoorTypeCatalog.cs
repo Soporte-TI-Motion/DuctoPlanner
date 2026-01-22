@@ -75,6 +75,7 @@
         public string Medida { get; set; }
         public decimal Monto { get; set; }
         public bool EsObligatorio { get; set; }
+        public bool EsObligatorioOpcional { get; set; }
     }
     public class ZoneCatalog
     {

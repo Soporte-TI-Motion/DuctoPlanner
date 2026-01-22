@@ -44,6 +44,7 @@ namespace CotizadorVerticalApi.Services
 
                 response.StatusCode = 500;
                 response.Message = "No se pudieron cargar las ultimas cotizaciones";
+                log.Error("No se pudieron cargar las ultimas cotizaciones",ex);
 
             }
             return response;
@@ -108,7 +109,7 @@ namespace CotizadorVerticalApi.Services
             {
                 response.StatusCode = 500;
                 response.Message = "No se pudo obtener la cotizacion";
-
+                log.Error($"No se pudo obtener la cotizacion. cotizacionId:{cotizacionId}",ex);
             }
             return response;
         }
@@ -190,8 +191,7 @@ namespace CotizadorVerticalApi.Services
             }
             catch (Exception ex)
             {
-
-                log.Error($"Ocurrio un error: {ex.Message}");
+                log.Error($"Ocurrio un error al guardar cotización",ex);
             }
             return response;
         }

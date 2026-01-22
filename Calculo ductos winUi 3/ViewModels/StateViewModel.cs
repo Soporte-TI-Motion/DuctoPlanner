@@ -120,7 +120,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 DiferenceFloors();
                 CountDoubleLevels();
                 CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
-                IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+                //IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
                 await HideLoader("Calculo terminado.");
 
             }

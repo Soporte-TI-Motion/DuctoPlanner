@@ -53,6 +53,9 @@ namespace Calculo_ductos_winUi_3.Views
 
             cbxTipoPuerta.Visibility = cbxTipo.SelectedIndex == 0 || cbxCompuerta.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
             lblTipoPuerta.Visibility = cbxTipo.SelectedIndex == 0 || cbxCompuerta.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
+
+            lblGuillotineType.Visibility = cbxTipo.SelectedIndex == 0 && cbxDischargeType.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            lblContainerType.Visibility = cbxTipo.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
         private void CbxCompuerta_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -63,6 +66,7 @@ namespace Calculo_ductos_winUi_3.Views
         private void CbxDischargeType_SelectionCahnged(object sender, SelectionChangedEventArgs e)
         {
             lblNeedAntiImpact.Visibility = cbxTipo.SelectedIndex == 0 && cbxDischargeType.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            lblGuillotineType.Visibility = cbxTipo.SelectedIndex == 0 && cbxDischargeType.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
         public async void CalculateDucts_Click(object sender, RoutedEventArgs e)
         { 

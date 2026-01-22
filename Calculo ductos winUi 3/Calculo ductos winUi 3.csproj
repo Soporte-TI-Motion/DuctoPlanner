@@ -43,6 +43,7 @@
     <None Remove="Views\CalculateDuctsView.xaml" />
     <None Remove="Views\CalculateIndirects.xaml" />
     <None Remove="Views\CalculateIndirectsGeneralSubView.xaml" />
+    <None Remove="Views\CalculateIndirectsMajorToolSubView.xaml" />
     <None Remove="Views\CalculateIndirectsOthersSubview.xaml" />
     <None Remove="Views\CalculateManPower.xaml" />
     <None Remove="Views\CalculateManPowerSubPageDetail.xaml" />
@@ -195,6 +196,11 @@
     <Content Update="Assets\3MTonM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CalculateIndirectsMajorToolSubView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ShowTotalPrice.xaml">

@@ -402,6 +402,12 @@
         "Description": "Contenedor Volquete 500",
         "Count": 0,
         "InstalationTime": 0
+      },
+      {
+        "Kit": "B8720435",
+        "Description": "Contenedor Volquete 550",
+        "Count": 0,
+        "InstalationTime": 0
       }
     ],
     "General": [

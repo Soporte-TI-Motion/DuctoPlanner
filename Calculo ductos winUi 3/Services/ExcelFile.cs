@@ -594,6 +594,9 @@ namespace Calculo_ductos_winUi_3.Services
         private static int GetElementCount(string kit) 
         {
             int count = 0;
+            int GuillotineCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault()?.Count ?? 0;
+            int ContainerCount = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Container).FirstOrDefault()?.Count ?? 0;
+            CatalogRowModel containerType = _state.FloorVM.FloorList.Where(f => f.Type == Floor.TypeFloor.discharge && f.Discharge == Floor.TypeDischarge.guilloutine).FirstOrDefault()?.ContainerType ?? _state.FloorVM.AvailableCointainerTypes.FirstOrDefault();
             try
             {
                 switch (kit)
@@ -625,9 +628,12 @@ namespace Calculo_ductos_winUi_3.Services
                     case "B701190": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Chimney).FirstOrDefault()?.Count ?? 0; break;
                     case "B872527":
                     case "B101118": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.TVA).FirstOrDefault()?.Count ?? 0; break;
-                    case "B602103": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Guillotine).FirstOrDefault()?.Count ?? 0; break;
+                    case "B602103": count = _state.FloorVM.FloorList.Where(f=>f.Type == Floor.TypeFloor.discharge && f.Discharge == Floor.TypeDischarge.guilloutine).FirstOrDefault().DischargeString.Equals("Guillotina normal") ? GuillotineCount  : 0; break;
+                    case "B872461": count = _state.FloorVM.FloorList.Where(f=>f.Type == Floor.TypeFloor.discharge && f.Discharge == Floor.TypeDischarge.guilloutine).FirstOrDefault().DischargeString.Equals("Guillotina inoxidable") ? GuillotineCount  : 0; break;
                     case "B602002": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Discharge).FirstOrDefault()?.Count ?? 0; break;
-                    case "B50200054": count = _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.Container).FirstOrDefault()?.Count ?? 0; break;
+                    case "B50200054": count = containerType.Id == 1 ? ContainerCount : 0; break;
+                    case "B50200053": count = containerType.Id == 3 ? ContainerCount : 0; break;
+                    case "B8720435": count = containerType.Id == 2 ? ContainerCount : 0; break;
                     case "B601032": count = _state.DuctsVM.DuctDetailList.Count >= 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
                     case "B903068": count = _state.DuctsVM.DuctDetailList.Count < 10 ? _state.ComponentsVM.ComponentList.Where(component => component.Type == Component.TypeComponent.AntiImpact).FirstOrDefault()?.Count ?? 0 : 0; break;
 
