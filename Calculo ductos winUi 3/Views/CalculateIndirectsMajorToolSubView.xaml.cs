@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -21,22 +20,19 @@ using Windows.Foundation.Collections;
 namespace Calculo_ductos_winUi_3.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CalculateIndirectsGeneralSubView : Page
+    public sealed partial class CalculateIndirectsMajorToolSubView : Page
     {
         public StateViewModel stateApp { get; set; }
-        public CalculateIndirectsGeneralSubView()
+        public CalculateIndirectsMajorToolSubView()
         {
             this.InitializeComponent();
             stateApp = ((App)Application.Current).ViewModel;
             this.DataContext = stateApp;
         }
-        public void SelectionChanged_Click(object sender, RoutedEventArgs e)
-        {
-            stateApp.IndirectsVM.FilterAvailableIndirects();
-        }
-        public async void AddTransport_Click(object sender, RoutedEventArgs e)
+        
+        public async void AddMajorTool_Click(object sender, RoutedEventArgs e)
         {
             var selected = stateApp.IndirectsVM.SelectedTransportType;
             var validations = new List<string>();
@@ -47,20 +43,7 @@ namespace Calculo_ductos_winUi_3.Views
             if (validations.Count == 0)
                 stateApp.IndirectsVM.AddTransport();
             else
-               await stateApp.ShowEmptyDataDialog(string.Join(Environment.NewLine,validations));
-        }
-        public async void AddMajorTool_Click(object sender, RoutedEventArgs e)
-        {
-            var selected = stateApp.IndirectsVM.SelectedMajorTool;
-            var validations = new List<string>();
-            if (stateApp.IndirectsVM.MajorTool.Where(i => i.Concepto.Equals(selected.Description)).Count() > 0)
-                validations.Add($"Ya se cuenta con una herramienta {selected.Description}, por favor revísalo.");
-            
-            if (validations.Count == 0)
-                stateApp.IndirectsVM.AddMajorTool(selected);
-            else
                 await stateApp.ShowEmptyDataDialog(string.Join(Environment.NewLine, validations));
         }
-
     }
 }

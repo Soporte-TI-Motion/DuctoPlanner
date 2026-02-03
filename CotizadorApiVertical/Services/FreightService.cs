@@ -25,6 +25,13 @@ namespace CotizadorApiVertical.Services
             try
             {
                 var detail = _freightRepository.GetFreight(localidadId, tipoCamionId);
+                if (detail == null)
+                {
+                    response.StatusCode = 404;
+                    response.Message = "No se encontró flete";
+                    log.Debug($"No se encontró flete Localidad:{localidadId}, TipoCamion:{tipoCamionId}");
+                    return response;
+                }
                 var Freight = new
                 {
                     FreightId = detail.FleteId,
@@ -43,7 +50,11 @@ namespace CotizadorApiVertical.Services
             catch (Exception ex)
             {
                 response.StatusCode = 500;
-                response.Message = "No se pudo obtener el flete";
+                response.Message = $"No se pudo obtener el flete";
+                log.Error(
+                            $"Error al obtener flete. Localidad:{localidadId}, TipoCamion:{tipoCamionId}",
+                            ex
+                        );
             }
             return response;
         }

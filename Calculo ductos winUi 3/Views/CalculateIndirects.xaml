@@ -43,10 +43,10 @@
             <SelectorBar x:Name="SelectorLeftSubPage" 
              Grid.Row="0" 
              SelectionChanged="SelectorLeftSubPage_SelectionChanged" 
-             Margin="36,36,36,0"
+             Margin="36,36,16,0"
              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
              CornerRadius="8">
-                <SelectorBarItem x:Name="SelectorBarDuct" Text="Datos generales" IsSelected="True"  />
+                <SelectorBarItem x:Name="SelectorBarDuct" Text="Datos generales" IsSelected="True" MaxWidth="160"   />
                 <SelectorBarItem x:Name="SelectorBarFloor" Text="Otros viaticos"  />
             </SelectorBar>
             <Frame x:Name="contentLeftsubPage" Grid.Row="1"  CornerRadius="8,0,0,0"/>
@@ -294,13 +294,13 @@
 
             </Grid>
             <Grid x:Name="SupervisorTable"
-         BorderBrush="Gray" 
-         BorderThickness="1"
-         CornerRadius="8" 
-         Grid.Column="1"
-         Grid.Row="1"
-         Margin="16,16,8,16"
-         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                 BorderBrush="Gray" 
+                 BorderThickness="1"
+                 CornerRadius="8" 
+                 Grid.Column="1"
+                 Grid.Row="1"
+                 Margin="16,16,8,16"
+                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="5*"></RowDefinition>

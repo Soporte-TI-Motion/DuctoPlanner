@@ -37,6 +37,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private Opcion _SelectedIzaje;
         private Opcion _SelectedTransportType;
         private CatalogIndirectModel _selectedIndirect;
+        private CatalogToolModel _selectedMajorTool;
         private decimal _unitCost;
         private decimal _selectedTrasnportCost;
         private bool _HasDoubleHeightLevels;
@@ -69,6 +70,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             MajorTool = new ObservableCollection<IndirectsModel>();
             AvailableIzaje = new ObservableCollection<Opcion> { new Opcion { Id = 1 , Description ="Si"}, new Opcion { Id = 2, Description = "No" } };
             AvailableTransportTypes = new ObservableCollection<Opcion> { new Opcion { Id = 1 , Description ="Aéreo"}, new Opcion { Id = 2, Description = "Autobus" } };
+            _selectedMajorTool = new CatalogToolModel();
             _SubTotalCostInstallers = 0m;
             _TotalCostInstallers = 0m;
             _SubTotalCostSupervisor = 0m;
@@ -124,13 +126,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
             HasDoubleHeightLevels = false;
             selectedTrasnportCost = "0";
             SelectedTransportType = new();
+            _selectedMajorTool = new();
             Clear();
         }
         #endregion
         #region Properties
         public ObservableCollection<CatalogToolModel> AllTools { get; set; }
+        public ObservableCollection<CatalogToolModel> AvailableMajorTool { get; set; }
         public ObservableCollection<CatalogIndirectModel> AllIndirects { get; set; }
         public ObservableCollection<CatalogIndirectModel> AvailableIndirects { get; set; }
+        public ObservableCollection<CatalogIndirectModel> AvailableMandatoryIndirects { get; set; }
         public ObservableCollection<Opcion> AvailableIzaje { get; set; }
         public ObservableCollection<Opcion> AvailableTransportTypes { get; set; }
         public ObservableCollection<CatalogZoneModel> AvailableZones { get; set; }
@@ -149,6 +154,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             } }
         public Opcion SelectedIzaje { get => _SelectedIzaje; set { SetProperty(ref _SelectedIzaje, value); } }
         public Opcion SelectedTransportType { get => _SelectedTransportType; set { SetProperty(ref _SelectedTransportType, value); } }
+        public CatalogToolModel SelectedMajorTool { get => _selectedMajorTool; set { SetProperty(ref _selectedMajorTool, value); } }
         public decimal TotalCostInstallers { get { return _TotalCostInstallers; } set { SetProperty(ref _TotalCostInstallers, value); } }
         public decimal TotalPriceWC { get { return _TotalPriceWC; } set { SetProperty(ref _TotalPriceWC, value); } }
         public decimal TotalPriceStore { get { return _TotalPriceStore; } set { SetProperty(ref _TotalPriceStore, value); } }
@@ -219,12 +225,14 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public void LoadTotals(Duct duct)
         {
+            int majorEfectiveWorkDays = _ManPowerVm.ManPower.OrderByDescending(resource => resource.JornadasEfectivas).FirstOrDefault().JornadasEfectivas;
+
             TotalEfectiveDaysInstaller = _ManPowerVm.EfectiveWorkDays.TotalWorkDays;
             TotalEfectiveDaysSupervisor = _ManPowerVm.EfectiveWorkDays.TotalWorkDays + 3;
             //TotalNoWorkDaysInstaller = _ManPowerVm.ManPower.Where(m => m.Recurso.Id == 1).Sum(m => m.DiasNoLaborales);
             TotalNoWorkDaysInstaller = _ManPowerVm.EfectiveWorkDays.NoWorkDays;
             TotalNoWorkDaysSupervisor = TotalEfectiveDaysSupervisor / 7;
-            TotalWeeks = (int)Math.Ceiling(_ManPowerVm.EfectiveWorkDays.TotalWorkDays / 7.0);
+            TotalWeeks = (int)Math.Ceiling(majorEfectiveWorkDays / 7.0);
             TotalFloors = duct.floors.Count;
             TotalEvents = GetTotalEvents(duct.floors);
             TotalForeingResourceInstaller = _ManPowerVm.ManPower.Where(r => r.TipoRecurso.Id == 1 && r.Recurso.Id == 1).Count();
@@ -244,7 +252,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             IndirectsSecurity.Clear();
             IndirectsVisit.Clear();
             MinorTool.Clear();
-            MajorTool.Clear();
+            //MajorTool.Clear();
             SubTotalCostInstallers = 0;
             SubTotalCostSupervisor = 0;
             SubTotalCostSecurity = 0;
@@ -253,8 +261,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalCostSupervisor = 0;
             TotalCostSecurity = 0;
             TotalCostVisit = 0;
-            var mandatory = AvailableIndirects.Where(p => p.ZoneId == SelectedZone.Id && p.IsMandatory).ToList();
-            foreach (var indirect in mandatory)
+            //var mandatory = AvailableIndirects.Where(p => p.ZoneId == SelectedZone.Id && p.IsMandatory).ToList();
+            foreach (var indirect in AvailableMandatoryIndirects.Where(i => !i.IsOptionalMandatory).ToList())
             {
                 var newIndirectInstaller = new IndirectsModel
                 {
@@ -292,7 +300,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             if(!isLocalProject)
             if (SelectedTransportType.Id == 1)
             {
-                foreach (var indirect in AvailableIndirects.Where(p => p.Concept.Contains("casa") && p.ZoneId == SelectedZone.Id).ToList())
+                foreach (var indirect in AvailableMandatoryIndirects.Where(p => p.Concept.Contains("casa") && p.ZoneId == SelectedZone.Id).ToList())
                 {
                     var newIndirectInstaller = new IndirectsModel
                     {
@@ -361,10 +369,12 @@ namespace Calculo_ductos_winUi_3.ViewModels
             AllIndirects = new ObservableCollection<CatalogIndirectModel>(indirects);
             AvailableZones = new ObservableCollection<CatalogZoneModel>(zones);
             AllTools = new ObservableCollection<CatalogToolModel>(tools);
+            AvailableMajorTool = new ObservableCollection<CatalogToolModel>(tools.Where(p=>p.Group==1).ToList());
         }
         public void FilterAvailableIndirects()
         {
-            AvailableIndirects = new ObservableCollection<CatalogIndirectModel>(AllIndirects.Where(i => i.ZoneId == SelectedZone.Id).ToList());
+            AvailableIndirects = new ObservableCollection<CatalogIndirectModel>(AllIndirects.Where(i => i.ZoneId == SelectedZone.Id && !i.IsMandatory).ToList());
+            AvailableMandatoryIndirects = new ObservableCollection<CatalogIndirectModel>(AllIndirects.Where(i => i.ZoneId == SelectedZone.Id && i.IsMandatory).ToList());
         }
 
         #endregion
@@ -428,6 +438,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
             OtherIndirectsSecurity.Add(indirectSecurity);
             OtherIndirectsVisit.Add(indirectVisit);
         }
+        public void AddMajorTool(CatalogToolModel tool)
+        {
+            MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Periodicity}T"), PrecioUnitario = tool.Price }); 
+        }
+
         private int ObtenerCantidad(string nameIndirect)
         { 
             int cantidad = 1;
@@ -476,7 +491,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 case "Transporte aereopuerto - casav":
                 case "Transporte casa - aereopuertov": cantidad = 1; break;
 
-                case "SemanaT": cantidad= TotalWeeks; break;
+                case "SemanaT": cantidad = TotalWeeks; break;
                 case "DiaT": cantidad= TotalEfectiveDaysInstaller; break;
                 case "MesT": cantidad= 1; break;
                 case "NivelT": cantidad= TotalFloors/10; break;
@@ -531,19 +546,19 @@ namespace Calculo_ductos_winUi_3.ViewModels
             {
                 switch (tool.Description)
                 {
-                    case "Escalera":
-                        if (tool.IsMandatory)
-                            MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Preiodicity}T"), PrecioUnitario = tool.Price }); break;
-                    case "Andamio":
-                        if (tool.IsMandatory && HasDoubleHeightLevels)
-                            MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Preiodicity}T"), PrecioUnitario = tool.Price }); break;
-                    case "Izaje":
-                        if (tool.IsMandatory && SelectedIzaje.Id == 1)
-                            MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Preiodicity}T"), PrecioUnitario = tool.Price }); break;
+                    //case "Escalera":
+                    //    if (tool.IsMandatory)
+                    //        MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Periodicity}T"), PrecioUnitario = tool.Price }); break;
+                    //case "Andamio":
+                    //    if (tool.IsMandatory && HasDoubleHeightLevels)
+                    //        MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Periodicity}T"), PrecioUnitario = tool.Price }); break;
+                    //case "Izaje":
+                    //    if (tool.IsMandatory && SelectedIzaje.Id == 1)
+                    //        MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Periodicity}T"), PrecioUnitario = tool.Price }); break;
                     case "Sanitarios":
-                        SubTotalPriceWC = ObtenerCantidad($"{tool.Preiodicity}T") * tool.Price;break;
+                        SubTotalPriceWC = ObtenerCantidad($"{tool.Periodicity}T") * tool.Price;break;
                     case "Bodega":
-                        SubTotalPriceStore = ObtenerCantidad($"{tool.Preiodicity}T") * tool.Price; break;
+                        SubTotalPriceStore = ObtenerCantidad($"{tool.Periodicity}T") * tool.Price; break;
                 }                
             }
 

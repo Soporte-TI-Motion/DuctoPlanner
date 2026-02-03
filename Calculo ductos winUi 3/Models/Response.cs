@@ -98,6 +98,7 @@ namespace Calculo_ductos_winUi_3.Models
         public string Unit { get; set; }
         public decimal Cost { get; set; }
         public bool IsMandatory { get; set; }
+        public bool IsOptionalMandatory { get; set; }
     }
     public class CatalogZoneModel
     {
@@ -124,7 +125,7 @@ namespace Calculo_ductos_winUi_3.Models
         public decimal Price { get; set; }
         public bool IsMandatory { get; set; }
         public int Group { get; set; }
-        public string Preiodicity { get; set; }
+        public string Periodicity { get; set; }
     }
 
 }

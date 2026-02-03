@@ -10,7 +10,7 @@
   <Identity
     Name="36e64640-6a87-42d8-a710-e57062f22b6c"
     Publisher="CN=Motion Corp, O=Motion Corp, C=MX"
-    Version="1.0.41.0" />
+    Version="1.0.45.0" />
 
   <mp:PhoneIdentity PhoneProductId="36e64640-6a87-42d8-a710-e57062f22b6c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

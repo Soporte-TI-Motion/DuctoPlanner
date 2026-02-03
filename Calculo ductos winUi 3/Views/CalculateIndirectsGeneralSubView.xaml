@@ -9,119 +9,134 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid x:Name="LeftGrid"
-      Grid.Column="0"
-      Grid.Row="1">
+    <Grid >
         <Grid 
         Grid.Row="1" 
         Grid.Column="0" CornerRadius="8" 
         Margin="36,16,16,36"
         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
-
-            <Grid
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
+                <Grid
                 x:Name="DataCard"
                 Margin="16,16,16,36"
                 CornerRadius="8" 
    
-                >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <StackPanel 
-                Orientation="Vertical" 
-                Grid.Column="0" 
-                Grid.Row="1" 
-                Grid.ColumnSpan="2"
-                Padding="0,8,0,0"
-                Margin="8"
-                Height="Auto">
-                    <TextBlock x:Name="lblZona" Margin="0,0,0,8" >Zona</TextBlock>
-                    <ComboBox x:Name="cbxZona"
-                        ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableZones, Mode=OneWay}"
-                        SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedZone, Mode=TwoWay}" 
-                        DisplayMemberPath="Description">
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel 
-                    Orientation="Vertical" 
-                    Grid.Column="0" 
-                    Grid.Row="2" 
-                    Grid.ColumnSpan="2"
-                    Padding="0,8,0,0"
-                    Margin="10"
-                    Height="Auto">          
+    >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel 
+                        Orientation="Vertical" 
+                        Grid.Column="0" 
+                        Grid.Row="0" 
+                        Grid.ColumnSpan="2"
+                        Padding="0,0,0,24"
+                        Margin="8"
+                        Height="Auto">
+                        <TextBlock x:Name="lblZona" Margin="0,0,0,8" >Zona</TextBlock>
+                        <ComboBox x:Name="cbxZona"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableZones, Mode=OneWay}"
+                            SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedZone, Mode=TwoWay}" 
+                            DisplayMemberPath="Description">
+                        </ComboBox>
+                    </StackPanel>
 
-                    <TextBlock x:Name="lblIzaje" Margin="0,0,0,8">Necesita izaje</TextBlock>
+                    <StackPanel 
+                        Orientation="Vertical" 
+                        Grid.Column="0" 
+                        Grid.Row="1" 
+                        Grid.ColumnSpan="2"
+                        Padding="0,4,0,0"
+                        Margin="10"
+                        Height="Auto">
 
-                    <ComboBox x:Name="cbxIzaje"
-                        ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableIzaje, Mode=OneWay}"
-                        SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedIzaje, Mode=TwoWay}" 
-                        DisplayMemberPath="Description">
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel 
-                    Orientation="Vertical" 
-                    Grid.Column="0" 
-                    Grid.Row="3" 
-                    Grid.ColumnSpan="2"
-                    Padding="0,8,0,0"
-                    Margin="10"
-                    Height="Auto">
+                        <TextBlock x:Name="lblTipoTransporte" Margin="0,0,0,8">Tipo de transporte</TextBlock>
 
-                    <TextBlock x:Name="lblTipoTransporte" Margin="0,0,0,8">Tipo de transporte</TextBlock>
+                        <ComboBox x:Name="cbxTipoTransporte"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableTransportTypes, Mode=OneWay}"
+                            SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedTransportType, Mode=TwoWay}" 
+                            DisplayMemberPath="Description"
+                            Height="Auto">
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Vertical" 
+                        Grid.Column="0" 
+                        Grid.Row="2" 
+                        Grid.ColumnSpan="2"
+                        Padding="0,8,0,0"
+                        Margin="10,0,0,0"
+                        Height="Auto">
 
-                    <ComboBox x:Name="cbxTipoTransporte"
-                        ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableTransportTypes, Mode=OneWay}"
-                        SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedTransportType, Mode=TwoWay}" 
-                        DisplayMemberPath="Description">
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel 
-    Orientation="Vertical" 
-    Grid.Column="0" 
-    Grid.Row="4" 
-    Grid.ColumnSpan="2"
-    Padding="0,8,0,0"
-    Margin="10"
-    Height="Auto">
+                        <TextBlock x:Name="lblPrecio" Margin="0,0,0,8">Precio</TextBlock>
 
-                    <TextBlock x:Name="lblPrecio" Margin="0,0,0,8">Precio</TextBlock>
-
-                    <TextBox 
+                        <TextBox 
         x:Name="txtNombreEjecutivo" 
         Text="{x:Bind stateApp.IndirectsVM.selectedTrasnportCost, Mode=TwoWay}"
         Height="30"></TextBox>
-                </StackPanel>
-                <StackPanel 
-                Orientation="Horizontal" 
-                HorizontalAlignment="Center"
-                Grid.Column="0" 
-                Grid.Row="5" 
-                Grid.ColumnSpan="2"
-                Margin="10"
-                Height="Auto">
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        Grid.Column="0" 
+                        Grid.Row="3" 
+                        Grid.ColumnSpan="2"
+                        Margin="10,0,10,10"
+                        Padding="0,0,0,24"
+                        Height="Auto">
 
-                    <Button x:Name="btnAgregarT" Margin="8" 
-                    Click="AddTransport_Click">Agregar</Button>
-                    
-                </StackPanel>
+                        <Button x:Name="btnAgregarT" Margin="8" 
+                        Click="AddTransport_Click">Agregar transporte</Button>
+
+                    </StackPanel>
+
+                    <StackPanel 
+                        Orientation="Vertical" 
+                        Grid.Column="0" 
+                        Grid.Row="4" 
+                        Grid.ColumnSpan="2"
+                        Padding="0,0,0,0"
+                        Margin="10,0,0,0"
+                        Height="Auto">
+
+                        <TextBlock x:Name="lblIzaje" Margin="0,0,0,8">Herramienta mayor</TextBlock>
+
+                        <ComboBox x:Name="cbxIzaje"
+                            ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableMajorTool, Mode=OneWay}"
+                            SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedMajorTool, Mode=TwoWay}" 
+                            DisplayMemberPath="Description">
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center"
+                        Grid.Column="0" 
+                        Grid.Row="5" 
+                        Grid.ColumnSpan="2"
+                        Height="Auto">
+
+                        <Button x:Name="btnAgregarTool" Margin="8" 
+                            Click="AddMajorTool_Click">Agregar herramienta</Button>
+
+                    </StackPanel>
 
 
 
-            </Grid>
+                </Grid>
+            </ScrollViewer>
+            
 
 
         </Grid>

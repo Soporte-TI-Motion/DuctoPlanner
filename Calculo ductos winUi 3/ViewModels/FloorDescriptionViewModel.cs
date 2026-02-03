@@ -25,6 +25,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private int _needAntiImpactIndex;
         private int _typeDischargeIndex;
         private int _typeDoorIndex;
+        private GuillotineModel _selectedGuillotineType;
+        private CatalogRowModel _selectedContainerType;
         //private CatalogRowModel _TypeDoorSelected;
 
         #endregion
@@ -34,6 +36,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public FloorDescriptionViewModel(BusyService busyService)
         {
             _floorList = new ObservableCollection<FloorDescription>();
+            _selectedGuillotineType = new();
+            _selectedContainerType = new();
             Busy = busyService;
             _floorDescription = new FloorDescription
             {
@@ -58,6 +62,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public void New() {
             FloorList = new ObservableCollection<FloorDescription>();
+            SelectedGuillotineType = new();
+            SelectedContainerType = new();
             _floorDescription = new FloorDescription
             {
                 //Uuid = Guid.NewGuid(),
@@ -85,6 +91,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             OnPropertyChanged(nameof(NeedChimney));
             OnPropertyChanged(nameof(FloorHeightText));
             OnPropertyChanged(nameof(Description));
+            OnPropertyChanged(nameof(SelectedGuillotineType));
 
         }
 
@@ -114,6 +121,26 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 }
             }
         }
+        public ObservableCollection<GuillotineModel> AvailableGuillotineTypes { get; set; } = new();
+        public GuillotineModel SelectedGuillotineType { get=> _selectedGuillotineType; 
+            set {
+                if (_selectedGuillotineType != value)
+                {
+                    _selectedGuillotineType = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SelectedGuillotineType));
+                }
+            } }
+        public ObservableCollection<CatalogRowModel> AvailableCointainerTypes { get; set; } = new();
+        public CatalogRowModel SelectedContainerType { get => _selectedContainerType; set {
+
+                if (_selectedContainerType != value)
+                {
+                    _selectedContainerType = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SelectedContainerType));
+                }
+            } }
         public Floor.TypeFloor Type
         {
             get => _floorDescription.Type;
@@ -289,8 +316,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     NeedAntiImpact = _floorDescription.NeedAntiImpact,
                     FloorHeight = _floorDescription.FloorHeight,
                     Type = _floorDescription.Type,
-                    Discharge = _floorDescription.Discharge,
-                    TypeDoor = _floorDescription.TypeDoor
+                    Discharge = _floorDescription.Discharge ,
+                    DischargeDescription = _floorDescription.Type == 0 ? SelectedGuillotineType.Description : _floorDescription.Discharge.ToString() ,
+                    TypeDoor = _floorDescription.TypeDoor,
+                    ContainerType = _floorDescription.Type == Floor.TypeFloor.discharge ? SelectedContainerType : new(),
                 });
                 OnPropertyChanged();
             }
@@ -320,6 +349,17 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public void LoadCatalogs(List<CatalogRowModel> catalogo)
         {
             AllDoorType = new ObservableCollection<CatalogRowModel>(catalogo);
+            AvailableGuillotineTypes = new ObservableCollection<GuillotineModel>{
+                new() { Id = 1, Description = "Guillotina normal" },
+                new() { Id = 2, Description = "Guillotina inoxidable" }
+            };
+            AvailableCointainerTypes = new ObservableCollection<CatalogRowModel> { 
+                new CatalogRowModel{ Id=1,Description="Contenedor 770L"},
+                new CatalogRowModel{ Id=2,Description="Contenedor 550L"},
+                new CatalogRowModel{ Id=3,Description="Contenedor 1100L"},
+            };
+            SelectedContainerType = AvailableCointainerTypes.FirstOrDefault();
+            SelectedGuillotineType = AvailableGuillotineTypes.FirstOrDefault();
         }
 
         public void FilterDoorsTypes(string ductPurpose)

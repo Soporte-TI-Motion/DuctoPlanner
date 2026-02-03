@@ -13,6 +13,8 @@ namespace Calculo_ductos_winUi_3.Models
         public CatalogRowModel TypeDoor { get; set; }
         public Floor.TypeFloor Type { get; set; }
         public Floor.TypeDischarge Discharge { get; set; }
+        public string DischargeDescription { get; set; }
+        public CatalogRowModel ContainerType { get; set; }
         public Guid Uuid { get; set; }
         public int FloorCount { get; set; }
         public bool NeedGate { get; set; }
@@ -73,10 +75,11 @@ namespace Calculo_ductos_winUi_3.Models
             return Type == Floor.TypeFloor.last ? NeedChimney ? "Chimenea" : "Cuello de ganso" : "-";
         }
         private string GetDischargeString (){
-            return Type == Floor.TypeFloor.discharge ? Discharge == Floor.TypeDischarge.guilloutine ? "Guillotina" : "Descargador" : "-";
+            return Type == Floor.TypeFloor.discharge ? Discharge == Floor.TypeDischarge.guilloutine ? DischargeDescription : "Descargador" : "-";
         }
         private string GetDoorTypeString() {
             return Type != Floor.TypeFloor.discharge ? NeedGate ? TypeDoor.Description: "-" : "-";
         }
+        
     }
 }
