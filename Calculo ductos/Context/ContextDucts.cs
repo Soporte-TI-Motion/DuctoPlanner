@@ -34,23 +34,6 @@ namespace Calculo_ductos.Context
             Dispose(false);
         }
 
-        public Dictionary<DuctPiece.TypeDuct, int> CalculateDucts(string paramsJson) {
-        //public List<string> CalculateDucts(string paramsJson) {
-
-            //List<string> result = new List<string>();
-            Dictionary<DuctPiece.TypeDuct, int> counter = InitDuctsCounter();
-            try
-            {
-                var floors = GetFloors(paramsJson);
-            }
-            catch (Exception ex)
-            {
-                return InitDuctsCounter();
-            }
-            //return result;
-            return counter;
-        }
-
         public Duct CalculateDuctsByFloor(string paramsJson)
         {
             //public List<string> CalculateDucts(string paramsJson) {
@@ -112,22 +95,6 @@ namespace Calculo_ductos.Context
                 }
             }
             duct.Components = result;
-        }
-
-        public Dictionary<DuctPiece.TypeDuct, int> InitDucts()
-        {
-            return InitDuctsCounter();  
-        }
-
-        private List<Floor> GetFloors(string paramsJson) {
-            try
-            {
-                return JsonSerializer.Deserialize<List<Floor>>(paramsJson);
-            }
-            catch (Exception ex)
-            {
-                return new List<Floor>();
-            }
         }
         private Duct GetDuct(string paramsJson)
         {
@@ -196,14 +163,7 @@ namespace Calculo_ductos.Context
 
             return counter;
         }
-        private void SumDucts(Dictionary<DuctPiece.TypeDuct, int> counter, Dictionary<DuctPiece.TypeDuct, int> ducts)
-        {
-            foreach (var duct in ducts)
-            {
-                counter[duct.Key] += duct.Value;
-            }
-        }
-
+  
         private void CalculateDischargeLevel(ref List<DuctPiece> results, ref decimal heightAvaible, TypeDischarge typeDischarge)
         {
 
@@ -304,116 +264,6 @@ namespace Calculo_ductos.Context
             }
         }
 
-        //Este es el original
-        private void CalculateCommonLevel2(ref Dictionary<DuctPiece.TypeDuct, int> results, ref decimal heightAvaible, bool needGate)
-        {
-            foreach (DuctPiece duct in Ducts.GetConfigCommonLevel())
-                switch (duct.Type)
-                {
-                    case DuctPiece.TypeDuct.C4:
-                        {
-                            if (needGate)
-                            {
-                                heightAvaible -= duct.Height;
-                                results[DuctPiece.TypeDuct.C4]++;
-                            }
-                            else
-                            {
-                                heightAvaible -= duct.Height;
-                                results[DuctPiece.TypeDuct.S4]++;
-                            }
-                        }; break;
-                    case DuctPiece.TypeDuct.B4:
-                        {
-                            int total = (int)(heightAvaible / duct.Height);
-                            results[DuctPiece.TypeDuct.B4] += total;
-                            heightAvaible -= (total * duct.Height);
-                        }; break;
-                    case DuctPiece.TypeDuct.B3:
-                        {
-                            int total = (int)(heightAvaible / duct.Height);
-                            results[DuctPiece.TypeDuct.B3] += total;
-                            heightAvaible -= (total * duct.Height);
-                        }; break;
-                    case DuctPiece.TypeDuct.B2:
-                        {
-                            int total = (int)(heightAvaible / duct.Height);
-                            results[DuctPiece.TypeDuct.B2] += total;
-                            heightAvaible -= (total * duct.Height);
-                        }; break;
-                }
-        }
-
-        private void CalculateCommonLevel3(ref Dictionary<DuctPiece.TypeDuct, int> results, ref decimal heightAvaible, bool needGate)
-        {
-            foreach (DuctPiece duct in Ducts.GetConfigCommonLevel())
-            {
-                switch (duct.Type)
-                {
-                    case DuctPiece.TypeDuct.C4:
-                        {
-                            if (needGate)
-                            {
-                                heightAvaible -= duct.Height;
-                                results[DuctPiece.TypeDuct.C4]++;
-                            }
-                            else
-                            {
-                                heightAvaible -= duct.Height;
-                                results[DuctPiece.TypeDuct.S4]++;
-                            }
-                        }
-                        break;
-
-                    case DuctPiece.TypeDuct.B4:
-                    case DuctPiece.TypeDuct.B3:
-                    case DuctPiece.TypeDuct.B2:
-                        {
-                            int total = (int)(heightAvaible / duct.Height); // Casting to int
-                            results[duct.Type] += total;
-                            heightAvaible -= (total * duct.Height);
-                        }
-                        break;
-                }
-            }
-        }
-
-        private void CalculateCommonLevel4(ref Dictionary<DuctPiece.TypeDuct, int> results, ref decimal heightAvailable, bool needGate)
-        {
-            foreach (DuctPiece duct in Ducts.GetConfigCommonLevel())
-            {
-                if (duct.Type == DuctPiece.TypeDuct.C4)
-                {
-                    if (needGate)
-                    {
-                        results[DuctPiece.TypeDuct.C4]++;
-                        heightAvailable -= duct.Height;
-                    }
-                    else
-                    {
-                        results[DuctPiece.TypeDuct.S4]++;
-                        heightAvailable -= duct.Height;
-                    }
-
-                    continue;  // Salir al siguiente ducto
-                }
-
-                // Para los ductos B2, B3 y B4
-                if (duct.Type >= DuctPiece.TypeDuct.B2 && duct.Type <= DuctPiece.TypeDuct.B4)
-                {
-                    int total = (int)(heightAvailable / duct.Height);
-                    results[duct.Type] += total;
-                    heightAvailable -= total * duct.Height;
-                }
-            }
-
-            // Validación para comprobar que no haya altura disponible negativa
-            if (heightAvailable < 0)
-            {
-                throw new InvalidOperationException("La altura disponible no puede ser negativa.");
-            }
-        }
-
         private void CalculateCommonLevel(ref List<DuctPiece> results, ref decimal availableHeight, bool needGate)
         {
             if (availableHeight <= 0) return; // Validación de altura disponible
@@ -449,23 +299,6 @@ namespace Calculo_ductos.Context
             piece.Count += total;
             availableHeight -= (total * duct.Height);
         }
-        private void CalculateComponent(int floorCount, List<DuctPiece> ducts, bool needChimney, TypeDischarge typeDischarge, ref Component component)
-        {
-            var par = floorCount % 2 == 0;
-            var division = floorCount / 2;
-            var gates = ducts.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).Sum(piece => piece.Count);
-            switch (component.Type)
-            {
-                case TypeComponent.XN: component.Count = floorCount - 2; break;
-                case TypeComponent.XNF: component.Count = 1; break;
-                case TypeComponent.Sprinkler: component.Count = (gates / 2) + 1; break;
-                case TypeComponent.Gate: component.Count = gates; break;
-                case TypeComponent.Guillotine: component.Count = typeDischarge == TypeDischarge.guilloutine ? 1:0; break;
-                case TypeComponent.Discharge: component.Count = typeDischarge == TypeDischarge.discharge ? 1:0; break;
-                case TypeComponent.TVA: component.Count = needChimney ? 0 : 1; break;
-                case TypeComponent.DisinfectionSystem: component.Count = 1; break;
-                case TypeComponent.Chimney: component.Count = needChimney ? 1 : 0; break;
-            }
-        }
+        
     }
 }
