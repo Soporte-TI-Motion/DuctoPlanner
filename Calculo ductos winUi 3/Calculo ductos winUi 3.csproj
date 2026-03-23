@@ -120,9 +120,6 @@
     <None Include="Models\FloorDuctDetailModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Calculo de ductos v1\Calculo ductos\Calculo ductos.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Update="Assets\5TonM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
