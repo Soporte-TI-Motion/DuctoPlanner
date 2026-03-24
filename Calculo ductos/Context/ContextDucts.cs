@@ -4,6 +4,7 @@ namespace Calculo_ductos.Context
 {
     using Config;
     using Params;
+    using System.Drawing;
     using Utils;
     using static Calculo_ductos.Params.Component;
     using static Calculo_ductos.Params.Floor;
@@ -36,43 +37,45 @@ namespace Calculo_ductos.Context
 
         public Duct CalculateDuctsByFloor(string paramsJson)
         {
-            //public List<string> CalculateDucts(string paramsJson) {
             Duct duct = new Duct();
-            List<Floor> calculatedFloors = new List<Floor>();
-            List<string> result = new List<string>();
-            Dictionary<DuctPiece.TypeDuct, int> counter = InitDuctsCounter();
+            
             try
             {
                 duct = GetDuct(paramsJson);
-
-
                 foreach (Floor floor in duct.floors)
                 {
                     floor.Ducts = PositionDucts(floor, out var heightAvaible);
-                    //SumDucts(counter, positions);
+                    
                     var a2 = floor.Ducts.FirstOrDefault(duct => duct.Type == DuctPiece.TypeDuct.A2);
                     var s4 = floor.Ducts.FirstOrDefault(duct => duct.Type == DuctPiece.TypeDuct.S4);
                     var c4 = floor.Ducts.FirstOrDefault(duct => duct.Type == DuctPiece.TypeDuct.C4);
 
                     a2.Count = s4.Count + c4.Count;
+                    if (floor.Type.Equals(Floor.TypeFloor.last))
+                    {
+                        a2.Count = 0;
+                    }
+                    if (floor.Type.Equals(Floor.TypeFloor.discharge))
+                    {
+                        a2.Count = 1;
+                    }
                     floor.HeightAvailable = heightAvaible;
                 }
-                //duct.floors = calculatedFloors;
+                
                 CalculateComponents(duct);
             }
             catch (Exception ex)
             {
                 return duct;
             }
-            //return result;
             return duct;
         }
         public void CalculateComponents(Duct duct)
         {
             List<Component> result = InitComponentList();
             var sumPieces = duct.floors.SumDuctPieces();
-            var par = duct.floors.Count % 2 == 0;
-            //var division = duct.floors.Count / 2;
+            //var par = duct.floors.Count % 2 == 0;
+
             var gates = sumPieces.Where(duct => duct.Type == DuctPiece.TypeDuct.C4).Sum(piece => piece.Count);
             var firstFloor = duct.floors.FirstOrDefault(f => f.Type == TypeFloor.discharge);
             var lastFloor = duct.floors.FirstOrDefault(f => f.Type == TypeFloor.last);
@@ -80,7 +83,7 @@ namespace Calculo_ductos.Context
             for (int i = 0; i < result.Count; i++)
             {
                 var temp = result[i];
-                //CalculateComponent(duct.floors.Count, sumPieces, duct.NeedChimmey,duct.floors.FirstOrDefault(f=>f.Type==TypeFloor.discharge).Discharge, ref temp);
+                
                 switch (temp.Type)
                 {
                     case TypeComponent.XN: temp.Count = duct.floors.Count - 2; break;
@@ -92,9 +95,59 @@ namespace Calculo_ductos.Context
                     case TypeComponent.TVA: temp.Count = lastFloor.NeedChimney ? 0 : 1; break;
                     case TypeComponent.DisinfectionSystem: temp.Count = duct.NeedDesinfectionSystem ? 1 : 0; break;
                     case TypeComponent.Chimney: temp.Count = lastFloor.NeedChimney ? 1 : 0; break;
+                    case TypeComponent.Container: temp.Count = 2;break;
+                    case TypeComponent. AntiImpact: temp.Count = (firstFloor.NeedAntiImpact ? 1 : 0);break;
                 }
             }
+
+            var soportesFinales = result.Where((Component r) => r.Type == Component.TypeComponent.XNF).FirstOrDefault();
+            var soportesNormales = result.Where((Component r) => r.Type == Component.TypeComponent.XN).FirstOrDefault();
+            Floor pisoAnterior = new Floor();
+
+            int normalesPorRestar = 0;
+            int finalesPorSumar = 0;
+            foreach (Floor pisoActual in duct.floors)
+            {
+                if (pisoActual.Type != Floor.TypeFloor.discharge)
+                {
+                    normalesPorRestar = ((pisoAnterior.IsExceededDoubleLevel || pisoAnterior.IsNormalDoubleLevel || pisoAnterior.Type == Floor.TypeFloor.discharge) ? 1 : 2);
+                    if (pisoActual.IsExceededDoubleLevel)
+                    {
+                        finalesPorSumar = ((pisoAnterior.IsExceededDoubleLevel || pisoAnterior.IsNormalDoubleLevel || pisoAnterior.Type == Floor.TypeFloor.discharge) ? 2 : 3);
+                    }
+                    else if (pisoActual.IsNormalDoubleLevel)
+                    {
+                        finalesPorSumar = ((pisoAnterior.IsExceededDoubleLevel || pisoAnterior.IsNormalDoubleLevel || pisoAnterior.Type == Floor.TypeFloor.discharge) ? 1 : 2);
+                    }
+                    else
+                    {
+                        finalesPorSumar = 0;
+                        normalesPorRestar = 0;
+                    }
+                }
+
+                soportesFinales.Count += finalesPorSumar;
+                soportesNormales.Count -= normalesPorRestar;
+                pisoAnterior = pisoActual;
+            }
+
             duct.Components = result;
+        }
+        public Dictionary<DuctPiece.TypeDuct, int> InitDucts()
+        {
+            return InitDuctsCounter();
+        }
+
+        private List<Floor> GetFloors(string paramsJson)
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<List<Floor>>(paramsJson);
+            }
+            catch (Exception)
+            {
+                return new List<Floor>();
+            }
         }
         private Duct GetDuct(string paramsJson)
         {
@@ -117,8 +170,8 @@ namespace Calculo_ductos.Context
 
                 switch (floor.Type)
                 {
-                    case Floor.TypeFloor.discharge: 
-                        CalculateDischargeLevel(ref results,ref heightAvaible, floor.Discharge); break;
+                    case Floor.TypeFloor.discharge:
+                        CalculateDischargeLevel(ref results, ref heightAvaible, floor.Discharge, floor.NeedAntiImpact); break;
                     case Floor.TypeFloor.common: { 
                         if (heightAvaible >= 4.5m) 
                             CalculateDoubleLevel(ref results, ref heightAvaible, floor.NeedGate);
@@ -129,14 +182,22 @@ namespace Calculo_ductos.Context
                     {
                         if (floor.NeedChimney)
                         {
-                            heightAvaible += 0.8m;
-                            if (heightAvaible > 4.8m)
-                                CalculateDoubleLevel(ref results, ref heightAvaible, floor.NeedGate);
+                            if (heightAvaible > 4.5m)
+                            {
+                                heightAvaible += 0.9m;
+                                CalculateDoubleLevel(ref results, ref heightAvaible, floor.NeedGate, true);
+                            }
                             else
-                                CalculateCommonLevel(ref results, ref heightAvaible, floor.NeedGate);
+                            {
+                                heightAvaible += 0.9m;
+                                CalculateCommonLevel(ref results, ref heightAvaible, floor.NeedGate,  true);
+                            }
                         }
                         else
-                        CalculateLastLevel(ref results, ref heightAvaible, floor.NeedGate); break;
+                        {
+                            CalculateLastLevelWithoutChimney(ref results, ref heightAvaible, floor.NeedGate);
+                        }
+                        break;
                     }
                 }
 
@@ -147,9 +208,7 @@ namespace Calculo_ductos.Context
 
         private List<Component> InitComponentList()
         {
-            List<Component> components = Components.GetAllComponents();
-
-            return components;
+            return Components.GetAllComponents();
         }
 
         private Dictionary<DuctPiece.TypeDuct, int> InitDuctsCounter()
@@ -163,142 +222,257 @@ namespace Calculo_ductos.Context
 
             return counter;
         }
-  
-        private void CalculateDischargeLevel(ref List<DuctPiece> results, ref decimal heightAvaible, TypeDischarge typeDischarge)
+
+        private void CalculateDischargeLevel(ref List<DuctPiece> results, ref decimal heightAvaible, Floor.TypeDischarge typeDischarge, bool needAntiImpact)
         {
-
-            //Se resta la altura para el bote
-            heightAvaible -= typeDischarge == TypeDischarge.guilloutine ? 1.5m : 2.3m;
-
-            foreach (DuctPiece duct in Ducts.GetConfigDischargeLevel())
+            Stack<DuctPiece> stack = new Stack<DuctPiece>();
+            int num = 0;
+            List<DuctPiece> configDischargeLevel = Ducts.GetConfigDischargeLevel();
+            heightAvaible -= ((typeDischarge != Floor.TypeDischarge.guilloutine) ? 2.3m : (needAntiImpact ? 2.42m : 1.5m));
+            DuctPiece oldBiggerDuct = configDischargeLevel.OrderByDescending((DuctPiece d) => d.Height).FirstOrDefault();
+            while (true)
             {
-                var ductPiece = results.FirstOrDefault(p => p.Type == duct.Type);
-                int total = (int)(heightAvaible / duct.Height);
-                ductPiece.Count += total;
-                heightAvaible -= (total * duct.Height);
-                //switch (duct.Type)
-                //{
-                //    case DuctPiece.TypeDuct.B4F:
-                //        {
-                            
-                //            results[DuctPiece.TypeDuct.B4F] += total;
-                            
-                //        }; break;
-                //    case DuctPiece.TypeDuct.B3F:
-                //        {
-                //            int total = (int)(heightAvaible / duct.Height);
-                //            results[DuctPiece.TypeDuct.B3F] += total;
-                //            heightAvaible -= (total * duct.Height);
-                //        }; break;
-                //    case DuctPiece.TypeDuct.B2F:
-                //        {
-                //            int total = (int)(heightAvaible / duct.Height);
-                //            results[DuctPiece.TypeDuct.B2F] += total;
-                //            heightAvaible -= (total * duct.Height);
-                //        }; break;
-                //}
-            }
-        }
-
-        private void CalculateLastLevel(ref List<DuctPiece> results, ref decimal heightAvaible, bool needGate)
-        {
-
-            foreach (DuctPiece duct in Ducts.GetConfigLastLevel())
-            {    
-                var ductPiece = results.FirstOrDefault(piece => piece.Type == duct.Type);
-
-                switch (duct.Type)
+                foreach (DuctPiece item in configDischargeLevel)
                 {
-                    case DuctPiece.TypeDuct.C4:
-                        {
-                            heightAvaible -= duct.Height;
-                            if (needGate)
-                            {
-                                ductPiece.Count++;
-                            }
-                            else
-                            {
-                                var ductPieceS4 = results.FirstOrDefault(piece => piece.Type == DuctPiece.TypeDuct.S4);
-                                ductPieceS4.Count++;
-                            }
-                        }; break;
-                    case DuctPiece.TypeDuct.B3:
-                    case DuctPiece.TypeDuct.B2:
-                        {
-                            ductPiece.Count++;
-                            heightAvaible -= duct.Height;
-                        }; break;
-                } 
-            }
-        }
-
-        private void CalculateDoubleLevel(ref List<DuctPiece> results, ref decimal heightAvaible, bool needGate)
-        {
-            foreach (DuctPiece duct in Ducts.GetConfigDoubleLevel())
-            {
-                var ductPiece = results.FirstOrDefault(piece => piece.Type == duct.Type);
-                switch (duct.Type)
-                {
-                    case DuctPiece.TypeDuct.C4:
-                        {
-                            heightAvaible -= duct.Height;
-                            if (needGate)
-                            {
-                                ductPiece.Count++;
-                            }
-                            else
-                            {
-                                var ductPieceS4 = results.FirstOrDefault(piece => piece.Type == DuctPiece.TypeDuct.S4);
-                                ductPieceS4.Count++;
-                            }
-                        }; break;
-                    case DuctPiece.TypeDuct.B4F:
-                    case DuctPiece.TypeDuct.B3F:
-                    case DuctPiece.TypeDuct.B2F:
-                        {
-                            int total = (int)(heightAvaible / duct.Height);
-                            ductPiece.Count += total;
-                            heightAvaible -= (total * duct.Height);
-                        }; break;
+                    DuctPiece duct = new DuctPiece(item);
+                    CalculateDucts(ref stack, ref heightAvaible, duct);
                 }
+                if ((heightAvaible <= 0.3m || num >= 3) && IsConsecutive(stack, isLastLevel: false, isNormalLevel: false))
+                {
+                    break;
+                }
+                int num2 = 0;
+                do
+                {
+                    if ((from p in stack
+                         group p by p.Type into p
+                         where p.Key == oldBiggerDuct.Type
+                         select p).Count() > 0)
+                    {
+                        DuctPiece ductPiece = new DuctPiece();
+                        do
+                        {
+                            ductPiece = stack.Pop();
+                            heightAvaible += ductPiece.Height;
+                        }
+                        while (ductPiece.Type != oldBiggerDuct.Type);
+                        configDischargeLevel.Remove(oldBiggerDuct);
+                        break;
+                    }
+                    num2++;
+                    oldBiggerDuct = (from d in configDischargeLevel
+                                     where d.Type != oldBiggerDuct.Type && d.Type != DuctPiece.TypeDuct.C4
+                                     orderby d.Height descending
+                                     select d).FirstOrDefault();
+                }
+                while (num2 < 2);
+                num++;
+            }
+            foreach (DuctPiece duct2 in stack)
+            {
+                results.FirstOrDefault((DuctPiece p) => p.Type == duct2.Type).Count++;
             }
         }
 
-        private void CalculateCommonLevel(ref List<DuctPiece> results, ref decimal availableHeight, bool needGate)
+        private void CalculateLastLevelWithoutChimney(ref List<DuctPiece> results, ref decimal heightAvaible, bool needGate)
         {
-            if (availableHeight <= 0) return; // Validación de altura disponible
-
-            foreach (DuctPiece duct in Ducts.GetConfigCommonLevel())
+            foreach (DuctPiece duct in Ducts.GetConfigLastLevel())
             {
-                var ductPiece = results.FirstOrDefault(p => p.Type == duct.Type);
+                DuctPiece ductPiece = results.FirstOrDefault((DuctPiece piece) => piece.Type == duct.Type);
                 switch (duct.Type)
                 {
                     case DuctPiece.TypeDuct.C4:
+                        heightAvaible -= duct.Height;
                         if (needGate)
                         {
-                            CalculateDucts(ref ductPiece, ref availableHeight, duct, DuctPiece.TypeDuct.C4);
+                            ductPiece.Count++;
+                            break;
                         }
-                        else
-                        {
-                            var ductPieceS4 = results.FirstOrDefault(piece => piece.Type == DuctPiece.TypeDuct.S4);
-                            CalculateDucts(ref ductPieceS4, ref availableHeight, new DuctPiece { Height = 1.20m, Type = DuctPiece.TypeDuct.S4 }, DuctPiece.TypeDuct.S4);
-                        }
+                        results.FirstOrDefault((DuctPiece piece) => piece.Type == DuctPiece.TypeDuct.S4).Count++;
                         break;
-                    case DuctPiece.TypeDuct.B4:
-                    case DuctPiece.TypeDuct.B3:
                     case DuctPiece.TypeDuct.B2:
-                        CalculateDucts(ref ductPiece, ref availableHeight, duct, duct.Type);
+                    case DuctPiece.TypeDuct.B3:
+                        ductPiece.Count++;
+                        heightAvaible -= duct.Height;
                         break;
                 }
             }
         }
 
-        private void CalculateDucts(ref DuctPiece piece, ref decimal availableHeight, DuctPiece duct, DuctPiece.TypeDuct type)
+        private void CalculateDoubleLevel(ref List<DuctPiece> results, ref decimal heightAvaible, bool needGate, bool isLastLevel = false)
         {
-            int total = type == DuctPiece.TypeDuct.C4 || type == DuctPiece.TypeDuct.S4 ? 1 : (int)(availableHeight / duct.Height);
-            piece.Count += total;
-            availableHeight -= (total * duct.Height);
+            Stack<DuctPiece> stack = new Stack<DuctPiece>();
+            int num = 0;
+            List<DuctPiece> configDoubleLevel = Ducts.GetConfigDoubleLevel();
+            DuctPiece oldBiggerDuct = (from d in configDoubleLevel
+                                       where d.Type != DuctPiece.TypeDuct.C4
+                                       orderby d.Height descending
+                                       select d).FirstOrDefault();
+            DuctPiece item = configDoubleLevel.Where((DuctPiece d) => d.Type == DuctPiece.TypeDuct.C4).FirstOrDefault();
+            while (true)
+            {
+                foreach (DuctPiece item2 in configDoubleLevel)
+                {
+                    DuctPiece duct = new DuctPiece(item2);
+                    if (item2.Type == DuctPiece.TypeDuct.C4)
+                    {
+                        if (needGate)
+                        {
+                            CalculateDucts(ref stack, ref heightAvaible, duct);
+                            continue;
+                        }
+                        CalculateDucts(ref stack, ref heightAvaible, new DuctPiece
+                        {
+                            Name = item2.Name,
+                            Height = 1.20m,
+                            Type = DuctPiece.TypeDuct.S4
+                        });
+                    }
+                    else
+                    {
+                        CalculateDucts(ref stack, ref heightAvaible, duct);
+                    }
+                }
+                if ((heightAvaible <= 0.3m || num >= 3) && IsConsecutive(stack, isLastLevel))
+                {
+                    break;
+                }
+                while ((from p in stack
+                        group p by p.Type into p
+                        where p.Key == oldBiggerDuct.Type
+                        select p).Count() <= 0)
+                {
+                    oldBiggerDuct = (from d in configDoubleLevel
+                                     where d.Type != oldBiggerDuct.Type && d.Type != DuctPiece.TypeDuct.C4
+                                     orderby d.Height descending
+                                     select d).FirstOrDefault();
+                }
+                DuctPiece ductPiece = new DuctPiece();
+                do
+                {
+                    ductPiece = stack.Pop();
+                    heightAvaible += ductPiece.Height;
+                }
+                while (ductPiece.Type != oldBiggerDuct.Type);
+                configDoubleLevel.Remove(oldBiggerDuct);
+                configDoubleLevel.Remove(item);
+                num++;
+            }
+            foreach (DuctPiece duct2 in stack)
+            {
+                results.FirstOrDefault((DuctPiece p) => p.Type == duct2.Type).Count++;
+            }
         }
-        
+
+        private void CalculateCommonLevel(ref List<DuctPiece> results, ref decimal heightAvaible, bool needGate, bool isLastLevel = false)
+        {
+            if (heightAvaible <= 0m)
+            {
+                return;
+            }
+            Stack<DuctPiece> stack = new Stack<DuctPiece>();
+            int num = 0;
+            List<DuctPiece> configCommonLevel = Ducts.GetConfigCommonLevel();
+            DuctPiece oldBiggerDuct = (from d in configCommonLevel
+                                       where d.Type != DuctPiece.TypeDuct.C4
+                                       orderby d.Height descending
+                                       select d).FirstOrDefault();
+            DuctPiece item = configCommonLevel.Where((DuctPiece d) => d.Type == DuctPiece.TypeDuct.C4).FirstOrDefault();
+            while (true)
+            {
+                foreach (DuctPiece item2 in configCommonLevel)
+                {
+                    new DuctPiece(item2);
+                    if (item2.Type == DuctPiece.TypeDuct.C4)
+                    {
+                        if (needGate)
+                        {
+                            CalculateDucts(ref stack, ref heightAvaible, item2);
+                            continue;
+                        }
+                        CalculateDucts(ref stack, ref heightAvaible, new DuctPiece
+                        {
+                            Name = item2.Name,
+                            Height = 1.20m,
+                            Type = DuctPiece.TypeDuct.S4
+                        });
+                    }
+                    else
+                    {
+                        CalculateDucts(ref stack, ref heightAvaible, item2);
+                    }
+                }
+                if ((heightAvaible <= 0.3m || num >= 3) && IsConsecutive(stack, isLastLevel))
+                {
+                    break;
+                }
+                while ((from p in stack
+                        group p by p.Type into p
+                        where p.Key == oldBiggerDuct.Type
+                        select p).Count() <= 0)
+                {
+                    oldBiggerDuct = (from d in configCommonLevel
+                                     where d.Type != oldBiggerDuct.Type && d.Type != DuctPiece.TypeDuct.C4
+                                     orderby d.Height descending
+                                     select d).FirstOrDefault();
+                }
+                DuctPiece ductPiece = new DuctPiece();
+                do
+                {
+                    ductPiece = stack.Pop();
+                    heightAvaible += ductPiece.Height;
+                }
+                while (ductPiece.Type != oldBiggerDuct.Type);
+                configCommonLevel.Remove(oldBiggerDuct);
+                configCommonLevel.Remove(item);
+                num++;
+            }
+            foreach (DuctPiece duct in stack)
+            {
+                results.FirstOrDefault((DuctPiece p) => p.Type == duct.Type).Count++;
+            }
+        }
+
+        private void CalculateDucts(ref Stack<DuctPiece> stack, ref decimal availableHeight, DuctPiece duct)
+        {
+            if (duct.Type == DuctPiece.TypeDuct.C4 || duct.Type == DuctPiece.TypeDuct.S4)
+            {
+                stack.Push(duct);
+                availableHeight -= duct.Height;
+                return;
+            }
+            while (availableHeight >= duct.Height)
+            {
+                stack.Push(duct);
+                availableHeight -= duct.Height;
+            }
+        }
+
+        private bool IsConsecutive(Stack<DuctPiece> stack, bool isLastLevel = false, bool isNormalLevel = true)
+        {
+            bool result = true;
+            if (stack.Count == 0)
+            {
+                return result;
+            }
+            List<DuctPiece> list = stack.Reverse().ToList();
+            if (isNormalLevel)
+            {
+                list.RemoveAt(0);
+            }
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                if (Math.Abs(list[i].GetWeight() - list[i + 1].GetWeight()) > 1)
+                {
+                    result = false;
+                }
+            }
+            if (list.Last().GetWeight() == 4 && isLastLevel)
+            {
+                result = false;
+            }
+            return result;
+        }
+
     }
 }
