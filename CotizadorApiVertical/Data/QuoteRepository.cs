@@ -73,9 +73,7 @@ namespace CotizadorVerticalApi.Data
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                
                 return connection.Query<QuoteModel>("Obtener_Ultimas_Cotizaciones", commandType: CommandType.StoredProcedure);
-
             };
             
         }

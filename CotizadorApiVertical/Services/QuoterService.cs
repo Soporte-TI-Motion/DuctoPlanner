@@ -34,7 +34,7 @@ namespace CotizadorVerticalApi.Services
             Response response = new Response();
             try
             {
-                var quotes = _quoteRepository.GetLastQuotes().Select(q => new { PT = q.PT, Id = q.CotizacionId, Date = q.Fecha}).ToList();
+                var quotes = _quoteRepository.GetLastQuotes().Select(q => new { PT = q.PT, Id = q.CotizacionId, Date = q.Fecha, ExecutiveName = q.NombreEjecutivo}).ToList();
                 response.Data = quotes;
                 response.StatusCode = 200;
                 response.Message = "Éxito";
