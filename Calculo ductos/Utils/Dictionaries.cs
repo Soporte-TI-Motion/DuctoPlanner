@@ -53,13 +53,13 @@ namespace Calculo_ductos.Utils
         public static Dictionary<DuctPiece.TypeDuct, int> SumDucts(
             this List<Floor> floors) {
             Dictionary<DuctPiece.TypeDuct, int> counter = InitDuctsCounter();
-            foreach (Floor floor in floors)
-            {
-                foreach (var duct in floor.Ducts)
-                {
-                    //counter[duct.Key] += duct.Value;
-                }
-            }
+            //foreach (Floor floor in floors)
+            //{
+            //    foreach (var duct in floor.Ducts)
+            //    {
+            //        //counter[duct.Key] += duct.Value;
+            //    }
+            //}
             return counter;
             
         }
