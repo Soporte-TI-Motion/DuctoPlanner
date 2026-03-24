@@ -1,19 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35521.163
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11612.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculo ductos winUi 3", "Calculo ductos winUi 3\Calculo ductos winUi 3.csproj", "{6B7B5665-EFC1-47EF-B4E3-EAF7C3E1C7C3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculo de ductos v1", "..\Calculo de ductos v1\Calculo de ductos v1\Calculo de ductos v1.csproj", "{866A214A-239F-4252-A27D-0B12004ECCD0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculo ductos", "..\Calculo de ductos v1\Calculo ductos\Calculo ductos.csproj", "{DA2854A3-2544-4033-9E58-CA06C5679DD3}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Ducto Planner (Package)", "Ducto Planner\Ducto Planner (Package)\Ducto Planner (Package).wapproj", "{40C11EF3-9F57-42A7-B928-70CD12A58978}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ducto Planner", "Ducto Planner\Ducto Planner\Ducto Planner.csproj", "{7B4BA4C8-5C86-492B-AEE4-49F8931FA0D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CotizadorApiVertical", "CotizadorApiVertical\CotizadorApiVertical.csproj", "{6961CBE0-7640-46EE-8980-9B1D23182512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculo ductos", "Calculo ductos\Calculo ductos.csproj", "{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,30 +41,6 @@ Global
 		{6B7B5665-EFC1-47EF-B4E3-EAF7C3E1C7C3}.Release|x86.ActiveCfg = Release|x86
 		{6B7B5665-EFC1-47EF-B4E3-EAF7C3E1C7C3}.Release|x86.Build.0 = Release|x86
 		{6B7B5665-EFC1-47EF-B4E3-EAF7C3E1C7C3}.Release|x86.Deploy.0 = Release|x86
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|x64.Build.0 = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Debug|x86.Build.0 = Debug|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|ARM64.Build.0 = Release|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|x64.ActiveCfg = Release|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|x64.Build.0 = Release|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|x86.ActiveCfg = Release|Any CPU
-		{866A214A-239F-4252-A27D-0B12004ECCD0}.Release|x86.Build.0 = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|x64.Build.0 = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Debug|x86.Build.0 = Debug|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|ARM64.Build.0 = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|x64.ActiveCfg = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|x64.Build.0 = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|x86.ActiveCfg = Release|Any CPU
-		{DA2854A3-2544-4033-9E58-CA06C5679DD3}.Release|x86.Build.0 = Release|Any CPU
 		{40C11EF3-9F57-42A7-B928-70CD12A58978}.Debug|ARM64.ActiveCfg = Debug|ARM64
 		{40C11EF3-9F57-42A7-B928-70CD12A58978}.Debug|ARM64.Build.0 = Debug|ARM64
 		{40C11EF3-9F57-42A7-B928-70CD12A58978}.Debug|ARM64.Deploy.0 = Debug|ARM64
@@ -109,8 +83,23 @@ Global
 		{6961CBE0-7640-46EE-8980-9B1D23182512}.Release|x64.Build.0 = Release|Any CPU
 		{6961CBE0-7640-46EE-8980-9B1D23182512}.Release|x86.ActiveCfg = Release|Any CPU
 		{6961CBE0-7640-46EE-8980-9B1D23182512}.Release|x86.Build.0 = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|x64.Build.0 = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Debug|x86.Build.0 = Debug|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|ARM64.Build.0 = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|x64.ActiveCfg = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|x64.Build.0 = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|x86.ActiveCfg = Release|Any CPU
+		{36CF05A8-7AE8-F27D-E0B7-99C0D99B406A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B1E54E27-29D3-4BB7-AC44-A71CC4F8BA43}
 	EndGlobalSection
 EndGlobal
