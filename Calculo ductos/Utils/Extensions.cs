@@ -26,6 +26,9 @@ namespace Calculo_ductos.Utils
                         Name = group.Key.Name,
                         Count = group.Sum(piece=>piece.Count)
                     }).ToList();
+                //Se agrega regla de tener un B2 extra para cualquier eventualidad
+                var B2 = duct.Where(piece=>piece.Type.Equals(DuctPiece.TypeDuct.B2)).FirstOrDefault();
+                if (B2!=null)B2.Count++;
             }
             catch (Exception ex)
             {
