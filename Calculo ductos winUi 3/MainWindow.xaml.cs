@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System.Diagnostics;
 using Calculo_ductos_winUi_3.Models;
-using Aspose.Cells;
 using Calculo_ductos.Params;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -53,12 +52,12 @@ namespace Calculo_ductos_winUi_3
 
             _ = SetWindowIconAsync(); 
 
-            StateApp.CompleteDuctVm.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(StateApp.CompleteDuctVm.Quotes))
-                {
-                    RebuildFlyout();
-                }
-            };
+            //StateApp.CompleteDuctVm.PropertyChanged += (s, e) => {
+            //    if (e.PropertyName == nameof(StateApp.CompleteDuctVm.Quotes))
+            //    {
+            //        RebuildFlyout();
+            //    }
+            //};
         }
         public StateViewModel _stateVieModel => ((App)Application.Current).ViewModel;
         public StateViewModel StateApp
@@ -294,6 +293,39 @@ namespace Calculo_ductos_winUi_3
             
 
             return validations;
+        }
+        private void Quote_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is QuoteModel q)
+            {
+                Trace.WriteLine($"Abriendo: {q.PT}");
+                _ = StateApp.LoadQuote(q.Id);
+                contentPage.Navigate(typeof(CalculateDuctsView));
+            }
+        }
+        private async void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            var control = new QuoteSearchControl
+            {
+                DataContext = StateApp.CompleteDuctVm
+            };
+
+            var dialog = new ContentDialog
+            {
+                Title = "Buscar cotización",
+                Content = control,
+                CloseButtonText = "Cerrar",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            control.QuoteSelected += async (q) =>
+            {
+                await StateApp.LoadQuote(q.Id);
+                contentPage.Navigate(typeof(CalculateDuctsView));
+                dialog.Hide();
+            };
+
+            await dialog.ShowAsync();
         }
     }
     public class NavLink

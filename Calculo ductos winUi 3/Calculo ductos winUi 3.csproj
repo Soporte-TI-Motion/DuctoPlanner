@@ -47,6 +47,7 @@
     <None Remove="Views\CalculateIndirectsOthersSubview.xaml" />
     <None Remove="Views\CalculateManPower.xaml" />
     <None Remove="Views\CalculateManPowerSubPageDetail.xaml" />
+    <None Remove="Views\QuoteSearchControl.xaml" />
     <None Remove="Views\ShowTotalPrice.xaml" />
   </ItemGroup>
 
@@ -196,6 +197,11 @@
     <Content Update="Assets\3MTonM.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\QuoteSearchControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CalculateIndirectsMajorToolSubView.xaml">

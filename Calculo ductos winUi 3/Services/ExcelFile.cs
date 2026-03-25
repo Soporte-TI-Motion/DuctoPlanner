@@ -47,7 +47,7 @@ namespace Calculo_ductos_winUi_3.Services
                 var worksheet = workbook.Worksheets[0];
                 worksheet.Name = "DUCTO 1";
                 await CreateDuctTemplateSheet(worksheet);
-                worksheet = workbook.Worksheets.Add("Inidirectos");
+                worksheet = workbook.Worksheets.Add("Indirectos");
                 await CreateIndirectTemplateSheet(worksheet, indirectppto);
                 workbook.Save(filePath, SaveFormat.Xlsx);
             }

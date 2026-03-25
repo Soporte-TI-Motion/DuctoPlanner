@@ -20,8 +20,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
     public class StateViewModel 
     {
         #region Fields
-        private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
-        //private readonly string _baseUrl = "http://localhost:8081/CotizadorApiVertical/Api/";
+        //private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
+        private readonly string _baseUrl = "http://localhost:8092/CotizadorApiVertical/Api/";
         private List<CatalogRowModel> PurposeCatalog;
         private List<CatalogRowModel> DoorTypeCatalog;
         private List<CatalogRowModel> SheetTypeCatalog;
@@ -260,6 +260,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 {
                     //CompleteDuctVm.Quotes.Clear();
                     CompleteDuctVm.Quotes = quotes;
+                    CompleteDuctVm.FilteredQuotes = quotes;
                 }
             }
             catch (Exception ex)
