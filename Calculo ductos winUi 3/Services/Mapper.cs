@@ -66,49 +66,101 @@ namespace Calculo_ductos_winUi_3.Services
             QuoteDetailModel quote = new QuoteDetailModel();
             try
             {
-                quote =
-                    new QuoteDetailModel
+                //quote =
+                //    new QuoteDetailModel
+                //    {
+                //        CotizacionId = 0,
+                //        PT = stateApp.CompleteDuctVm.PT,
+                //        NombreEjecutivo = stateApp.CompleteDuctVm.ExecutiveName,
+                //        TipoLaminaId = stateApp.CompleteDuctVm.SheetTypeId,
+                //        PropositoId = stateApp.CompleteDuctVm.PurposeId,
+                //        Diametro = "24\"",
+                //        SiteRef ="VERS",
+                //        NecesitaAspersor = stateApp.CompleteDuctVm.NeedSprinkler,
+                //        NecesitaSistemaDD = stateApp.CompleteDuctVm.NeedDesinfectionSystem,
+                //        LocalidadId = stateApp.FreightVM.SelectedLocality.Id,
+                //        RentabilidadMOId = stateApp.CompleteDuctVm.SelectedRentability.Id,
+                //        NecesitaIzaje = stateApp.IndirectsVM.SelectedIzaje.Id == 1,
+                //        ZonaId = stateApp.IndirectsVM.SelectedZone.Id,
+                //        Niveles = stateApp.FloorVM.FloorList.Select(
+                //            floor => new FloorDetailModel
+                //            {
+                //                TipoNivelId = Convert.ToInt32(floor.Type),
+                //                Cantidad = floor.FloorCount,
+                //                Altura = floor.FloorHeight,
+                //                NecesitaPuerta = floor.NeedGate,
+                //                NecesitaChimenea = floor.NeedChimney,
+                //                NecesitaAntiImpactos = floor.NeedAntiImpact,
+                //                TipoPuertaId = floor.TypeDoor.Id,
+                //                TipoDescargaId = Convert.ToInt32(floor.Discharge)
+                //            }
+                //            ).ToList(),
+                //        ManoDeObra = stateApp.ManPowerVM.ManPower.Select(
+                //            resource => new HumanResource{
+                //                RecursoId = resource.Recurso.Id,
+                //                TipoRecursoId = resource.TipoRecurso.Id
+                //            }).ToList(),
+                //        //por el momento se toma solo de uno ya que actualmente la logica de negocio agrega lo mismo a todos
+                //        Viaticos = stateApp.IndirectsVM.OtherIndirectsInstaller.Select(
+                //            viatico=> new Viatico { 
+                //                Concepto = viatico.Concepto, 
+                //                Cantidad = viatico.Cantidad, 
+                //                PrecioUnitario = viatico.PrecioUnitario, 
+                //                PoliticaViaticosId = viatico.PoliticaViaticosId
+                //            }).ToList(),
+                //    };
+
+                //version para contemplar nulos
+                quote = new QuoteDetailModel
+                {
+                    CotizacionId = 0,
+                    PT = stateApp?.CompleteDuctVm?.PT,
+                    NombreEjecutivo = stateApp?.CompleteDuctVm?.ExecutiveName,
+                    TipoLaminaId = stateApp?.CompleteDuctVm?.SheetTypeId ?? 0,
+                    PropositoId = stateApp?.CompleteDuctVm?.PurposeId ?? 0,
+                    Diametro = "24\"",
+                    SiteRef = "VERS",
+                    NecesitaAspersor = stateApp?.CompleteDuctVm?.NeedSprinkler ?? false,
+                    NecesitaSistemaDD = stateApp?.CompleteDuctVm?.NeedDesinfectionSystem ?? false,
+
+                    LocalidadId = stateApp?.FreightVM?.SelectedLocality?.Id ?? 0,
+                    RentabilidadMOId = stateApp?.CompleteDuctVm?.SelectedRentability?.Id ?? 0,
+
+                    NecesitaIzaje = (stateApp?.IndirectsVM?.SelectedIzaje?.Id ?? 0) == 1,
+                    ZonaId = stateApp?.IndirectsVM?.SelectedZone?.Id ?? 0,
+
+                    Niveles = stateApp?.FloorVM?.FloorList?
+                    .Select(floor => new FloorDetailModel
                     {
-                        CotizacionId = 0,
-                        PT = stateApp.CompleteDuctVm.PT,
-                        NombreEjecutivo = stateApp.CompleteDuctVm.ExecutiveName,
-                        TipoLaminaId = stateApp.CompleteDuctVm.SheetTypeId,
-                        PropositoId = stateApp.CompleteDuctVm.PurposeId,
-                        Diametro = "24\"",
-                        SiteRef ="VERS",
-                        NecesitaAspersor = stateApp.CompleteDuctVm.NeedSprinkler,
-                        NecesitaSistemaDD = stateApp.CompleteDuctVm.NeedDesinfectionSystem,
-                        LocalidadId = stateApp.FreightVM.SelectedLocality.Id,
-                        RentabilidadMOId = stateApp.CompleteDuctVm.SelectedRentability.Id,
-                        NecesitaIzaje = stateApp.IndirectsVM.SelectedIzaje.Id == 1,
-                        ZonaId = stateApp.IndirectsVM.SelectedZone.Id,
-                        Niveles = stateApp.FloorVM.FloorList.Select(
-                            floor => new FloorDetailModel
-                            {
-                                TipoNivelId = Convert.ToInt32(floor.Type),
-                                Cantidad = floor.FloorCount,
-                                Altura = floor.FloorHeight,
-                                NecesitaPuerta = floor.NeedGate,
-                                NecesitaChimenea = floor.NeedChimney,
-                                NecesitaAntiImpactos = floor.NeedAntiImpact,
-                                TipoPuertaId = floor.TypeDoor.Id,
-                                TipoDescargaId = Convert.ToInt32(floor.Discharge)
-                            }
-                            ).ToList(),
-                        ManoDeObra = stateApp.ManPowerVM.ManPower.Select(
-                            resource => new HumanResource{
-                                RecursoId = resource.Recurso.Id,
-                                TipoRecursoId = resource.TipoRecurso.Id
-                            }).ToList(),
-                        //por el momento se toma solo de uno ya que actualmente la logica de negocio agrega lo mismo a todos
-                        Viaticos = stateApp.IndirectsVM.OtherIndirectsInstaller.Select(
-                            viatico=> new Viatico { 
-                                Concepto = viatico.Concepto, 
-                                Cantidad = viatico.Cantidad, 
-                                PrecioUnitario = viatico.PrecioUnitario, 
-                                PoliticaViaticosId = viatico.PoliticaViaticosId
-                            }).ToList(),
-                    };
+                        TipoNivelId = Convert.ToInt32(floor?.Type ?? 0),
+                        Cantidad = floor?.FloorCount ?? 0,
+                        Altura = floor?.FloorHeight ?? 0,
+                        NecesitaPuerta = floor?.NeedGate ?? false,
+                        NecesitaChimenea = floor?.NeedChimney ?? false,
+                        NecesitaAntiImpactos = floor?.NeedAntiImpact ?? false,
+                        TipoPuertaId = floor?.TypeDoor?.Id ?? 0,
+                        TipoDescargaId = Convert.ToInt32(floor?.Discharge ?? 0)
+                    })
+                    .ToList() ?? new List<FloorDetailModel>(),
+
+                                ManoDeObra = stateApp?.ManPowerVM?.ManPower?
+                    .Select(resource => new HumanResource
+                    {
+                        RecursoId = resource?.Recurso?.Id ?? 0,
+                        TipoRecursoId = resource?.TipoRecurso?.Id ?? 0
+                    })
+                    .ToList() ?? new List<HumanResource>(),
+
+                                Viaticos = stateApp?.IndirectsVM?.OtherIndirectsInstaller?
+                    .Select(viatico => new Viatico
+                    {
+                        Concepto = viatico?.Concepto,
+                        Cantidad = viatico?.Cantidad ?? 0,
+                        PrecioUnitario = viatico?.PrecioUnitario ?? 0,
+                        PoliticaViaticosId = viatico?.PoliticaViaticosId ?? 0
+                    })
+                    .ToList() ?? new List<Viatico>()
+                };
             }
             catch (Exception ex)
             {

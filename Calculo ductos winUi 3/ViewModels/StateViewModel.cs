@@ -121,12 +121,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 CountDoubleLevels();
                 CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
                 //IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+                await SaveLog("Se realizo calculo de despiece","");
                 await HideLoader("Calculo terminado.");
 
             }
             catch (Exception ex)
             {
-
+                await SaveLog("Ocurrio un error en el calculo del despiece", ex.ToString());
                 await HideLoader(ex.Message,18000);
             }
         }
@@ -180,6 +181,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             await ShowLoader("Cargando información...");
             await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
             ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct, FreightVM.SelectedState);
+            await SaveLog("Se realizo calculo de flete", "");
             await HideLoader("Informacion cargada", 500);
             if (FreightVM.Freight.Price == 0)
                await ShowEmptyDataDialog("Por el momento no se tiene un costo para este destino, favor de contactar con almacén para cotizar.");
@@ -188,11 +190,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
             await ShowLoader("Calculando mano de obra...");
             await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
             IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+            await SaveLog("Se realizo calculo de mano de obra", "");
             await HideLoader("Calculo terminado", 500);
         }
         public async Task CalculateIndirects(object sender, RoutedEventArgs e) {
             await ShowLoader("Calculando indirectos...");
             await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability,FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+            await SaveLog("Se realizo calculo de indirectos", "");
             await HideLoader("Calculo terminado", 500);
         }
         private async Task InitializeAsync()
@@ -360,11 +364,29 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
             catch (Exception ex)
             {
-
+                await SaveLog("Ocurrio un error al tratar de guardar la cotizacion", ex.ToString());
                 await HideLoader("Ocurrio un erro al guardar los datos: "+ex.Message,18000);
             }
             
 
+        }
+        private async Task SaveLog(string message,string trace)
+        {           
+            try
+            {
+                var quote = this.MapStateAppToQuoteDetail();
+                var logParam = new LogModel();
+                logParam.stateApp = quote;
+                logParam.message = message;
+                logParam.trace = trace;
+                logParam.host = Environment.MachineName;
+                var response = await Client.PostAsync<LogModel, object>("Log", logParam);
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         #endregion
 

@@ -287,8 +287,8 @@ namespace Calculo_ductos_winUi_3
             if (StateApp.IndirectsVM.SelectedZone == null)
                 validations.Add("No se ha seleccionado zona para indirectos, por favor revísalo.");
 
-            if (StateApp.IndirectsVM.SelectedIzaje == null)
-                validations.Add("No se ha seleccionado izaje, por favor revísalo.");
+            //if (StateApp.IndirectsVM.SelectedIzaje == null)
+            //    validations.Add("No se ha seleccionado izaje, por favor revísalo.");
 
             
 
