@@ -104,6 +104,7 @@ namespace CotizadorVerticalApi.Services
                 response.Data = quote;
                 response.StatusCode = 200;
                 response.Message = "Éxito";
+                log.Info($"Se consulto la cotizacion: {JsonConvert.SerializeObject(quote)}");
             }
             catch (Exception ex)
             {
