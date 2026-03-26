@@ -649,10 +649,14 @@ namespace Calculo_ductos_winUi_3.Services
                     {
                         //ropa c4
                         case "B872520": count = c4Count; break;
-                        ////puerta UL derecha
+                        ////puerta UL derecha c/cerradura
                         case "B301057": 
-                        ////puerta UL izquierda 
+                        ////puerta UL derecha s/cerradura
+                        case "B301056": 
+                        ////puerta UL izquierda c/cerradura
                         case "B301055": 
+                        ////puerta UL izquierda s/cerradura
+                        case "B301044": 
                         ////puerta Inoxidable derecha
                         case "B301080": 
                         ////puerta Inoxidable izquierda

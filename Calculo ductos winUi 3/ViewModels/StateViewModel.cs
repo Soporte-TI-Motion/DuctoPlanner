@@ -120,9 +120,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 DiferenceFloors();
                 CountDoubleLevels();
                 CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
-                //IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+                await RecalcState();
+
                 await SaveLog("Se realizo calculo de despiece","");
                 await HideLoader("Calculo terminado.");
+                
 
             }
             catch (Exception ex)
@@ -206,6 +208,24 @@ namespace Calculo_ductos_winUi_3.ViewModels
             await LoadQuotesAsync();
             await HideLoader("Datos cargados.");
             
+        }
+
+        private async Task RecalcState()
+        {
+            if (FreightVM.Freight.FreightId > 0)
+            {
+                await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
+            }
+            if (ManPowerVM.ManPower.Count > 0)
+            {
+                ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct, FreightVM.SelectedState);
+                await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
+                IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+            }
+            if (IndirectsVM.IndirectsInstallers.Count > 0)
+            {
+                await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability, FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+            }
         }
 
         #region Api
@@ -345,8 +365,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 Trace.WriteLine($"[Quotes Load Error]: {ex.Message}");
 
             }
-        }
-       
+        }       
         private async Task SaveState() 
         {
             await ShowLoader("Guardando datos...");

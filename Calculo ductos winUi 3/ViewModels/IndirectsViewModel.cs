@@ -300,7 +300,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             if(!isLocalProject)
             if (SelectedTransportType.Id == 1)
             {
-                foreach (var indirect in AvailableMandatoryIndirects.Where(p => p.Concept.Contains("casa") && p.ZoneId == SelectedZone.Id).ToList())
+                foreach (var indirect in AvailableMandatoryIndirects.Where(p => (p.Concept.Contains("casa")|| p.Concept.Contains("Hotel")) && p.ZoneId == SelectedZone.Id).ToList())
                 {
                     var newIndirectInstaller = new IndirectsModel
                     {
