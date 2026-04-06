@@ -128,6 +128,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public async Task CalculateManPower(CatalogRentabilityModel rentability)
         {
             Subtotals.Clear ();
+            UpdateEffectiveDaysToMO();
             foreach (var model in ManPower) {
                 Subtotals.Add(new SubtotalHumaResource {Descripcion = model.Recurso.Description, Subtotal = model.PrecioTotal });
             }
@@ -185,6 +186,14 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private void RemoveResource(Guid uuid)
         {
             ManPower.Remove(ManPower.FirstOrDefault(x => x.Uuid == uuid));
+        }
+        private void UpdateEffectiveDaysToMO()
+        {
+            foreach (var human in ManPower)
+            {
+                human.JornadasEfectivas = human.Recurso.Id != 1 ? EfectiveWorkDays.TotalWorkDays + 3 : EfectiveWorkDays.TotalWorkDays;
+                human.DiasNoLaborales = human.TipoRecurso.Id == 1 ? human.JornadasEfectivas / 7 : 0;
+            }
         }
         #endregion
     }
