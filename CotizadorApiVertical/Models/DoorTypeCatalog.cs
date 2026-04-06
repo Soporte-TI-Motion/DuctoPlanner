@@ -76,6 +76,13 @@
         public decimal Monto { get; set; }
         public bool EsObligatorio { get; set; }
         public bool EsObligatorioOpcional { get; set; }
+        public int UbicacionId { get; set; }
+        public string Ubicacion { get; set; }
+        public int RedondeoId { get; set; }
+        public string Redondeo { get; set; }
+        public string Base { get; set; }
+        public int Multiplicador { get; set; }
+        public int Divisor { get; set; }
     }
     public class ZoneCatalog
     {
