@@ -99,6 +99,13 @@ namespace Calculo_ductos_winUi_3.Models
         public decimal Cost { get; set; }
         public bool IsMandatory { get; set; }
         public bool IsOptionalMandatory { get; set; }
+        public int LocationId { get; set; }
+        public string Location { get; set; }
+        public int RoundingId { get; set; }
+        public string Rounding { get; set; }
+        public string Base { get; set; }
+        public int Multiplier { get; set; }
+        public int Divider { get; set; }
     }
     public class CatalogZoneModel
     {
