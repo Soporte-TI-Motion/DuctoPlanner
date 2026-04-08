@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.AppService;
+using Windows.Graphics.DirectX.Direct3D11;
 
 namespace Calculo_ductos_winUi_3.ViewModels
 {
@@ -229,14 +230,20 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
             TotalEfectiveDaysInstaller = _ManPowerVm.EfectiveWorkDays.TotalWorkDays;
             TotalEfectiveDaysSupervisor = _ManPowerVm.EfectiveWorkDays.TotalWorkDays + 3;
+
             //TotalNoWorkDaysInstaller = _ManPowerVm.ManPower.Where(m => m.Recurso.Id == 1).Sum(m => m.DiasNoLaborales);
+
             TotalNoWorkDaysInstaller = _ManPowerVm.EfectiveWorkDays.NoWorkDays;
             TotalNoWorkDaysSupervisor = TotalEfectiveDaysSupervisor / 7;
+
             TotalWeeks = (int)Math.Ceiling(majorEfectiveWorkDays / 7.0);
             TotalFloors = duct.floors.Count;
             TotalEvents = GetTotalEvents(duct.floors);
+
             TotalForeingResourceInstaller = _ManPowerVm.ManPower.Where(r => r.TipoRecurso.Id == 1 && r.Recurso.Id == 1).Count();
+
             TotalResourceInstaller = _ManPowerVm.ManPower.Where(r => r.Recurso.Id == 1).Count();
+
             HasDoubleHeightLevels = duct.floors.Where(p => p.Height >= 4.5m).ToList().Count > 0;
         }
         //public decimal selectedTrasnportCost { get => _selectedTrasnportCost; set {SetProperty(ref _selectedTrasnportCost, value); } }
@@ -252,6 +259,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             IndirectsSecurity.Clear();
             IndirectsVisit.Clear();
             MinorTool.Clear();
+
             //MajorTool.Clear();
             SubTotalCostInstallers = 0;
             SubTotalCostSupervisor = 0;
@@ -261,77 +269,66 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalCostSupervisor = 0;
             TotalCostSecurity = 0;
             TotalCostVisit = 0;
+
             //var mandatory = AvailableIndirects.Where(p => p.ZoneId == SelectedZone.Id && p.IsMandatory).ToList();
-            foreach (var indirect in AvailableMandatoryIndirects.Where(i => !i.IsOptionalMandatory).ToList())
+            foreach (var hresource in _ManPowerVm.ManPower)
             {
-                var newIndirectInstaller = new IndirectsModel
+                //aqui se aplica la regla de foraneo o local
+                var lista = AvailableMandatoryIndirects.Where(i => i.Location.ToLower().Equals(hresource.TipoRecurso.Description.ToLower()) && !i.IsOptionalMandatory).ToList();
+                foreach (var indirect in lista)
                 {
-                    Concepto = indirect.Concept,
-                    Cantidad = ObtenerCantidad($"{indirect.Concept}i"),
-                    PrecioUnitario = indirect.Cost
-                };
-                var newIndirectSupervisor = new IndirectsModel
-                {
-                    Concepto = indirect.Concept,
-                    Cantidad = ObtenerCantidad($"{indirect.Concept}s"),
-                    PrecioUnitario = indirect.Cost
-                };
-                var newIndirectSecurity = new IndirectsModel
-                {
-                    Concepto = indirect.Concept,
-                    Cantidad = ObtenerCantidad($"{indirect.Concept}se"),
-                    PrecioUnitario = indirect.Cost
-                };
-                var newIndirectVisit = new IndirectsModel
-                {
-                    Concepto = indirect.Concept,
-                    Cantidad = ObtenerCantidad($"{indirect.Concept}v"),
-                    PrecioUnitario = indirect.Cost
-                };
-                                   
-                    IndirectsInstallers.Add(newIndirectInstaller);                    
-                    IndirectsSupervisor.Add(newIndirectSupervisor);                    
-                    IndirectsSecurity.Add(newIndirectSecurity);
-                    if (!newIndirectVisit.Concepto.Contains("Hotel"))
-                        IndirectsVisit.Add(newIndirectVisit);                     
-                
-                
-            }
-            if(!isLocalProject)
-            if (SelectedTransportType.Id == 1)
-            {
-                foreach (var indirect in AvailableMandatoryIndirects.Where(p => (p.Concept.Contains("casa")|| p.Concept.Contains("Hotel")) && p.ZoneId == SelectedZone.Id).ToList())
-                {
-                    var newIndirectInstaller = new IndirectsModel
+                    var cantidadTotal = ObtenerCantidadBase(indirect, hresource);
+
+
+                    var newIndirect = new IndirectsModel
                     {
+                        PoliticaViaticosId = indirect.Id,
                         Concepto = indirect.Concept,
-                        Cantidad = ObtenerCantidad($"{indirect.Concept}i"),
+                        Cantidad = cantidadTotal,
                         PrecioUnitario = indirect.Cost
                     };
-                    var newIndirectSupervisor = new IndirectsModel
+
+                    switch (hresource.Recurso.Description)
                     {
-                        Concepto = indirect.Concept,
-                        Cantidad = ObtenerCantidad($"{indirect.Concept}s"),
-                        PrecioUnitario = indirect.Cost
-                    };
-                    var newIndirectSecurity = new IndirectsModel
-                    {
-                        Concepto = indirect.Concept,
-                        Cantidad = ObtenerCantidad($"{indirect.Concept}se"),
-                        PrecioUnitario = indirect.Cost
-                    };
-                    var newIndirectVisit = new IndirectsModel
-                    {
-                        Concepto = indirect.Concept,
-                        Cantidad = ObtenerCantidad($"{indirect.Concept}v"),
-                        PrecioUnitario = indirect.Cost
-                    };
-                    IndirectsInstallers.Add(newIndirectInstaller);
-                    IndirectsSupervisor.Add(newIndirectSupervisor);
-                    IndirectsSecurity.Add(newIndirectSecurity);
-                    IndirectsVisit.Add(newIndirectVisit);
+                        case "Técnico instalador": AddIndirect(IndirectsInstallers,newIndirect); break;
+                        case "Supervisor de obra": AddIndirect(IndirectsSupervisor,newIndirect); break;
+                        case "Encargado de seguridad": AddIndirect(IndirectsSecurity,newIndirect); break;
+                        case "Visita técnica": if (!indirect.Concept.ToLower().Contains("hotel")) AddIndirect(IndirectsVisit,newIndirect); break;
+                    }
+
+
                 }
+                //agregamos el transporte de casa-aereopuerto aereopuerto-casa
+                if (!isLocalProject)
+                    if (TieneVuelo())
+                    {
+                        var lista2 = AvailableMandatoryIndirects.Where(p => (p.Concept.Contains("casa") && p.ZoneId == SelectedZone.Id)).ToList();
+                        foreach (var indirect in lista2)                        
+                        {
+                            var cantidadTotal = ObtenerCantidadBase(indirect, hresource);
+
+                            var newIndirect = new IndirectsModel
+                            {
+                                PoliticaViaticosId = indirect.Id,
+                                Concepto = indirect.Concept,
+                                Cantidad = cantidadTotal,
+                                PrecioUnitario = indirect.Cost
+                            };
+
+                            switch (hresource.Recurso.Description)
+                            {
+                                case "Técnico instalador": AddIndirect(IndirectsInstallers, newIndirect); break;
+                                case "Supervisor de obra": AddIndirect(IndirectsSupervisor, newIndirect); break;
+                                case "Encargado de seguridad": AddIndirect(IndirectsSecurity, newIndirect); break;
+                                case "Visita técnica": AddIndirect(IndirectsVisit, newIndirect); break;
+                            }
+                        }
+                    }
+
             }
+            
+            
+            
 
             CalculateTools();
 
@@ -357,6 +354,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalPriceStore = SubTotalPriceStore * rentability.Rentability;
             TotalCostTool = SubTotalCostTool * rentability.Rentability;
         }
+        
         public void RecalculateRentability(CatalogRentabilityModel rentability)
         {
             TotalCostInstallers = SubTotalCostInstallers * rentability.Rentability;
@@ -370,6 +368,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             AvailableZones = new ObservableCollection<CatalogZoneModel>(zones);
             AllTools = new ObservableCollection<CatalogToolModel>(tools);
             AvailableMajorTool = new ObservableCollection<CatalogToolModel>(tools.Where(p=>p.Group==1).ToList());
+            
         }
         public void FilterAvailableIndirects()
         {
@@ -384,6 +383,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public ICommand AddTransportCommand { get; }
         #endregion
         #region Private Methods
+        public void AddIndirect(ObservableCollection<IndirectsModel> list, IndirectsModel indirect)
+        {
+            var item = list.FirstOrDefault(x => x.PoliticaViaticosId == indirect.PoliticaViaticosId);
+            if (item == null)
+                list.Add(indirect);
+            else
+            {
+                item.Cantidad += indirect.Cantidad;
+            }
+        }
         public void AddIndirect()
         {
             var indirect = new IndirectsModel
@@ -405,25 +414,26 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public void AddTransport()
         {
             var politicaViaticosId = SelectedTransportType.Id == 1 ? SelectedZone.Id == 1 ? 5 : 19 : SelectedZone.Id == 1 ? 6 : 20;
+            //var politicaViaticosId = SelectedTransportType.IdCatalog;
             var indirectInstaller = new IndirectsModel
             {
                 Concepto = SelectedTransportType.Description,
                 PrecioUnitario = Convert.ToDecimal(selectedTrasnportCost),
-                Cantidad = TotalForeingResourceInstaller,
+                Cantidad = TotalForeingResourceInstaller * TotalEvents,
                 PoliticaViaticosId = politicaViaticosId,
             };
             var indirectSupervisor = new IndirectsModel
             {
                 Concepto = SelectedTransportType.Description,
                 PrecioUnitario = Convert.ToDecimal(selectedTrasnportCost),
-                Cantidad = 1,
+                Cantidad = 1 * TotalEvents,
                 PoliticaViaticosId = politicaViaticosId,
             };
             var indirectSecurity = new IndirectsModel
             {
                 Concepto = SelectedTransportType.Description,
                 PrecioUnitario = Convert.ToDecimal(selectedTrasnportCost),
-                Cantidad = 1,
+                Cantidad = 1 * TotalEvents,
                 PoliticaViaticosId = politicaViaticosId,
             };
             var indirectVisit = new IndirectsModel
@@ -568,6 +578,25 @@ namespace Calculo_ductos_winUi_3.ViewModels
             //    MajorTool.Add(new IndirectsModel { Concepto = "Andamio", Cantidad = TotalWeeks, PrecioUnitario = 2500m });
             //if (SelectedIzaje.Id == 1)
             //    MajorTool.Add(new IndirectsModel { Concepto = "Izaje", Cantidad = TotalWeeks, PrecioUnitario = TotalFloors <= 20 ? 2500m : 5000m });
+        }
+        private bool TieneVuelo()
+        {
+            var vuelo = OtherIndirectsInstaller.Where(indirect=>indirect.Concepto.Contains("Aereo")).Count();
+            return vuelo > 0;
+        }
+        private int ObtenerCantidadBase(CatalogIndirectModel indirect, HumanResourceModel hresource)
+        {
+            var basedias = 0;
+            var cantidadTotal = 0;
+            switch (indirect.Base)
+            {
+                case "LABORAL": basedias = hresource.JornadasEfectivas; break;
+                case "TOTAL": basedias = hresource.JornadasEfectivas + hresource.DiasNoLaborales; break;
+                case "EVENTO": basedias = TotalEvents; break;
+                default: basedias = 1; break;
+            }
+            cantidadTotal = (basedias * indirect.Multiplier) / indirect.Divider;
+            return cantidadTotal;
         }
         #endregion
     }

@@ -143,7 +143,8 @@ namespace Calculo_ductos_winUi_3.Services
                     })
                     .ToList() ?? new List<FloorDetailModel>(),
 
-                                ManoDeObra = stateApp?.ManPowerVM?.ManPower?
+                     ManoDeObra = stateApp?.ManPowerVM?.ManPower?
+                    .Where(resource=> resource.TipoRecurso.Id!=0)
                     .Select(resource => new HumanResource
                     {
                         RecursoId = resource?.Recurso?.Id ?? 0,
@@ -154,7 +155,7 @@ namespace Calculo_ductos_winUi_3.Services
                                 Viaticos = stateApp?.IndirectsVM?.OtherIndirectsInstaller?
                     .Select(viatico => new Viatico
                     {
-                        Concepto = viatico?.Concepto,
+                        Concepto = viatico?.Concepto ?? "",
                         Cantidad = viatico?.Cantidad ?? 0,
                         PrecioUnitario = viatico?.PrecioUnitario ?? 0,
                         PoliticaViaticosId = viatico?.PoliticaViaticosId ?? 0

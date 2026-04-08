@@ -96,6 +96,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public ObservableCollection<CatalogResourceModel> AvailableResources { get; set; }
         public ObservableCollection<CatalogResourceTypeModel> AvailableResourceTypes { get; set; }
         public ObservableCollection<SubtotalHumaResource> Subtotals { get; set; }
+        public string TypeLocation { get; set; }
         
         public decimal TotalPriceManPower{ get => _TotalPriceManPower; set {SetProperty(ref _TotalPriceManPower, value);}}
         public decimal SubTotalPriceManPower{ get => _SubTotalPriceManPower; set {SetProperty(ref _SubTotalPriceManPower, value);}}
@@ -129,10 +130,24 @@ namespace Calculo_ductos_winUi_3.ViewModels
         {
             Subtotals.Clear ();
             UpdateEffectiveDaysToMO();
+            var visitHResource = new HumanResourceModel();
+            visitHResource.JornadasEfectivas = 1;
+            visitHResource.Recurso.Description = "Visita técnica";
+            visitHResource.TipoRecurso.Description = TypeLocation;
+            visitHResource.Recurso.SalaryPerWorkday = AvailableResources.FirstOrDefault(p => p.Id == 2).SalaryPerWorkday;
+            var item = ManPower.FirstOrDefault(x => x.Recurso.Description.Equals("Visita técnica"));
+
+            if (item != null)
+                ManPower.Remove(item);
+            ManPower.Add(visitHResource);
+
+
+
+
             foreach (var model in ManPower) {
                 Subtotals.Add(new SubtotalHumaResource {Descripcion = model.Recurso.Description, Subtotal = model.PrecioTotal });
             }
-            Subtotals.Add(new SubtotalHumaResource { Descripcion = "Visita técnica", Subtotal = AvailableResources.Where(p => p.Id == 2).FirstOrDefault().SalaryPerWorkday});
+            //Subtotals.Add(new SubtotalHumaResource { Descripcion = "Visita técnica", Subtotal = AvailableResources.Where(p => p.Id == 2).FirstOrDefault().SalaryPerWorkday});
 
             SubTotalPriceManPower = Subtotals.Select(p => p.Subtotal).Sum();
             TotalPriceManPower = SubTotalPriceManPower * rentability.Rentability;
@@ -165,8 +180,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
             EfectiveWorkDays.WorkDaysBase = Convert.ToInt32(Math.Ceiling((duct.floors.Count ) / 2.5));
             EfectiveWorkDays.WorkDaysDobleFloors = duct.floors.Where(p => p.Height >= 4.5m ).ToList().Count * 0.5;
             EfectiveWorkDays.WorkDaysExtraFloors = duct.floors.Count > 10 ? 1 : 0;
-            EfectiveWorkDays.WorkDayForeign = entidad.Name.Equals("CIUDAD DE MÉXICO") ? 0 : 1;
+            EfectiveWorkDays.WorkDayForeign = entidad.Name.Contains("MÉXICO") ? 0 : 1;
             EfectiveWorkDays.NoWorkDays = EfectiveWorkDays.WorkDaysBase / 7;
+            TypeLocation = !entidad.Name.Contains("MÉXICO") ? "Foráneo" : "Local";
         }
         #endregion
         #region Commands
