@@ -648,6 +648,7 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit) 
                     {
                         //ropa c4
+                        case "B101110":
                         case "B872520": count = c4Count; break;
                         ////puerta UL derecha c/cerradura
                         case "B301057": 
@@ -670,7 +671,8 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit)
                     {
                         //basura c4
-                        case "B101110": count = c4Count; break;
+                        case "B101110":
+                        case "B872520": count = c4Count; break;
                         ////puerta Pintada
                         case "B301061":
                         ////puerta Inoxidable

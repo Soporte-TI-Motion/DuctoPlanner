@@ -20,8 +20,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
     public class StateViewModel 
     {
         #region Fields
-        //private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
-        private readonly string _baseUrl = "http://localhost:8092/CotizadorApiVertical/Api/";
+        private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
+        //private readonly string _baseUrl = "http://localhost:8092/CotizadorApiVertical/Api/";
         private List<CatalogRowModel> PurposeCatalog;
         private List<CatalogRowModel> DoorTypeCatalog;
         private List<CatalogRowModel> SheetTypeCatalog;
@@ -60,7 +60,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
             };
             FreightVM = new CalculateFreightViewModel(Client);
             ManPowerVM = new ManPowerViewModel();
+            ManPowerVM.IsLocalProject = IsLocalProject;
             IndirectsVM = new IndirectsViewModel(ManPowerVM);
+            IndirectsVM.IsLocalProject= IsLocalProject;
         }
 
         #endregion
@@ -182,7 +184,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         {
             await ShowLoader("Cargando información...");
             await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
-            ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct, FreightVM.SelectedState);
+            ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
             await SaveLog("Se realizo calculo de flete", "");
             await HideLoader("Informacion cargada", 500);
             if (FreightVM.Freight.Price == 0)
@@ -197,7 +199,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public async Task CalculateIndirects(object sender, RoutedEventArgs e) {
             await ShowLoader("Calculando indirectos...");
-            await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability,FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+            await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
             await SaveLog("Se realizo calculo de indirectos", "");
             await HideLoader("Calculo terminado", 500);
         }
@@ -218,13 +220,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
             if (ManPowerVM.ManPower.Count > 0)
             {
-                ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct, FreightVM.SelectedState);
+                ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
                 await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
                 IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
             }
             if (IndirectsVM.IndirectsInstallers.Count > 0)
             {
-                await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability, FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+                await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
             }
         }
 
@@ -344,7 +346,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
 
                     await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
-                    ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct,selectedState);
+                    ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
                     CompleteDuctVm.SelectedRentability = CompleteDuctVm.AvailableRentabilities.Where(r => r.Id == quote.RentabilidadMOId).FirstOrDefault();
                     ManPowerVM.ManPower = quote.MapQuoteDetailManPower(ManPowerVM);
 
@@ -357,7 +359,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                         var selectdTransport = IndirectsVM.AvailableTransportTypes.Where(t => t.Id == typeTransport).FirstOrDefault();
                         IndirectsVM.SelectedTransportType = selectdTransport;
                     }
-                        await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability, FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+                        await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
                 }
             }
             catch (Exception ex)
@@ -406,6 +408,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
             {
 
             }
+        }
+        private bool IsLocalProject()
+        {
+            string[] municipios = { "TOLUCA", "ATLACOMULCO", "TEXCOCO" };
+            bool result = false;
+            result = FreightVM.SelectedState.Name.Contains("MÉXICO") ? (municipios.Any(m => FreightVM.SelectedMunicipality.Name.Contains(m)) ? false : true) : false;
+            return result;
         }
         #endregion
 

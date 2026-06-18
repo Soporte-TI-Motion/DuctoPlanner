@@ -80,7 +80,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             set {
                 _PurposeId = value;
                 OnPropertyChanged();
-                FilterKits();
+                
             }
         }
         public string ExecutiveName 
@@ -106,6 +106,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             set {
                 _SheetTypeId = value;
                 OnPropertyChanged();
+                FilterKits();
             }
         }
         public int QuoteVersion 
@@ -311,6 +312,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private void FilterKits()
         {
             AvailableKits.Clear();
+            //var filtrados = AllKits.Where(p => p.PurposeId == PurposeId).ToList();
+            var filtrados = AllKits.Where(p => p.SheetTypeId == SheetTypeId || p.SheetTypeId == 2).ToList();
+
+            foreach (var item in filtrados)
+                AvailableKits.Add(item);
+        }
+        private void FilterKitsSheet()
+        {
+            AvailableKits.Clear();
+
             var filtrados = AllKits.Where(p => p.PurposeId == PurposeId).ToList();
 
             foreach (var item in filtrados)

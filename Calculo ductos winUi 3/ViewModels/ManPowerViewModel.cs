@@ -123,6 +123,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public string TotalPriceVisitFormatted => $"Precio: $ {TotalPriceManPowerVisit:N2}";
         public string SubTotalPriceVisitFormatted => $"Costo: $ {SubTotalPriceManPowerVisit:N2}";
 
+        public IsLocalProjectDelegate IsLocalProject { get; set; }
         #endregion
         #region Public Methods
 
@@ -175,14 +176,17 @@ namespace Calculo_ductos_winUi_3.ViewModels
             AvailableResources = new ObservableCollection<CatalogResourceModel>(resources);
             AvailableResourceTypes = new ObservableCollection<CatalogResourceTypeModel>(resourceTypes);
         }
-        public void CalculateWorkDays(Duct duct,CatalogRowEntityModel entidad)
+        public void CalculateWorkDays(Duct duct)
         {
+            string[] municipios = { "TOLUCA", "ATLACOMULCO", "TEXCOCO" };
+
             EfectiveWorkDays.WorkDaysBase = Convert.ToInt32(Math.Ceiling((duct.floors.Count ) / 2.5));
             EfectiveWorkDays.WorkDaysDobleFloors = duct.floors.Where(p => p.Height >= 4.5m ).ToList().Count * 0.5;
             EfectiveWorkDays.WorkDaysExtraFloors = duct.floors.Count > 10 ? 1 : 0;
-            EfectiveWorkDays.WorkDayForeign = entidad.Name.Contains("MÉXICO") ? 0 : 1;
+            EfectiveWorkDays.WorkDayForeign = IsLocalProject() ? 0 : 1;
             EfectiveWorkDays.NoWorkDays = EfectiveWorkDays.WorkDaysBase / 7;
-            TypeLocation = !entidad.Name.Contains("MÉXICO") ? "Foráneo" : "Local";
+            TypeLocation = IsLocalProject() ? "Local": "Foráneo";
+
         }
         #endregion
         #region Commands
@@ -211,6 +215,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 human.DiasNoLaborales = human.TipoRecurso.Id == 1 ? human.JornadasEfectivas / 7 : 0;
             }
         }
+        #endregion
+        #region Delegates
+        public delegate bool IsLocalProjectDelegate();
+
         #endregion
     }
 }

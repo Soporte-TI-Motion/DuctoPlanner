@@ -246,10 +246,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
             HasDoubleHeightLevels = duct.floors.Where(p => p.Height >= 4.5m).ToList().Count > 0;
         }
-        //public decimal selectedTrasnportCost { get => _selectedTrasnportCost; set {SetProperty(ref _selectedTrasnportCost, value); } }
+        //public decimal selectedTrasnportCost { get => _selectedTrasnportCost; set {SetProperty(ref _selectedTrasnportCost, value); } 
+        public IsLocalProjectDelegate IsLocalProject { get; set; }
         #endregion
         #region Public Methods
-        public async Task CalculateIndirects(CatalogRentabilityModel rentability, bool isLocalProject)
+        public async Task CalculateIndirects(CatalogRentabilityModel rentability)
         {
             //int TotalEfectiveDays = _ManPowerVm.EfectiveWorkDays.TotalWorkDays;
             //int TotalWeeks = (int)Math.Ceiling(_ManPowerVm.EfectiveWorkDays.TotalWorkDays / 7.0);
@@ -299,7 +300,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
                 }
                 //agregamos el transporte de casa-aereopuerto aereopuerto-casa
-                if (!isLocalProject)
+                if (!IsLocalProject())
                     if (TieneVuelo())
                     {
                         var lista2 = AvailableMandatoryIndirects.Where(p => (p.Concept.Contains("casa") && p.ZoneId == SelectedZone.Id)).ToList();
@@ -581,7 +582,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         private bool TieneVuelo()
         {
-            var vuelo = OtherIndirectsInstaller.Where(indirect=>indirect.Concepto.Contains("Aereo")).Count();
+            var vuelo = OtherIndirectsInstaller.Where(indirect=>indirect.Concepto.Contains("Aéreo")).Count();
             return vuelo > 0;
         }
         private int ObtenerCantidadBase(CatalogIndirectModel indirect, HumanResourceModel hresource)
@@ -598,6 +599,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
             cantidadTotal = (basedias * indirect.Multiplier) / indirect.Divider;
             return cantidadTotal;
         }
+        #endregion
+        #region Delegates
+        public delegate bool IsLocalProjectDelegate();
+
         #endregion
     }
 }

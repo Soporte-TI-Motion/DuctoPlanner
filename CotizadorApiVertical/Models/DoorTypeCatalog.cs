@@ -101,6 +101,7 @@
         public decimal Precio { get; set; }
         public string Moneda { get; set; }
         public decimal TipoCambio { get; set; }
+        public int TipoLaminaId { get; set; }
 
     }
     public class ToolCatalog

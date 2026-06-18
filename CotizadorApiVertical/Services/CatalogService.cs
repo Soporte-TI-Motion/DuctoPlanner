@@ -70,7 +70,7 @@ namespace CotizadorApiVertical.Services
                         Multiplier = p.Multiplicador, 
                         Divider = p.Divisor }).ToList(),
                     Zones = Zones.Select(p => new CatalogZoneModel { Id = p.ZonaId, Description = p.Descripcion}).ToList(),
-                    Kits = Kits.Select(p => new CatalogKitModel { Id = p.KitId , Description = p.Descripcion, Item = p.Item, TypeKitId = p.TipoKitId, TypeKit = p.TipoKit,PurposeId = p.PropositoId,Purpose=p.Proposito, Price=p.Precio,Currency=p.Moneda,ExchangeRate=p.TipoCambio}).ToList(),
+                    Kits = Kits.Select(p => new CatalogKitModel { Id = p.KitId , Description = p.Descripcion, Item = p.Item, TypeKitId = p.TipoKitId, TypeKit = p.TipoKit,PurposeId = p.PropositoId,Purpose=p.Proposito, Price=p.Precio,Currency=p.Moneda,ExchangeRate=p.TipoCambio, SheetTypeId=p.TipoLaminaId}).ToList(),
                     Tools = tools.Select(p => new CatalogTool { Id = p.HerramientaId, Description = p.Descripcion, Price = p.PrecioUnitario,IsMandatory = p.EsObligatorio, Group = p.Grupo, Periodicity = p.Periodicidad}).ToList(),
                 };
                 response.Data = catalogs;

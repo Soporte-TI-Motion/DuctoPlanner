@@ -109,6 +109,7 @@ namespace CotizadorApiVertical.Models
         public decimal Price { get; set; }
         public string Currency { get; set; }
         public decimal ExchangeRate { get; set; }
+        public int SheetTypeId { get; set; }
     }
     public class CatalogTool
     {
