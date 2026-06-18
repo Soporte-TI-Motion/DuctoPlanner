@@ -37,9 +37,9 @@
                     <!-- Botones principales en la barra -->
                     <AppBarButton Icon="Document" Label="Nuevo" Click="NewFileButton_Click"/>
 
-                    <AppBarButton x:Name="OpenButton" Icon="Folder" Label="Abrir">
-                        
+                    <AppBarButton x:Name="OpenButton" Icon="Folder" Label="Abrir" Click="OpenButton_Click">
                     </AppBarButton>
+
                     <AppBarButton Icon="Save" Label="Guardar" Click="SaveButton_Click"/>
                     <AppBarButton Icon="Share" Label="Exportar" Click="ExportButton_Click" />
 

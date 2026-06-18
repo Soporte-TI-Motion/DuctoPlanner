@@ -96,6 +96,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public ObservableCollection<CatalogResourceModel> AvailableResources { get; set; }
         public ObservableCollection<CatalogResourceTypeModel> AvailableResourceTypes { get; set; }
         public ObservableCollection<SubtotalHumaResource> Subtotals { get; set; }
+        public string TypeLocation { get; set; }
         
         public decimal TotalPriceManPower{ get => _TotalPriceManPower; set {SetProperty(ref _TotalPriceManPower, value);}}
         public decimal SubTotalPriceManPower{ get => _SubTotalPriceManPower; set {SetProperty(ref _SubTotalPriceManPower, value);}}
@@ -122,16 +123,32 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public string TotalPriceVisitFormatted => $"Precio: $ {TotalPriceManPowerVisit:N2}";
         public string SubTotalPriceVisitFormatted => $"Costo: $ {SubTotalPriceManPowerVisit:N2}";
 
+        public IsLocalProjectDelegate IsLocalProject { get; set; }
         #endregion
         #region Public Methods
 
         public async Task CalculateManPower(CatalogRentabilityModel rentability)
         {
             Subtotals.Clear ();
+            UpdateEffectiveDaysToMO();
+            var visitHResource = new HumanResourceModel();
+            visitHResource.JornadasEfectivas = 1;
+            visitHResource.Recurso.Description = "Visita técnica";
+            visitHResource.TipoRecurso.Description = TypeLocation;
+            visitHResource.Recurso.SalaryPerWorkday = AvailableResources.FirstOrDefault(p => p.Id == 2).SalaryPerWorkday;
+            var item = ManPower.FirstOrDefault(x => x.Recurso.Description.Equals("Visita técnica"));
+
+            if (item != null)
+                ManPower.Remove(item);
+            ManPower.Add(visitHResource);
+
+
+
+
             foreach (var model in ManPower) {
                 Subtotals.Add(new SubtotalHumaResource {Descripcion = model.Recurso.Description, Subtotal = model.PrecioTotal });
             }
-            Subtotals.Add(new SubtotalHumaResource { Descripcion = "Visita técnica", Subtotal = AvailableResources.Where(p => p.Id == 2).FirstOrDefault().SalaryPerWorkday});
+            //Subtotals.Add(new SubtotalHumaResource { Descripcion = "Visita técnica", Subtotal = AvailableResources.Where(p => p.Id == 2).FirstOrDefault().SalaryPerWorkday});
 
             SubTotalPriceManPower = Subtotals.Select(p => p.Subtotal).Sum();
             TotalPriceManPower = SubTotalPriceManPower * rentability.Rentability;
@@ -159,13 +176,17 @@ namespace Calculo_ductos_winUi_3.ViewModels
             AvailableResources = new ObservableCollection<CatalogResourceModel>(resources);
             AvailableResourceTypes = new ObservableCollection<CatalogResourceTypeModel>(resourceTypes);
         }
-        public void CalculateWorkDays(Duct duct,CatalogRowEntityModel entidad)
+        public void CalculateWorkDays(Duct duct)
         {
+            string[] municipios = { "TOLUCA", "ATLACOMULCO", "TEXCOCO" };
+
             EfectiveWorkDays.WorkDaysBase = Convert.ToInt32(Math.Ceiling((duct.floors.Count ) / 2.5));
             EfectiveWorkDays.WorkDaysDobleFloors = duct.floors.Where(p => p.Height >= 4.5m ).ToList().Count * 0.5;
             EfectiveWorkDays.WorkDaysExtraFloors = duct.floors.Count > 10 ? 1 : 0;
-            EfectiveWorkDays.WorkDayForeign = entidad.Name.Equals("CIUDAD DE MÉXICO") ? 0 : 1;
+            EfectiveWorkDays.WorkDayForeign = IsLocalProject() ? 0 : 1;
             EfectiveWorkDays.NoWorkDays = EfectiveWorkDays.WorkDaysBase / 7;
+            TypeLocation = IsLocalProject() ? "Local": "Foráneo";
+
         }
         #endregion
         #region Commands
@@ -186,6 +207,18 @@ namespace Calculo_ductos_winUi_3.ViewModels
         {
             ManPower.Remove(ManPower.FirstOrDefault(x => x.Uuid == uuid));
         }
+        private void UpdateEffectiveDaysToMO()
+        {
+            foreach (var human in ManPower)
+            {
+                human.JornadasEfectivas = human.Recurso.Id != 1 ? EfectiveWorkDays.TotalWorkDays + 3 : EfectiveWorkDays.TotalWorkDays;
+                human.DiasNoLaborales = human.TipoRecurso.Id == 1 ? human.JornadasEfectivas / 7 : 0;
+            }
+        }
+        #endregion
+        #region Delegates
+        public delegate bool IsLocalProjectDelegate();
+
         #endregion
     }
 }

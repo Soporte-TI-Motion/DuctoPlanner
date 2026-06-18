@@ -51,4 +51,11 @@ namespace CotizadorApiVertical.Params
         public int PoliticaViaticosId { get; set; } = 0;
 
     }
+    public class LogParam
+    {
+        public string message { get; set; }
+        public string trace { get; set; }
+        public QuoteParam stateApp { get; set; }
+        public string host { get; set; }
+    }
 }

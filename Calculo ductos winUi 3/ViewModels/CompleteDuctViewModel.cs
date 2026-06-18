@@ -27,8 +27,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private CatalogRentabilityModel _SelectedRentability;
         private ObservableCollection<QuoteModel> _Quotes { get; set; }
         //private int _DischargeTypeId;
-        
-        
+        private ObservableCollection<QuoteModel> _filteredQuotes;
+        private string _searchText;
+        private string _selectedFilter = "PT";
+
+
         public CompleteDuctViewModel() {
             PurposeId = 1;
             ExecutiveName = string.Empty;
@@ -38,6 +41,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
             NeedDesinfetionSystemValue = 1;
             _totalDoubleLevels = 0;
             _SelectedRentability = new CatalogRentabilityModel();
+            _filteredQuotes = new ObservableCollection<QuoteModel>();
+            _Quotes = new ObservableCollection<QuoteModel>();
+            _searchText = string.Empty;
         }
         public void New() {
             PurposeId = 1;
@@ -74,7 +80,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             set {
                 _PurposeId = value;
                 OnPropertyChanged();
-                FilterKits();
+                
             }
         }
         public string ExecutiveName 
@@ -100,6 +106,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             set {
                 _SheetTypeId = value;
                 OnPropertyChanged();
+                FilterKits();
             }
         }
         public int QuoteVersion 
@@ -217,6 +224,72 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ObservableCollection<QuoteModel> FilteredQuotes
+        {
+            get => _filteredQuotes;
+            set  {
+                if (value != _filteredQuotes)
+                {
+                    _filteredQuotes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (value != _searchText)
+                { 
+                    _searchText = value;
+                    Filtrar();
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public List<string> FilterOptions { get; } = new()
+        {
+            "PT",
+            "Ejecutivo"
+        };
+
+        
+        public string SelectedFilter
+        {
+            get => _selectedFilter;
+            set
+            {
+                if (value != _selectedFilter)
+                { 
+                    _selectedFilter = value;
+                    OnPropertyChanged();
+                    Filtrar();
+                }
+            }
+        }
+
+        private void Filtrar()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                FilteredQuotes = new ObservableCollection<QuoteModel>(Quotes);
+                return;
+            }
+
+            var result = Quotes.Where(q =>
+            {
+                return SelectedFilter switch
+                {
+                    "PT" => q.PT?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true,
+                    "Ejecutivo" => q.ExecutiveName?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true,
+                    _ => false
+                };
+            });
+
+            FilteredQuotes = new ObservableCollection<QuoteModel>(result);
+        }
+
         public void LoadCatalogs(List<CatalogKitModel> kits, List<CatalogRentabilityModel> rentabilities)
         {
             AllKits = new ObservableCollection<CatalogKitModel>(kits);
@@ -239,6 +312,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private void FilterKits()
         {
             AvailableKits.Clear();
+            //var filtrados = AllKits.Where(p => p.PurposeId == PurposeId).ToList();
+            var filtrados = AllKits.Where(p => p.SheetTypeId == SheetTypeId || p.SheetTypeId == 2).ToList();
+
+            foreach (var item in filtrados)
+                AvailableKits.Add(item);
+        }
+        private void FilterKitsSheet()
+        {
+            AvailableKits.Clear();
+
             var filtrados = AllKits.Where(p => p.PurposeId == PurposeId).ToList();
 
             foreach (var item in filtrados)

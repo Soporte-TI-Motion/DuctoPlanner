@@ -21,7 +21,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
     {
         #region Fields
         private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
-        //private readonly string _baseUrl = "http://localhost:8081/CotizadorApiVertical/Api/";
+        //private readonly string _baseUrl = "http://localhost:8092/CotizadorApiVertical/Api/";
         private List<CatalogRowModel> PurposeCatalog;
         private List<CatalogRowModel> DoorTypeCatalog;
         private List<CatalogRowModel> SheetTypeCatalog;
@@ -60,7 +60,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
             };
             FreightVM = new CalculateFreightViewModel(Client);
             ManPowerVM = new ManPowerViewModel();
+            ManPowerVM.IsLocalProject = IsLocalProject;
             IndirectsVM = new IndirectsViewModel(ManPowerVM);
+            IndirectsVM.IsLocalProject= IsLocalProject;
         }
 
         #endregion
@@ -120,13 +122,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 DiferenceFloors();
                 CountDoubleLevels();
                 CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
-                //IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+                await RecalcState();
+
+                await SaveLog("Se realizo calculo de despiece","");
                 await HideLoader("Calculo terminado.");
+                
 
             }
             catch (Exception ex)
             {
-
+                await SaveLog("Ocurrio un error en el calculo del despiece", ex.ToString());
                 await HideLoader(ex.Message,18000);
             }
         }
@@ -179,7 +184,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         {
             await ShowLoader("Cargando información...");
             await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
-            ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct, FreightVM.SelectedState);
+            ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
+            await SaveLog("Se realizo calculo de flete", "");
             await HideLoader("Informacion cargada", 500);
             if (FreightVM.Freight.Price == 0)
                await ShowEmptyDataDialog("Por el momento no se tiene un costo para este destino, favor de contactar con almacén para cotizar.");
@@ -188,11 +194,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
             await ShowLoader("Calculando mano de obra...");
             await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
             IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+            await SaveLog("Se realizo calculo de mano de obra", "");
             await HideLoader("Calculo terminado", 500);
         }
         public async Task CalculateIndirects(object sender, RoutedEventArgs e) {
             await ShowLoader("Calculando indirectos...");
-            await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability,FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+            await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
+            await SaveLog("Se realizo calculo de indirectos", "");
             await HideLoader("Calculo terminado", 500);
         }
         private async Task InitializeAsync()
@@ -202,6 +210,24 @@ namespace Calculo_ductos_winUi_3.ViewModels
             await LoadQuotesAsync();
             await HideLoader("Datos cargados.");
             
+        }
+
+        private async Task RecalcState()
+        {
+            if (FreightVM.Freight.FreightId > 0)
+            {
+                await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
+            }
+            if (ManPowerVM.ManPower.Count > 0)
+            {
+                ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
+                await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
+                IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
+            }
+            if (IndirectsVM.IndirectsInstallers.Count > 0)
+            {
+                await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
+            }
         }
 
         #region Api
@@ -260,6 +286,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 {
                     //CompleteDuctVm.Quotes.Clear();
                     CompleteDuctVm.Quotes = quotes;
+                    CompleteDuctVm.FilteredQuotes = quotes;
                 }
             }
             catch (Exception ex)
@@ -319,7 +346,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     CompleteDuctVm.CalculatePrice(DuctsVM, ComponentsVM, FloorVM);
 
                     await FreightVM.CalculateFreight(DuctsVM.DucList.ToList(), CompleteDuctVm.SelectedRentability);
-                    ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct,selectedState);
+                    ManPowerVM.CalculateWorkDays(DuctsVM.CompleteDuct);
                     CompleteDuctVm.SelectedRentability = CompleteDuctVm.AvailableRentabilities.Where(r => r.Id == quote.RentabilidadMOId).FirstOrDefault();
                     ManPowerVM.ManPower = quote.MapQuoteDetailManPower(ManPowerVM);
 
@@ -332,7 +359,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                         var selectdTransport = IndirectsVM.AvailableTransportTypes.Where(t => t.Id == typeTransport).FirstOrDefault();
                         IndirectsVM.SelectedTransportType = selectdTransport;
                     }
-                        await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability, FreightVM.SelectedState.Name.Equals("CIUDAD DE MÉXICO"));
+                        await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
                 }
             }
             catch (Exception ex)
@@ -340,8 +367,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 Trace.WriteLine($"[Quotes Load Error]: {ex.Message}");
 
             }
-        }
-       
+        }       
         private async Task SaveState() 
         {
             await ShowLoader("Guardando datos...");
@@ -359,11 +385,36 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
             catch (Exception ex)
             {
-
+                await SaveLog("Ocurrio un error al tratar de guardar la cotizacion", ex.ToString());
                 await HideLoader("Ocurrio un erro al guardar los datos: "+ex.Message,18000);
             }
             
 
+        }
+        private async Task SaveLog(string message,string trace)
+        {           
+            try
+            {
+                var quote = this.MapStateAppToQuoteDetail();
+                var logParam = new LogModel();
+                logParam.stateApp = quote;
+                logParam.message = message;
+                logParam.trace = trace;
+                logParam.host = Environment.MachineName;
+                var response = await Client.PostAsync<LogModel, object>("Log", logParam);
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private bool IsLocalProject()
+        {
+            string[] municipios = { "TOLUCA", "ATLACOMULCO", "TEXCOCO" };
+            bool result = false;
+            result = FreightVM.SelectedState.Name.Contains("MÉXICO") ? (municipios.Any(m => FreightVM.SelectedMunicipality.Name.Contains(m)) ? false : true) : false;
+            return result;
         }
         #endregion
 

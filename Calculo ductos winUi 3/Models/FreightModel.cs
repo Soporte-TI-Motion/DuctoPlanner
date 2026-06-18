@@ -52,8 +52,22 @@ namespace Calculo_ductos_winUi_3.Models
         public int LocalityId { get=>_LocalityId; set=>SetProperty(ref _LocalityId,value); }
         public string LocalityName { get=>_LocalityName; set=>SetProperty(ref _LocalityName,value); }
         public string MunicipalityName { get=> _MunicipalityName; set=>SetProperty(ref _MunicipalityName, value); }
-        public decimal Price { get=>_Price; set=>SetProperty(ref _Price,value); }
-        public decimal HandlingCost { get=>_HandlingCost; set=>SetProperty(ref _HandlingCost,value); }
+        public decimal Price { get=>_Price; 
+            set
+            {
+                SetProperty(ref _Price,value); 
+                OnPropertyChanged(nameof(FirstSubTotalPrice));
+                OnPropertyChanged(nameof(SubTotalPrice));
+            }
+        }
+        public decimal HandlingCost { get=>_HandlingCost;
+            set
+            {
+                SetProperty(ref _HandlingCost,value); 
+                OnPropertyChanged(nameof(FirstSubTotalPrice));
+                OnPropertyChanged(nameof(SubTotalPrice));
+            }
+        }
         public bool IsSelected { get=>_IsSelected; set=>SetProperty(ref _IsSelected,value); }
         public string ImagePath { get=>_ImagePath; set=>SetProperty(ref _ImagePath,value); } 
         public int EstimatedTimeArrival { get=>_EstimatedTimeArrival; set=>SetProperty(ref _EstimatedTimeArrival,value); }
@@ -62,7 +76,7 @@ namespace Calculo_ductos_winUi_3.Models
             get => Price + HandlingCost;
         }
         public decimal SubTotalPrice { 
-            get => (Price + HandlingCost) * 1.1m;
+            get => FirstSubTotalPrice * 1.1m;
         }
         public decimal TotalPrice { get => _TotalPrice; set => SetProperty(ref _TotalPrice, value); }
     }

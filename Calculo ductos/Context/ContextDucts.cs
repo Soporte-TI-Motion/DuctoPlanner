@@ -60,6 +60,7 @@ namespace Calculo_ductos.Context
                         a2.Count = 1;
                     }
                     floor.HeightAvailable = heightAvaible;
+
                 }
                 
                 CalculateComponents(duct);
@@ -86,7 +87,8 @@ namespace Calculo_ductos.Context
                 
                 switch (temp.Type)
                 {
-                    case TypeComponent.XN: temp.Count = duct.floors.Count - 2; break;
+                    // Se modifica regla para tener un soporte normal mas
+                    case TypeComponent.XN: temp.Count = duct.floors.Count - 1; break;
                     case TypeComponent.XNF: temp.Count = 1; break;
                     case TypeComponent.Sprinkler: temp.Count = duct.NeedSprinkler ? (gates / 2) + 1 : 0; break;
                     case TypeComponent.Gate: temp.Count = gates; break;

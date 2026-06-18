@@ -101,7 +101,7 @@ namespace CotizadorApiVertical.Data
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                return connection.Query<IndirectsCatalog>("Obtener_Catalogo_Viaticos", commandType: CommandType.StoredProcedure);
+                return connection.Query<IndirectsCatalog>("Obtener_Catalogo_Viaticos_Reglas", commandType: CommandType.StoredProcedure);
             }
         }
         public IEnumerable<ZoneCatalog> GetZonesCatalog()

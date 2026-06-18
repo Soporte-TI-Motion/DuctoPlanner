@@ -62,7 +62,7 @@
                     HorizontalAlignment="Center"
                     Margin="16"
                     TextWrapping="Wrap"
-                    Text="{x:Bind stateApp.FreightVM.SelectedLocality.Name, Mode=OneWay}"
+                    Text="{x:Bind stateApp.FreightVM.SelectedMunicipality.Name, Mode=OneWay}"
                     Style="{StaticResource BodyStrongTextBlockStyle}"></TextBlock>
                 <TextBlock
                     Grid.Row="0"
@@ -119,10 +119,11 @@
                     Grid.Row="4"
                     Grid.Column="0"
                     Orientation="Horizontal"
+                    Spacing="6"
                     Margin="56,8,0,0"
                     HorizontalAlignment="Left">
+                    <TextBlock Visibility="Visible" Text="{x:Bind stateApp.CompleteDuctVm.TotalDoubleLevels}"></TextBlock>
                     <TextBlock Text="Niveles doble altura "></TextBlock>
-                    <TextBlock Visibility="Collapsed" Text="{x:Bind stateApp.CompleteDuctVm.TotalDoubleLevels}"></TextBlock>
                 </StackPanel>
                 <StackPanel
                     Grid.Row="4"

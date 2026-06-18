@@ -47,7 +47,7 @@ namespace Calculo_ductos_winUi_3.Services
                 var worksheet = workbook.Worksheets[0];
                 worksheet.Name = "DUCTO 1";
                 await CreateDuctTemplateSheet(worksheet);
-                worksheet = workbook.Worksheets.Add("Inidirectos");
+                worksheet = workbook.Worksheets.Add("Indirectos");
                 await CreateIndirectTemplateSheet(worksheet, indirectppto);
                 workbook.Save(filePath, SaveFormat.Xlsx);
             }
@@ -648,11 +648,16 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit) 
                     {
                         //ropa c4
+                        case "B101110":
                         case "B872520": count = c4Count; break;
-                        ////puerta UL derecha
+                        ////puerta UL derecha c/cerradura
                         case "B301057": 
-                        ////puerta UL izquierda 
+                        ////puerta UL derecha s/cerradura
+                        case "B301056": 
+                        ////puerta UL izquierda c/cerradura
                         case "B301055": 
+                        ////puerta UL izquierda s/cerradura
+                        case "B301044": 
                         ////puerta Inoxidable derecha
                         case "B301080": 
                         ////puerta Inoxidable izquierda
@@ -666,7 +671,8 @@ namespace Calculo_ductos_winUi_3.Services
                     switch (kit)
                     {
                         //basura c4
-                        case "B101110": count = c4Count; break;
+                        case "B101110":
+                        case "B872520": count = c4Count; break;
                         ////puerta Pintada
                         case "B301061":
                         ////puerta Inoxidable

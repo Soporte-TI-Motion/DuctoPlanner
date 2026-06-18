@@ -34,7 +34,7 @@ namespace CotizadorVerticalApi.Services
             Response response = new Response();
             try
             {
-                var quotes = _quoteRepository.GetLastQuotes().Select(q => new { PT = q.PT, Id = q.CotizacionId, Date = q.Fecha}).ToList();
+                var quotes = _quoteRepository.GetLastQuotes().Select(q => new { PT = q.PT, Id = q.CotizacionId, Date = q.Fecha, ExecutiveName = q.NombreEjecutivo}).ToList();
                 response.Data = quotes;
                 response.StatusCode = 200;
                 response.Message = "Éxito";
@@ -104,6 +104,7 @@ namespace CotizadorVerticalApi.Services
                 response.Data = quote;
                 response.StatusCode = 200;
                 response.Message = "Éxito";
+                log.Info($"Se consulto la cotizacion: {JsonConvert.SerializeObject(quote)}");
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ namespace Calculo_ductos_winUi_3.Models
         public int Id { get; set; } = 0;
         public DateTime Date { get; set; } = DateTime.MinValue;
         public string PT { get; set; } = string.Empty;
+        public string ExecutiveName { get; set; } = string.Empty;
     }
     public class QuoteInsertionResultModel
     {
@@ -62,4 +63,12 @@ namespace Calculo_ductos_winUi_3.Models
         public int PoliticaViaticosId {get;set;} = 0;
 
     }
+    public class LogModel
+    {
+        public string message { get; set; }
+        public string trace { get; set; }
+        public QuoteDetailModel stateApp { get; set; }
+        public string host { get; set; }
+    }
+
 }
