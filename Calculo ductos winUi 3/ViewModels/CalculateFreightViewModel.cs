@@ -114,8 +114,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 //OnPropertyChanged(nameof(Freight));
             }
         }
-        public string TotalPriceFormatted => $"Precio: $ {Freight.TotalPrice:N2}";
-        public string SubTotalPriceFormatted => $"Costo: $ {Freight.SubTotalPrice:N2}";
+        public string TotalPriceFormatted => $"$ {Freight.TotalPrice:N2}";
+        public string SubTotalPriceFormatted => $"$ {Freight.SubTotalPrice:N2}";
         public string SubtotalPriceAddedPercent => $"$ {Freight.SubTotalPrice:N2} (+10%)";
 
         #endregion

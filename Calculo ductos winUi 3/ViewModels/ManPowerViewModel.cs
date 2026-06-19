@@ -100,8 +100,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         
         public decimal TotalPriceManPower{ get => _TotalPriceManPower; set {SetProperty(ref _TotalPriceManPower, value);}}
         public decimal SubTotalPriceManPower{ get => _SubTotalPriceManPower; set {SetProperty(ref _SubTotalPriceManPower, value);}}
-        public string TotalPriceFormatted => $"Precio: $ {TotalPriceManPower:N2}";
-        public string SubTotalPriceFormatted => $"Costo: $ {SubTotalPriceManPower:N2}";
+        public string TotalPriceFormatted => $"$ {TotalPriceManPower:N2}";
+        public string SubTotalPriceFormatted => $"$ {SubTotalPriceManPower:N2}";
 
         public decimal TotalPriceManPowerInstaller { get => _TotalPriceManPowerInstaller; set { SetProperty(ref _TotalPriceManPowerInstaller, value); } }
         public decimal SubTotalPriceManPowerInstaller { get => _SubTotalPriceManPowerInstaller; set { SetProperty(ref _SubTotalPriceManPowerInstaller, value); } }
@@ -120,8 +120,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
         public decimal TotalPriceManPowerVisit { get => _TotalPriceManPowerVisit; set { SetProperty(ref _TotalPriceManPowerVisit, value); } }
         public decimal SubTotalPriceManPowerVisit { get => _SubTotalPriceManPowerVisit; set { SetProperty(ref _SubTotalPriceManPowerVisit, value); } }
-        public string TotalPriceVisitFormatted => $"Precio: $ {TotalPriceManPowerVisit:N2}";
-        public string SubTotalPriceVisitFormatted => $"Costo: $ {SubTotalPriceManPowerVisit:N2}";
+        public string TotalPriceVisitFormatted => $"$ {TotalPriceManPowerVisit:N2}";
+        public string SubTotalPriceVisitFormatted => $"$ {SubTotalPriceManPowerVisit:N2}";
 
         public IsLocalProjectDelegate IsLocalProject { get; set; }
         #endregion

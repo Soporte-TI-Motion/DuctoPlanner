@@ -17,12 +17,15 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid x:Name="TopGrid"
             Grid.ColumnSpan="3"
@@ -41,6 +44,7 @@
               Grid.Row="1"
               Grid.Column="0"
               Margin="32,32,16,0"
+              Visibility="Collapsed"
               Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -62,173 +66,295 @@
                 TextAlignment="Center"
                 VerticalAlignment="Center"/>
         </Grid>
+        
         <Grid x:Name="DuctGrid"
-              CornerRadius="15"
               Grid.Row="2"
-              Grid.RowSpan="2"
-              Grid.Column="0"
-              Margin="32,66,16,48"
-              Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="5*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Border 
-                    Grid.Row="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#662196F3" Offset="0.0"/>
-                        <GradientStop Color="#CC1976D2" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Despiece" 
-                   Foreground="{StaticResource TextFillColorInverseBrush}"
-                   FontWeight="Bold"
-                   FontSize="17"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"/>
+              Grid.Column="1"
+              Grid.ColumnSpan="1"
+                Margin="0,0,0,0">
+
+            <Border
+                CornerRadius="15"
+                Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <!-- Barra lateral -->
+
+                    <Border Width="12"
+                    HorizontalAlignment="Left"
+                    CornerRadius="15,0,0,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="0,1">
+                                <GradientStop Color="#2196F3"
+                                      Offset="0"/>
+                                <GradientStop Color="#1976D2"
+                                      Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                    </Border>
+                    
+                    <!-- Contenido -->
+                    
+                    <StackPanel 
+                        Margin="24,20,24,20"
+                        CornerRadius="15,0,0,15"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Spacing="10">
+
+                        <TextBlock Text="Despiece"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+
+                        <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}"
+                         IsReadOnly="True"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         TextAlignment="Center"
+                         Padding="0"
+                         FontSize="20"
+                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                         UseSystemFocusVisuals="False"
+                         FocusVisualPrimaryThickness="0"
+                         FocusVisualSecondaryThickness="0"/>
+
+                    </StackPanel>
+
+                </Grid>
+
             </Border>
-            <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}" 
-                Background="Transparent" 
-                Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                FontWeight="Bold"
-                FontSize="19"
-                BorderThickness="0"
-                Grid.Row="1"
-                IsReadOnly="True"
-                TextAlignment="Center"
-                VerticalAlignment="Center"
-                UseSystemFocusVisuals="False"
-                FocusVisualPrimaryThickness="0"
-                FocusVisualSecondaryThickness="0"/>
-            <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}" 
-                Background="Transparent" 
-                Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                FontSize="15"
-                BorderThickness="0"
-                Visibility="Collapsed"
-                Grid.Row="2"
-                IsReadOnly="True"
-                TextAlignment="Center"
-                VerticalAlignment="Top"
-                UseSystemFocusVisuals="False"
-                FocusVisualPrimaryThickness="0"
-                FocusVisualSecondaryThickness="0"/>     
+
         </Grid>
         <Grid x:Name="FreightGrid"
-          CornerRadius="15"
-          Grid.Row="4"
-          Grid.RowSpan="2"
-          Grid.Column="0"
-          Margin="32,0,16,114"
-          Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="4*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Border 
-            Grid.Row="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#997E57C2" Offset="0.0"/>
-                        <GradientStop Color="#CC512DA8" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Flete" 
-           Foreground="{StaticResource TextFillColorInverseBrush}"
-           FontWeight="Bold"
-           FontSize="17"
-           VerticalAlignment="Center"
-           HorizontalAlignment="Center"/>
+       Grid.Row="3"
+       Grid.Column="1"
+       Grid.ColumnSpan="1"
+         Margin="0,0,0,0">
+
+            <Border
+         CornerRadius="15"
+         Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <!-- Barra lateral -->
+
+                    <Border Width="12"
+             HorizontalAlignment="Left"
+             CornerRadius="15,0,0,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                                  EndPoint="0,1">
+                                <GradientStop Color="#997E57C2"
+                               Offset="0"/>
+                                <GradientStop Color="#CC512DA8"
+                               Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                    </Border>
+
+                    <!-- Contenido -->
+
+                    <StackPanel 
+                 Margin="24,20,24,20"
+                 CornerRadius="15,0,0,15"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                 Spacing="10">
+
+                        <TextBlock Text="Flete"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+
+                        <TextBox Text="{x:Bind stateApp.FreightVM.TotalPriceFormatted, Mode=OneWay}"
+                            IsReadOnly="True"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            TextAlignment="Center"
+                            Padding="0"
+                            FontSize="20"
+                            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                            UseSystemFocusVisuals="False"
+                            FocusVisualPrimaryThickness="0"
+                            FocusVisualSecondaryThickness="0"/>         
+                        <TextBox Text="{x:Bind stateApp.FreightVM.SubTotalPriceFormatted, Mode=OneWay}" 
+                    Background="Transparent" 
+                    Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                    FontSize="15"
+                    BorderThickness="0"
+                    Grid.Row="2"
+                    IsReadOnly="True"
+                    Visibility="Collapsed"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    UseSystemFocusVisuals="False"
+                    FocusVisualPrimaryThickness="0"
+                    FocusVisualSecondaryThickness="0"/>
+
+                    </StackPanel>
+
+                </Grid>
+
             </Border>
-            <TextBox Text="{x:Bind stateApp.FreightVM.TotalPriceFormatted, Mode=OneWay}" 
-        Background="Transparent" 
-        Foreground="{StaticResource TextFillColorPrimaryBrush}"
-        FontWeight="Bold"
-        FontSize="19"
-        BorderThickness="0"
-        Grid.Row="1"
-        IsReadOnly="True"
-        TextAlignment="Center"
-        VerticalAlignment="Bottom"
-        UseSystemFocusVisuals="False"
-        FocusVisualPrimaryThickness="0"
-        FocusVisualSecondaryThickness="0"/>
-            <TextBox Text="{x:Bind stateApp.FreightVM.SubTotalPriceFormatted, Mode=OneWay}" 
-        Background="Transparent" 
-        Foreground="{StaticResource TextFillColorPrimaryBrush}"
-        FontSize="15"
-        BorderThickness="0"
-        Grid.Row="2"
-        IsReadOnly="True"
-                     
-        TextAlignment="Center"
-        VerticalAlignment="Top"
-        UseSystemFocusVisuals="False"
-        FocusVisualPrimaryThickness="0"
-        FocusVisualSecondaryThickness="0"/>
+
         </Grid>
-        
         <Grid x:Name="ManPowerGridTotal"
-            CornerRadius="15"
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="16,32,16,0"
-            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Border  
-                Grid.Row="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#FFBCAAA4" Offset="0.0"/>
-                        <GradientStop Color="#FF8D6E63" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Mano de obra (Total)" 
-                 Foreground="{StaticResource TextFillColorInverseBrush}"
-                 FontWeight="Bold"
-                 FontSize="17"
+    Grid.Row="4"
+    Grid.Column="1"
+    Grid.ColumnSpan="1"
+  Margin="0,0,0,0">
+
+            <Border
+  CornerRadius="15"
+  Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <!-- Barra lateral -->
+
+                    <Border Width="12"
+      HorizontalAlignment="Left"
+      CornerRadius="15,0,0,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                           EndPoint="0,1">
+                                <GradientStop Color="#FFBCAAA4"
+                        Offset="0"/>
+                                <GradientStop Color="#FF8D6E63"
+                        Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                    </Border>
+
+                    <!-- Contenido -->
+
+                    <StackPanel 
+          Margin="24,20,24,20"
+          CornerRadius="15,0,0,15"
+                 Orientation="Horizontal"
                  VerticalAlignment="Center"
-                 HorizontalAlignment="Center"/>
+                 HorizontalAlignment="Center"
+          Spacing="10">
+
+                        <TextBlock Text="Mano de obra "
+             FontSize="16"
+             FontWeight="SemiBold"
+             Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+
+                        <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceFormatted, Mode=OneWay}" 
+                            IsReadOnly="True"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            TextAlignment="Center"
+                            Padding="0"
+                            FontSize="20"
+                            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                            UseSystemFocusVisuals="False"
+                            FocusVisualPrimaryThickness="0"
+                            FocusVisualSecondaryThickness="0"/> 
+                        <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceFormatted, Mode=OneWay}" 
+                    Background="Transparent" 
+                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                    Visibility="Collapsed"
+                    FontSize="15"
+                    BorderThickness="0"
+                    Grid.Row="2"
+                    IsReadOnly="True"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    UseSystemFocusVisuals="False"
+                    Padding="0,0,0,8"
+                    FocusVisualPrimaryThickness="0"
+                    FocusVisualSecondaryThickness="0"/>
+
+                    </StackPanel>
+
+                </Grid>
+
             </Border>
-            <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceFormatted, Mode=OneWay}" 
-              Background="Transparent" 
-              Foreground="{StaticResource TextFillColorPrimaryBrush}"
-              FontWeight="Bold"
-              FontSize="19"
-              BorderThickness="0"
-              Grid.Row="1"
-              IsReadOnly="True"
-              TextAlignment="Center"
-              VerticalAlignment="Bottom"
-              UseSystemFocusVisuals="False"
-              FocusVisualPrimaryThickness="0"
-              FocusVisualSecondaryThickness="0"/>
-            <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceFormatted, Mode=OneWay}" 
-              Background="Transparent" 
-              Foreground="{StaticResource TextFillColorSecondaryBrush}"
-              FontSize="15"
-              BorderThickness="0"
-              Grid.Row="2"
-              IsReadOnly="True"
-              TextAlignment="Center"
-              VerticalAlignment="Top"
-              UseSystemFocusVisuals="False"
-              Padding="0,0,0,8"
-              FocusVisualPrimaryThickness="0"
-              FocusVisualSecondaryThickness="0"/>
+
         </Grid>
+        <Grid x:Name="IndirectsGridTotal"
+Grid.Row="5"
+Grid.Column="1"
+Grid.ColumnSpan="1"
+Margin="0,0,0,0">
+
+            <Border
+CornerRadius="15"
+Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <!-- Barra lateral -->
+
+                    <Border Width="12"
+        HorizontalAlignment="Left"
+        CornerRadius="15,0,0,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                   EndPoint="0,1">
+                                <GradientStop Color="#9981C784"
+                   Offset="0"/>
+                                <GradientStop Color="#CC388E3C"
+                Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                    </Border>
+
+                    <!-- Contenido -->
+
+                    <StackPanel 
+        Margin="24,20,24,20"
+        CornerRadius="15,0,0,15"
+         Orientation="Horizontal"
+         VerticalAlignment="Center"
+         HorizontalAlignment="Center"
+        Spacing="10">
+
+                        <TextBlock Text="Indirectos"
+            FontSize="16"
+            FontWeight="SemiBold"
+            Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+
+                        <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceFormatted, Mode=OneWay}" 
+                            IsReadOnly="True"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            TextAlignment="Center"
+                            Padding="0"
+                            FontSize="20"
+                            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                            UseSystemFocusVisuals="False"
+                            FocusVisualPrimaryThickness="0"
+                            FocusVisualSecondaryThickness="0"/>         
+                        <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceFormatted, Mode=OneWay}" 
+            Background="Transparent" 
+            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+            FontSize="15"
+            BorderThickness="0"
+            Grid.Row="2"
+            IsReadOnly="True"
+            TextAlignment="Center"
+            VerticalAlignment="Top"
+            Visibility="Collapsed"                
+            UseSystemFocusVisuals="False"
+            FocusVisualPrimaryThickness="0"
+            FocusVisualSecondaryThickness="0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+
         <Grid x:Name="ManPowerGridInstaller"
             CornerRadius="15"
             Grid.Row="2"
             Grid.Column="1"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -266,6 +392,7 @@
             <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceInstallerFormatted, Mode=OneWay}" 
                   Background="Transparent" 
                   Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                  Visibility="Collapsed"
                   FontSize="15"
                   BorderThickness="0"
                   Grid.Row="2"
@@ -282,6 +409,7 @@
             Grid.Row="3"                  
             Grid.Column="1"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -319,6 +447,7 @@
             <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceSupervisorFormatted, Mode=OneWay}" 
               Background="Transparent" 
               Foreground="{StaticResource TextFillColorSecondaryBrush}"
+              Visibility="Collapsed"
               FontSize="15"
               BorderThickness="0"
               Grid.Row="2"
@@ -334,9 +463,9 @@
         <Grid x:Name="ManPowerGridSecurity"
             CornerRadius="15"
             Grid.Row="4"
-                  
             Grid.Column="1"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -374,6 +503,7 @@
             <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceSecurityFormatted, Mode=OneWay}" 
                 Background="Transparent" 
                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                Visibility="Collapsed"
                 FontSize="15"
                 BorderThickness="0"
                 Grid.Row="2"
@@ -390,6 +520,7 @@
             Grid.Row="5"   
             Grid.Column="1"
             Margin="16,16,16,8"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -427,6 +558,7 @@
             <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceVisitFormatted, Mode=OneWay}" 
                 Background="Transparent" 
                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                Visibility="Collapsed"
                 FontSize="15"
                 BorderThickness="0"
                 Grid.Row="2"
@@ -440,65 +572,13 @@
         </Grid>
 
 
-        <Grid x:Name="IndirectsGridTotal"
-            CornerRadius="15"
-            Grid.Row="1"
-            Grid.Column="2"
-            Margin="16,32,16,0"
-            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Border 
-                Grid.Row="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#9981C784" Offset="0.0"/>
-                        <GradientStop Color="#CC388E3C" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Indirectos (Total)" 
-                Foreground="{StaticResource TextFillColorInverseBrush}"
-                FontWeight="Bold"
-                FontSize="17"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"/>
-            </Border>
-            <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceFormatted, Mode=OneWay}" 
-             Background="Transparent" 
-             Foreground="{StaticResource TextFillColorPrimaryBrush}"
-             FontWeight="Bold"
-             FontSize="19"
-             BorderThickness="0"
-             Grid.Row="1"
-             IsReadOnly="True"
-             TextAlignment="Center"
-             VerticalAlignment="Bottom"
-             UseSystemFocusVisuals="False"
-             FocusVisualPrimaryThickness="0"
-             FocusVisualSecondaryThickness="0"/>
-            <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceFormatted, Mode=OneWay}" 
-             Background="Transparent" 
-             Foreground="{StaticResource TextFillColorPrimaryBrush}"
-             FontSize="15"
-             BorderThickness="0"
-             Grid.Row="2"
-             IsReadOnly="True"
-             TextAlignment="Center"
-             VerticalAlignment="Top"
-                
-             UseSystemFocusVisuals="False"
-             FocusVisualPrimaryThickness="0"
-             FocusVisualSecondaryThickness="0"/>
-
-        </Grid>
+        
         <Grid x:Name="IndirectsGridInstaller"
             CornerRadius="15"
             Grid.Row="2"
             Grid.Column="2"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -536,6 +616,7 @@
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceInstallersFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -553,6 +634,7 @@
             Grid.Row="3"
             Grid.Column="2"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"></RowDefinition>
@@ -590,6 +672,7 @@
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceSupervisorFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -607,6 +690,7 @@
             Grid.Row="4"
             Grid.Column="2"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -644,6 +728,7 @@
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceSecurityFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -661,6 +746,7 @@
             Grid.Row="5"
             Grid.Column="2"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -698,6 +784,7 @@
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceVisitFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorSecondaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -715,6 +802,7 @@
             Grid.Row="3"       
             Grid.Column="3"
             Margin="16,16,16,0"
+            Visibility="Collapsed"
             Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
@@ -752,6 +840,7 @@
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceWCFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -765,19 +854,19 @@
 
         </Grid>
         <Grid x:Name="IndirectsGridStore"
-       CornerRadius="15"
-       Grid.Row="4"
-       
-       Grid.Column="3"
-       Margin="16,16,16,0"
-       Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            CornerRadius="15"
+            Grid.Row="4"
+            Grid.Column="3"
+            Margin="16,16,16,0"
+            Visibility="Collapsed"
+            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Border 
- Grid.Row="0">
+                Grid.Row="0">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Color="#9981C784" Offset="0.0"/>
@@ -785,11 +874,11 @@
                     </LinearGradientBrush>
                 </Border.Background>
                 <TextBlock Text="Indirectos (Bodega)" 
-Foreground="{StaticResource TextFillColorInverseBrush}"
-FontWeight="Bold"
-FontSize="17"
-VerticalAlignment="Center"
-HorizontalAlignment="Center"/>
+                Foreground="{StaticResource TextFillColorInverseBrush}"
+                FontWeight="Bold"
+                FontSize="17"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
             </Border>
             <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceStoreFormatted, Mode=OneWay}" 
                  Background="Transparent" 
@@ -807,6 +896,7 @@ HorizontalAlignment="Center"/>
             <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceStoreFormatted, Mode=OneWay}" 
              Background="Transparent" 
              Foreground="{StaticResource TextFillColorPrimaryBrush}"
+             Visibility="Collapsed"
              FontSize="15"
              BorderThickness="0"
              Grid.Row="2"
@@ -819,60 +909,82 @@ HorizontalAlignment="Center"/>
              FocusVisualSecondaryThickness="0"/>
 
         </Grid>
-        
+
         <Grid x:Name="ProjectGrid"
-            CornerRadius="15"
-            Grid.Row="1"
-            Grid.RowSpan="2"
-            Grid.Column="3"
-            Margin="16,32,32,64"
-            Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
-                <RowDefinition Height="2*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Border  
-                Grid.Row="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#99FFD54F" Offset="0.0"/>
-                        <GradientStop Color="#CCFFC107" Offset="1.0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <TextBlock Text="Total del proyecto" 
-                     Foreground="{StaticResource TextFillColorInverseBrush}"
-                     FontWeight="Bold"
-                     FontSize="17"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Center"/>
+          Grid.Row="6"
+          Grid.RowSpan="2"
+          Grid.Column="1"
+          Grid.ColumnSpan="1"
+          Margin="0,0,0,0">
+
+            <Border
+         CornerRadius="15"
+         Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <!-- Barra lateral -->
+
+                    <Border Width="12"
+                         HorizontalAlignment="Left"
+                         CornerRadius="15,0,0,15">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0"
+                                  EndPoint="0,1">
+                                <GradientStop Color="#99FFD54F"
+                               Offset="0"/>
+                                <GradientStop Color="#CCFFC107"
+                               Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                    </Border>
+
+                    <!-- Contenido -->
+
+                    <StackPanel 
+                 Margin="24,20,24,20"
+                 CornerRadius="15,0,0,15"
+                        HorizontalAlignment="Center"
+                 Spacing="10">
+
+                        <TextBlock Text="Total del proyecto"
+                                   TextAlignment="Center"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+
+                        <TextBox Text="{x:Bind stateApp.TotalPriceFormatted, Mode=OneWay}" 
+                    Background="Transparent" 
+                    Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                    FontWeight="Bold"
+                    FontSize="28"
+                    BorderThickness="0"
+                    Grid.Row="1"
+                    IsReadOnly="True"
+                    TextAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    UseSystemFocusVisuals="False"
+                    FocusVisualPrimaryThickness="0"
+                    FocusVisualSecondaryThickness="0"/>
+                        <TextBox Text="{x:Bind stateApp.SubTotalPriceFormatted, Mode=OneWay}" 
+                    Background="Transparent" 
+                    Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                    Visibility="Collapsed"
+                    FontSize="17"
+                    BorderThickness="0"
+                    Grid.Row="2"
+                    IsReadOnly="True"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    UseSystemFocusVisuals="False"
+                    FocusVisualPrimaryThickness="0"
+                    FocusVisualSecondaryThickness="0"/>
+
+                    </StackPanel>
+
+                </Grid>
+
             </Border>
-            <TextBox Text="{x:Bind stateApp.TotalPriceFormatted, Mode=OneWay}" 
-                  Background="Transparent" 
-                  Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                  FontWeight="Bold"
-                  FontSize="20"
-                  BorderThickness="0"
-                  Grid.Row="1"
-                  IsReadOnly="True"
-                  TextAlignment="Center"
-                  VerticalAlignment="Bottom"
-                  UseSystemFocusVisuals="False"
-                  FocusVisualPrimaryThickness="0"
-                  FocusVisualSecondaryThickness="0"/>
-            <TextBox Text="{x:Bind stateApp.SubTotalPriceFormatted, Mode=OneWay}" 
-                  Background="Transparent" 
-                  Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                  FontSize="17"
-                  BorderThickness="0"
-                  Grid.Row="2"
-                  IsReadOnly="True"
-                  TextAlignment="Center"
-                  VerticalAlignment="Top"
-                  UseSystemFocusVisuals="False"
-                  FocusVisualPrimaryThickness="0"
-                  FocusVisualSecondaryThickness="0"/>
+
         </Grid>
     </Grid>
 </Page>

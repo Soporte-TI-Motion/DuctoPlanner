@@ -109,14 +109,14 @@
                         Grid.ColumnSpan="2"
                         Padding="0,0,0,0"
                         Margin="10,0,0,0"
-                        Height="Auto">
-
+                        Height="Auto"
+                        Visibility="Collapsed">                        
                         <TextBlock x:Name="lblIzaje" Margin="0,0,0,8">Herramienta mayor</TextBlock>
-
                         <ComboBox x:Name="cbxIzaje"
                             ItemsSource="{x:Bind stateApp.IndirectsVM.AvailableMajorTool, Mode=OneWay}"
                             SelectedItem="{x:Bind stateApp.IndirectsVM.SelectedMajorTool, Mode=TwoWay}" 
-                            DisplayMemberPath="Description">
+                            DisplayMemberPath="Description"
+                                  >
                         </ComboBox>
                     </StackPanel>
                     <StackPanel 
@@ -125,8 +125,8 @@
                         Grid.Column="0" 
                         Grid.Row="5" 
                         Grid.ColumnSpan="2"
-                        Height="Auto">
-
+                        Height="Auto"
+                        Visibility="Collapsed">
                         <Button x:Name="btnAgregarTool" Margin="8" 
                             Click="AddMajorTool_Click">Agregar herramienta</Button>
 

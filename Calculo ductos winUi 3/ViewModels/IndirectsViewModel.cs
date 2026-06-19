@@ -191,8 +191,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public string SubTotalPriceSecurityFormatted => $"Costo: $ {SubTotalCostSecurity:N2}";
         public string TotalPriceVisitFormatted => $"Precio: $ {TotalCostVisit:N2}";
         public string SubTotalPriceVisitFormatted => $"Costo: $ {SubTotalCostVisit:N2}";
-        public string TotalPriceFormatted => $"Precio: $ {TotalCostInstallers+ TotalCostSupervisor+ TotalCostSecurity+ TotalCostVisit+TotalPriceWC+TotalPriceStore:N2}";
-        public string SubTotalPriceFormatted => $"Costo: $ {SubTotalCostInstallers+ SubTotalCostSupervisor+ SubTotalCostSecurity+ SubTotalCostVisit+SubTotalPriceWC+SubTotalPriceStore:N2}";
+        public string TotalPriceFormatted => $"$ {TotalCostInstallers+ TotalCostSupervisor+ TotalCostSecurity+ TotalCostVisit+TotalPriceWC+TotalPriceStore:N2}";
+        public string SubTotalPriceFormatted => $"$ {SubTotalCostInstallers+ SubTotalCostSupervisor+ SubTotalCostSecurity+ SubTotalCostVisit+SubTotalPriceWC+SubTotalPriceStore:N2}";
         public string TotalPriceStoreFormatted => $"Precio: ${TotalPriceStore:N2}";
         public string TotalPriceWCFormatted => $"Precio: ${TotalPriceWC:N2}";
         public string SubTotalPriceStoreFormatted => $"Costo: ${SubTotalPriceStore:N2}";
@@ -261,7 +261,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             IndirectsVisit.Clear();
             MinorTool.Clear();
 
-            //MajorTool.Clear();
+            MajorTool.Clear();
             SubTotalCostInstallers = 0;
             SubTotalCostSupervisor = 0;
             SubTotalCostSecurity = 0;
@@ -327,10 +327,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     }
 
             }
-            
-            
-            
 
+            AddMajorTools();
             CalculateTools();
 
             SumIndirect(1, IndirectsInstallers);
@@ -355,7 +353,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
             TotalPriceStore = SubTotalPriceStore * rentability.Rentability;
             TotalCostTool = SubTotalCostTool * rentability.Rentability;
         }
-        
+        public void AddMajorTools()
+        {
+            foreach (var majortool in AvailableMajorTool)
+            {
+                AddMajorTool(majortool);
+            }
+        }
         public void RecalculateRentability(CatalogRentabilityModel rentability)
         {
             TotalCostInstallers = SubTotalCostInstallers * rentability.Rentability;

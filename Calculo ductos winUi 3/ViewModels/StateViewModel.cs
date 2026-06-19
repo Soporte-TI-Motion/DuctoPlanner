@@ -83,7 +83,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public decimal TotalPrice { get 
             { 
                 return 
-                    CompleteDuctVm.SubTotalPrice + 
+                    (CompleteDuctVm.SubTotalPrice + 
                     FreightVM.Freight.TotalPrice + 
                     ManPowerVM.TotalPriceManPower + 
                     IndirectsVM.TotalCostInstallers + 
@@ -91,7 +91,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     IndirectsVM.TotalCostSecurity + 
                     IndirectsVM.TotalCostVisit +
                     IndirectsVM.TotalPriceWC +
-                    IndirectsVM.TotalPriceStore; } }
+                    IndirectsVM.TotalPriceStore)*0.95m; } }
         public decimal SubTotalPrice { get { 
                 return CompleteDuctVm.SubTotalPrice + 
                     FreightVM.Freight.SubTotalPrice + 
@@ -108,7 +108,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
         #endregion
 
-
+        
         public async Task CalculateDucts(object sender, RoutedEventArgs e)
         {
             try

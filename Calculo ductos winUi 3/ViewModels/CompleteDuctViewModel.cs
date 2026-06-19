@@ -198,8 +198,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 }
             }
         }
-        public string TotalPriceFormatted => $"Precio: $ {TotalPrice:N2}";
-        public string SubTotalPriceFormatted => $"Precio: $ {SubTotalPrice:N2}";
+        //por decision de dirección se va a reducir o tener un ajuste del 5% global en disminución
+        public string TotalPriceFormatted => $"$ {TotalPrice:N2}";
+        public string SubTotalPriceFormatted => $"$ {SubTotalPrice:N2}";
         public int TotalDoubleLevels
         {
             get => _totalDoubleLevels; set

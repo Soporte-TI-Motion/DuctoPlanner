@@ -72,5 +72,6 @@ namespace Calculo_ductos_winUi_3.Views
         {
             return stateApp.ComponentsVM.ComponentList.Count > 0;
         }
+        
     }
 }
