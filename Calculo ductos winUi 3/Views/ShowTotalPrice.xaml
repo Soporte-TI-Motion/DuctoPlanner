@@ -44,7 +44,7 @@
               Grid.Row="1"
               Grid.Column="0"
               Margin="32,32,16,0"
-              Visibility="Collapsed"
+              Visibility="Visible"
               Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
