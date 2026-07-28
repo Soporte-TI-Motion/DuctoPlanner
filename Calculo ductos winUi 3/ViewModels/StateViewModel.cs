@@ -110,9 +110,16 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
         public ObservableCollection<ConceptModel> Concepts { get; set; } = new ObservableCollection<ConceptModel>();
 
-        public decimal TotalPriceConceptDuct => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.duct).Sum(c => c.TotalPrice);
-        public decimal TotalPriceConceptMO => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.manpower).Sum(c => c.TotalPrice);
-        public decimal TotalPriceConceptIndirect => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.indirect).Sum(c => c.TotalPrice);
+        public decimal TotalPriceConceptDuct => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.duct && c.IsSelected).Sum(c => c.TotalPrice);
+        public decimal TotalPriceConceptMO => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.manpower && c.IsSelected).Sum(c => c.TotalPrice);
+        public decimal TotalPriceConceptIndirect => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.indirect && c.IsSelected).Sum(c => c.TotalPrice);
+
+        public string TotalPriceConceptDuctFormatted => $"$ {TotalPriceConceptDuct:N2}";
+        public string TotalPriceConceptMOFormatted => $"$ {TotalPriceConceptMO:N2}";
+        public string TotalPriceConceptIndirectFormatted => $"$ {TotalPriceConceptIndirect:N2}";
+
+        public decimal TotalConceptsPrice => (TotalPriceConceptDuct + TotalPriceConceptMO + TotalPriceConceptIndirect + FreightVM.Freight.TotalPrice) * 0.95m;
+        public string TotalConceptsPriceFormatted => $"Precio: $ {TotalConceptsPrice:N2}";
 
         #endregion
 
@@ -253,6 +260,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
                         OnPropertyChanged(nameof(TotalPriceConceptDuct));
                         OnPropertyChanged(nameof(TotalPriceConceptMO));
                         OnPropertyChanged(nameof(TotalPriceConceptIndirect));
+                        OnPropertyChanged(nameof(TotalPriceConceptDuctFormatted));
+                        OnPropertyChanged(nameof(TotalPriceConceptMOFormatted));
+                        OnPropertyChanged(nameof(TotalPriceConceptIndirectFormatted));
+                        OnPropertyChanged(nameof(TotalConceptsPrice));
+                        OnPropertyChanged(nameof(TotalConceptsPriceFormatted));
                     }
                 };
                 Concepts.Add(concept);
@@ -261,6 +273,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
             OnPropertyChanged(nameof(TotalPriceConceptDuct));
             OnPropertyChanged(nameof(TotalPriceConceptMO));
             OnPropertyChanged(nameof(TotalPriceConceptIndirect));
+            OnPropertyChanged(nameof(TotalPriceConceptDuctFormatted));
+            OnPropertyChanged(nameof(TotalPriceConceptMOFormatted));
+            OnPropertyChanged(nameof(TotalPriceConceptIndirectFormatted));
+            OnPropertyChanged(nameof(TotalConceptsPrice));
+            OnPropertyChanged(nameof(TotalConceptsPriceFormatted));
         }
 
         #region Api

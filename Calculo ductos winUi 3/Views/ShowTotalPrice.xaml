@@ -80,20 +80,14 @@
                                        FontSize="16" FontWeight="SemiBold"
                                        VerticalAlignment="Center" Margin="0,0,16,0"
                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBox Text="{x:Bind stateApp.CompleteDuctVm.SubTotalPriceFormatted, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                                <TextBox Text="{x:Bind stateApp.TotalPriceConceptDuct, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                            </StackPanel>
+                            <TextBox Grid.Column="1"
+                                     Text="{x:Bind stateApp.TotalPriceConceptDuctFormatted, Mode=OneWay}"
+                                     IsReadOnly="True" Background="Transparent" BorderThickness="0"
+                                     TextAlignment="Center" Padding="0" FontSize="18"
+                                     VerticalAlignment="Center"
+                                     Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                                     UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
+                                     FocusVisualSecondaryThickness="0"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -118,20 +112,14 @@
                                        FontSize="16" FontWeight="SemiBold"
                                        VerticalAlignment="Center" Margin="0,0,16,0"
                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBox Text="{x:Bind stateApp.ManPowerVM.TotalPriceFormatted, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                                <TextBox Text="{x:Bind stateApp.TotalPriceConceptMO, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                            </StackPanel>
+                            <TextBox Grid.Column="1"
+                                     Text="{x:Bind stateApp.TotalPriceConceptMOFormatted, Mode=OneWay}"
+                                     IsReadOnly="True" Background="Transparent" BorderThickness="0"
+                                     TextAlignment="Center" Padding="0" FontSize="18"
+                                     VerticalAlignment="Center"
+                                     Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                                     UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
+                                     FocusVisualSecondaryThickness="0"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -156,20 +144,14 @@
                                        FontSize="16" FontWeight="SemiBold"
                                        VerticalAlignment="Center" Margin="0,0,16,0"
                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceFormatted, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                                <TextBox Text="{x:Bind stateApp.TotalPriceConceptIndirect, Mode=OneWay}"
-                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"
-                                         TextAlignment="Center" Padding="0" FontSize="18"
-                                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
-                                         UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
-                                         FocusVisualSecondaryThickness="0"/>
-                            </StackPanel>
+                            <TextBox Grid.Column="1"
+                                     Text="{x:Bind stateApp.TotalPriceConceptIndirectFormatted, Mode=OneWay}"
+                                     IsReadOnly="True" Background="Transparent" BorderThickness="0"
+                                     TextAlignment="Center" Padding="0" FontSize="18"
+                                     VerticalAlignment="Center"
+                                     Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                                     UseSystemFocusVisuals="False" FocusVisualPrimaryThickness="0"
+                                     FocusVisualSecondaryThickness="0"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -221,7 +203,7 @@
                             <TextBlock Text="Total del proyecto"
                                        TextAlignment="Center" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"/>
-                            <TextBox Text="{x:Bind stateApp.TotalPriceFormatted, Mode=OneWay}"
+                            <TextBox Text="{x:Bind stateApp.TotalConceptsPriceFormatted, Mode=OneWay}"
                                      Background="Transparent" Foreground="{StaticResource TextFillColorPrimaryBrush}"
                                      FontWeight="Bold" FontSize="28" BorderThickness="0"
                                      IsReadOnly="True" TextAlignment="Center"
