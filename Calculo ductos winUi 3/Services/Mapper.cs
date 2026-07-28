@@ -139,7 +139,9 @@ namespace Calculo_ductos_winUi_3.Services
                         NecesitaChimenea = floor?.NeedChimney ?? false,
                         NecesitaAntiImpactos = floor?.NeedAntiImpact ?? false,
                         TipoPuertaId = floor?.TypeDoor?.Id ?? 0,
-                        TipoDescargaId = Convert.ToInt32(floor?.Discharge ?? 0)
+                        TipoDescargaId = Convert.ToInt32(floor?.Discharge ?? 0),
+                        TipoGuillotinaId = floor?.GuillotineTypeId ?? 0,
+                        TipoContenedorId = floor?.ContainerType?.Id ?? 0
                     })
                     .ToList() ?? new List<FloorDetailModel>(),
 
@@ -182,7 +184,10 @@ namespace Calculo_ductos_winUi_3.Services
                     NeedChimney = floor.NecesitaChimenea,
                     NeedAntiImpact = floor.NecesitaAntiImpactos,
                     TypeDoor = floorVm.AllDoorType.Where(type => type.Id == floor.TipoPuertaId).FirstOrDefault(),
-                    Discharge = (Floor.TypeDischarge)floor.TipoDescargaId
+                    Discharge = (Floor.TypeDischarge)floor.TipoDescargaId,
+                    GuillotineTypeId = floor.TipoGuillotinaId,
+                    ContainerType = floorVm.AvailableCointainerTypes.FirstOrDefault(c => c.Id == floor.TipoContenedorId) ?? new(),
+                    DischargeDescription = floorVm.AvailableGuillotineTypes.FirstOrDefault(g => g.Id == floor.TipoGuillotinaId)?.Description ?? string.Empty
                 }
             ).ToList();
 

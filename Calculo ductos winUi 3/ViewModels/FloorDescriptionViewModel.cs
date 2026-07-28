@@ -318,6 +318,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     Type = _floorDescription.Type,
                     Discharge = _floorDescription.Discharge ,
                     DischargeDescription = _floorDescription.Type == 0 ? SelectedGuillotineType.Description : _floorDescription.Discharge.ToString() ,
+                    GuillotineTypeId = _floorDescription.Type == Floor.TypeFloor.discharge ? SelectedGuillotineType?.Id ?? 0 : 0,
                     TypeDoor = _floorDescription.TypeDoor,
                     ContainerType = _floorDescription.Type == Floor.TypeFloor.discharge ? SelectedContainerType : new(),
                 });

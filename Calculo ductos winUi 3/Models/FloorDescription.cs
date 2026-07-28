@@ -15,6 +15,7 @@ namespace Calculo_ductos_winUi_3.Models
         public Floor.TypeDischarge Discharge { get; set; }
         public string DischargeDescription { get; set; }
         public CatalogRowModel ContainerType { get; set; }
+        public int GuillotineTypeId { get; set; } = 0;
         public Guid Uuid { get; set; }
         public int FloorCount { get; set; }
         public bool NeedGate { get; set; }

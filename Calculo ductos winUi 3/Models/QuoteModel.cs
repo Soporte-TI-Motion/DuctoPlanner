@@ -49,6 +49,8 @@ namespace Calculo_ductos_winUi_3.Models
         public bool NecesitaAntiImpactos { get; set; } = false;
         public int TipoPuertaId {get;set;} = 0;
         public int TipoDescargaId { get; set; } = 0;
+        public int TipoGuillotinaId { get; set; } = 0;
+        public int TipoContenedorId { get; set; } = 0;
     }
     public class HumanResource
     { 
