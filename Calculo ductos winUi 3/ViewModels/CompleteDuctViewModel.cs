@@ -1,5 +1,6 @@
 ﻿using Calculo_ductos.Params;
 using Calculo_ductos_winUi_3.Models;
+using DocumentFormat.OpenXml.Bibliography;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,9 +31,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private ObservableCollection<QuoteModel> _filteredQuotes;
         private string _searchText;
         private string _selectedFilter = "PT";
+        private readonly Action<ConceptModel> _addConcept;
 
-
-        public CompleteDuctViewModel() {
+        public CompleteDuctViewModel(Action<ConceptModel> addConcept = null)
+        {
+            _addConcept = addConcept;
             PurposeId = 1;
             ExecutiveName = string.Empty;
             SheetTypeId = 0;
@@ -44,6 +47,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             _filteredQuotes = new ObservableCollection<QuoteModel>();
             _Quotes = new ObservableCollection<QuoteModel>();
             _searchText = string.Empty;
+            _addConcept = addConcept;
         }
         public void New() {
             PurposeId = 1;
@@ -335,25 +339,52 @@ namespace Calculo_ductos_winUi_3.ViewModels
             {
                 var kit = AvailableKits.Where(k => k.TypeKit.Equals(duct.Type.ToString())).FirstOrDefault();
                 if (kit != null)
-                    SubTotalPrice += (kit.Price*kit.ExchangeRate*duct.Count);
+                    SubTotalPrice += (kit.Price * kit.ExchangeRate * duct.Count);
             }
+            ConceptModel concept = new ConceptModel
+            {
+                UnitPrice = SubTotalPrice * SelectedRentability.Rentability,
+                Description = "Despiece",
+                Type = ConceptModel.TypeConcept.duct,
+            };
+            concept.Initialize(1);
+
+            _addConcept(concept);
+
             //Componentes
             foreach (var component in componentVm.ComponentList)
             {
-                
+                concept = new ConceptModel();
+                concept.IsEditable = true;
+                concept.Type = ConceptModel.TypeConcept.duct;
+
                 if (component.Type == Calculo_ductos.Params.Component.TypeComponent.Gate)
                 {
                     var kits = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).ToList();
-                    foreach(var kit in kits)
-                    if (kit != null)
-                        SubTotalPrice += (kit.Price * kit.ExchangeRate * GetDoorCount(kit.Item, floorVm));
+                    foreach (var kit in kits)
+                        if (kit != null)
+                        {
+                            int count = GetDoorCount(kit.Item, floorVm);
+
+                            SubTotalPrice += (kit.Price * kit.ExchangeRate * count);
+
+                            concept.UnitPrice = kit.Price * kit.ExchangeRate * SelectedRentability.Rentability;
+                            concept.Description = kit.Description;
+                            concept.Initialize(count);                            
+                        }
                 }
                 else 
                 {
                     var kit = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).FirstOrDefault();
                     if (kit != null)
+                    { 
                         SubTotalPrice += (kit.Price * kit.ExchangeRate * component.Count);
+                        concept.UnitPrice = kit.Price * kit.ExchangeRate * SelectedRentability.Rentability;
+                        concept.Description = kit.Description;
+                        concept.Initialize(component.Count);
+                    }
                 }
+                _addConcept(concept);
             }
         }
         private void SetExchangeRate() {

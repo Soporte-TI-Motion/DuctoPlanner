@@ -56,10 +56,10 @@ namespace Calculo_ductos_winUi_3.Views
             if (stateApp.IndirectsVM.MajorTool.Where(i => i.Concepto.Equals(selected.Description)).Count() > 0)
                 validations.Add($"Ya se cuenta con una herramienta {selected.Description}, por favor revísalo.");
             
-            if (validations.Count == 0)
-                stateApp.IndirectsVM.AddMajorTool(selected);
-            else
-                await stateApp.ShowEmptyDataDialog(string.Join(Environment.NewLine, validations));
+            //if (validations.Count == 0)
+            //    stateApp.IndirectsVM.AddMajorTool(selected);
+            //else
+            //    await stateApp.ShowEmptyDataDialog(string.Join(Environment.NewLine, validations));
         }
 
     }

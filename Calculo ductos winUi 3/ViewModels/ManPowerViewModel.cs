@@ -29,9 +29,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private decimal _SubTotalPriceManPowerSecurity;
         private decimal _TotalPriceManPowerVisit;
         private decimal _SubTotalPriceManPowerVisit;
+        private readonly Action<ConceptModel> _addConcept;
         #endregion
         #region Constructor
-        public ManPowerViewModel()
+        public ManPowerViewModel(Action<ConceptModel> addConcept)
         {
             _resource = new CatalogResourceModel();
             _resourceType = new CatalogResourceTypeModel();
@@ -50,6 +51,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             RemoveResourceCommand = new RelayCommand<Guid>(RemoveResource);
             ManPower = new ObservableCollection<HumanResourceModel>();
             Subtotals = new ObservableCollection<SubtotalHumaResource>();
+            _addConcept = addConcept;
         }
         public void New()
         {
@@ -146,7 +148,19 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
 
             foreach (var model in ManPower) {
-                Subtotals.Add(new SubtotalHumaResource {Descripcion = model.Recurso.Description, Subtotal = model.PrecioTotal });
+                ConceptModel concept = new ConceptModel
+                {
+                    Description = model.Recurso.Description,
+                    UnitPrice = model.PrecioTotal * rentability.Rentability,
+                    Type = ConceptModel.TypeConcept.manpower,
+                    IsEditable = true
+                };
+                concept.Initialize(1);
+
+                _addConcept(concept);
+                Subtotals.Add(new SubtotalHumaResource {
+                    Descripcion = model.Recurso.Description, 
+                    Subtotal = model.PrecioTotal });
             }
             //Subtotals.Add(new SubtotalHumaResource { Descripcion = "Visita técnica", Subtotal = AvailableResources.Where(p => p.Id == 2).FirstOrDefault().SalaryPerWorkday});
 

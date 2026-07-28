@@ -51,10 +51,12 @@ namespace Calculo_ductos_winUi_3.ViewModels
         private int _TotalNoworkDaysSupervisor;
         private int _TotalWeeks;
         private int _TotalFloors;
+        private readonly Action<ConceptModel> _addConcept;
         #endregion
         #region Constructor
-        public IndirectsViewModel(ManPowerViewModel ManPowerVm) 
+        public IndirectsViewModel(ManPowerViewModel ManPowerVm, Action<ConceptModel> addConcept = null) 
         {
+            _addConcept = addConcept;
             AllIndirects = new ObservableCollection<CatalogIndirectModel>();
             AllTools = new ObservableCollection<CatalogToolModel>();
             AvailableIndirects = new ObservableCollection<CatalogIndirectModel>();
@@ -328,11 +330,22 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
             }
 
-            AddMajorTools();
+            AddMajorTools(rentability);
             CalculateTools();
 
             SumIndirect(1, IndirectsInstallers);
             SumIndirect(1, MinorTool);
+            //aqui se creara el concepto por indirectos de instaladores
+            ConceptModel concept = new ConceptModel {
+                Description = "Viaticos - Técnico instalador",
+                UnitPrice = SubTotalCostInstallers * rentability.Rentability,
+                IsEditable = true,
+                Type=ConceptModel.TypeConcept.indirect,
+
+            };
+            concept.Initialize(1);
+            _addConcept(concept);
+
             SumIndirect(1, MajorTool);
             SumIndirect(2, IndirectsSupervisor);
             SumIndirect(3, IndirectsSecurity);
@@ -346,18 +359,25 @@ namespace Calculo_ductos_winUi_3.ViewModels
             SubTotalCostTool = MinorTool.Sum(x => x.CostoToal) + MajorTool.Sum(x=>x.CostoToal);
            
             TotalCostInstallers = SubTotalCostInstallers * rentability.Rentability;
+
             TotalCostSupervisor = SubTotalCostSupervisor * rentability.Rentability;
             TotalCostSecurity = SubTotalCostSecurity * rentability.Rentability;
             TotalCostVisit = SubTotalCostVisit * rentability.Rentability;
             TotalPriceWC = SubTotalPriceWC * rentability.Rentability;
             TotalPriceStore = SubTotalPriceStore * rentability.Rentability;
             TotalCostTool = SubTotalCostTool * rentability.Rentability;
+            SumConcept(2, TotalCostSupervisor);
+            SumConcept(3, TotalCostSecurity);
+            SumConcept(4, TotalCostVisit);
+            SumConcept(5, TotalPriceWC);
+            SumConcept(6, TotalCostSupervisor);
+
         }
-        public void AddMajorTools()
+        public void AddMajorTools(CatalogRentabilityModel rentability)
         {
             foreach (var majortool in AvailableMajorTool)
             {
-                AddMajorTool(majortool);
+                AddMajorTool(majortool,rentability);
             }
         }
         public void RecalculateRentability(CatalogRentabilityModel rentability)
@@ -453,9 +473,22 @@ namespace Calculo_ductos_winUi_3.ViewModels
             OtherIndirectsSecurity.Add(indirectSecurity);
             OtherIndirectsVisit.Add(indirectVisit);
         }
-        public void AddMajorTool(CatalogToolModel tool)
+        public void AddMajorTool(CatalogToolModel tool, CatalogRentabilityModel rentability )
         {
-            MajorTool.Add(new IndirectsModel { Concepto = tool.Description, Cantidad = ObtenerCantidad($"{tool.Periodicity}T"), PrecioUnitario = tool.Price }); 
+            int count = ObtenerCantidad($"{tool.Periodicity}T");
+            MajorTool.Add(new IndirectsModel { 
+                Concepto = tool.Description, 
+                Cantidad = count, 
+                PrecioUnitario = tool.Price });
+            ConceptModel concept = new ConceptModel
+            {
+                Description = tool.Description,
+                UnitPrice = tool.Price * rentability.Rentability,
+                Type = ConceptModel.TypeConcept.indirect,
+                IsEditable = true,
+             };
+            concept.Initialize(count);
+            _addConcept(concept);
         }
 
         private int ObtenerCantidad(string nameIndirect)
@@ -552,6 +585,26 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 }
                 
             }
+        }
+
+        private void SumConcept(int type, decimal price) 
+        {
+            ConceptModel concept = new ConceptModel{ 
+                UnitPrice = price,
+                IsEditable = true,
+                Type = ConceptModel.TypeConcept.indirect
+            };
+            concept.Initialize(1);
+            switch (type)
+            {
+                
+                case 2: concept.Description = "Viaticos - Supervisor de obra"; break;
+                case 3: concept.Description = "Viaticos - Encargado de seguridad"; break;
+                case 4: concept.Description = "Viaticos - Visita técnica"; break;
+                case 5: concept.Description = "Baños"; break;
+                case 6: concept.Description = "Bodega"; break;
+            }
+            _addConcept(concept);
         }
         private void CalculateTools()
         {

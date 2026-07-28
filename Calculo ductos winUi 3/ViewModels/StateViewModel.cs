@@ -50,7 +50,8 @@ namespace Calculo_ductos_winUi_3.ViewModels
             FloorVM = new FloorDescriptionViewModel(Busy);
             DuctsVM = new DuctsViewModel();
             ComponentsVM = new ComponentsViewModel();
-            CompleteDuctVm = new CompleteDuctViewModel();
+            CompleteDuctVm = new CompleteDuctViewModel(AddConcept);
+
             CompleteDuctVm.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(CompleteDuctVm.PurposeId))
@@ -59,9 +60,9 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 }
             };
             FreightVM = new CalculateFreightViewModel(Client);
-            ManPowerVM = new ManPowerViewModel();
+            ManPowerVM = new ManPowerViewModel(AddConcept);
             ManPowerVM.IsLocalProject = IsLocalProject;
-            IndirectsVM = new IndirectsViewModel(ManPowerVM);
+            IndirectsVM = new IndirectsViewModel(ManPowerVM,AddConcept);
             IndirectsVM.IsLocalProject= IsLocalProject;
         }
 
@@ -80,6 +81,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public IndirectsViewModel IndirectsVM { get; } 
         public string AppVersion => GetAppVersion();
         //public decimal TotalPrice { get { return CompleteDuctVm.TotalPrice + FreightVM.Freight.TotalPrice + ManPowerVM.TotalPriceManPower + IndirectsVM.TotalCostInstallers + IndirectsVM.TotalCostSupervisor + IndirectsVM.TotalCostSecurity + IndirectsVM.TotalCostVisit; } }
+        
         public decimal TotalPrice { get 
             { 
                 return 
@@ -105,6 +107,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public string TotalPriceFormatted => $"Precio: $ {TotalPrice:N2}";
         public string SubTotalPriceFormatted => $"Costo: $ {SubTotalPrice:N2}";
 
+        public ObservableCollection<ConceptModel> Concepts { get; set; } = new ObservableCollection<ConceptModel>();
 
         #endregion
 
@@ -228,6 +231,14 @@ namespace Calculo_ductos_winUi_3.ViewModels
             {
                 await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
             }
+        }
+        public void AddConcept(ConceptModel concept)
+        {
+            var existing = Concepts.FirstOrDefault(c => c.Description.Equals(concept.Description));
+            if (existing != null)
+                existing.Initialize(existing.MaxCount + concept.Count);
+            else
+                Concepts.Add(concept);
         }
 
         #region Api
