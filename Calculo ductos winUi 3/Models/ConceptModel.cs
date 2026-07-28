@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,20 @@ namespace Calculo_ductos_winUi_3.Models
         public decimal UnitPrice { get; set; } = 0.0m;
         public string Description { get; set; } = string.Empty;
         public int MaxCount { get; private set; } = 0;
-        public int Count { 
-            get => _Count; 
+        public int Count {
+            get => _Count;
             set {
                 var clamped = Math.Clamp(value, 0, MaxCount);
                 SetProperty(ref _Count, clamped);
                 OnPropertyChanged(nameof(TotalPrice));
+                OnPropertyChanged(nameof(TotalPriceFormatted));
                 OnPropertyChanged(nameof(CanIncrement));
                 OnPropertyChanged(nameof(CanDecrement));
+                IncrementCommand.NotifyCanExecuteChanged();
+                DecrementCommand.NotifyCanExecuteChanged();
             } }
         public decimal TotalPrice => UnitPrice * Count;
-        // helpers para habilitar/deshabilitar botones en la vista
+        public string TotalPriceFormatted => $"$ {TotalPrice:N2}";
         public bool CanIncrement => Count < MaxCount;
         public bool CanDecrement => Count > 0;
 
@@ -42,14 +46,26 @@ namespace Calculo_ductos_winUi_3.Models
             }
         }
 
+        public IRelayCommand IncrementCommand { get; }
+        public IRelayCommand DecrementCommand { get; }
+
+        public ConceptModel()
+        {
+            IncrementCommand = new RelayCommand(() => Count++, () => CanIncrement);
+            DecrementCommand = new RelayCommand(() => Count--, () => CanDecrement);
+        }
+
         public void Initialize(int count)
         {
             MaxCount = count;
-            _Count = count; // sin pasar por el setter para no disparar notificaciones antes de tiempo
+            _Count = count;
             OnPropertyChanged(nameof(Count));
             OnPropertyChanged(nameof(TotalPrice));
+            OnPropertyChanged(nameof(TotalPriceFormatted));
             OnPropertyChanged(nameof(CanIncrement));
             OnPropertyChanged(nameof(CanDecrement));
+            IncrementCommand.NotifyCanExecuteChanged();
+            DecrementCommand.NotifyCanExecuteChanged();
         }
     }
 }
