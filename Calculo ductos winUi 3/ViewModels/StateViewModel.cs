@@ -1,6 +1,7 @@
 ﻿using Calculo_ductos.Params;
 using Calculo_ductos_winUi_3.Models;
 using Calculo_ductos_winUi_3.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.UI.Xaml;
@@ -17,7 +18,7 @@ using Windows.Services.Store;
 
 namespace Calculo_ductos_winUi_3.ViewModels
 {
-    public class StateViewModel 
+    public class StateViewModel : ObservableObject
     {
         #region Fields
         private readonly string _baseUrl = "http://192.168.10.228:8092/CotizadorApiVertical/Api/";
@@ -108,6 +109,10 @@ namespace Calculo_ductos_winUi_3.ViewModels
         public string SubTotalPriceFormatted => $"Costo: $ {SubTotalPrice:N2}";
 
         public ObservableCollection<ConceptModel> Concepts { get; set; } = new ObservableCollection<ConceptModel>();
+
+        public decimal TotalPriceConceptDuct => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.duct).Sum(c => c.TotalPrice);
+        public decimal TotalPriceConceptMO => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.manpower).Sum(c => c.TotalPrice);
+        public decimal TotalPriceConceptIndirect => Concepts.Where(c => c.Type == ConceptModel.TypeConcept.indirect).Sum(c => c.TotalPrice);
 
         #endregion
 
@@ -238,7 +243,23 @@ namespace Calculo_ductos_winUi_3.ViewModels
             if (existing != null)
                 existing.Initialize(existing.MaxCount + concept.Count);
             else
+            {
+                concept.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(ConceptModel.IsSelected) ||
+                        e.PropertyName == nameof(ConceptModel.TotalPrice))
+                    {
+                        OnPropertyChanged(nameof(TotalPriceConceptDuct));
+                        OnPropertyChanged(nameof(TotalPriceConceptMO));
+                        OnPropertyChanged(nameof(TotalPriceConceptIndirect));
+                    }
+                };
                 Concepts.Add(concept);
+            }
+
+            OnPropertyChanged(nameof(TotalPriceConceptDuct));
+            OnPropertyChanged(nameof(TotalPriceConceptMO));
+            OnPropertyChanged(nameof(TotalPriceConceptIndirect));
         }
 
         #region Api

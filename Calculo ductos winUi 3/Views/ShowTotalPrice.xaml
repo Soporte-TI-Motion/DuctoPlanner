@@ -120,6 +120,17 @@
                          UseSystemFocusVisuals="False"
                          FocusVisualPrimaryThickness="0"
                          FocusVisualSecondaryThickness="0"/>
+                        <TextBox Text="{x:Bind stateApp.TotalPriceConceptDuct, Mode=OneWay}"
+                         IsReadOnly="True"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         TextAlignment="Center"
+                         Padding="0"
+                         FontSize="20"
+                         Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                         UseSystemFocusVisuals="False"
+                         FocusVisualPrimaryThickness="0"
+                         FocusVisualSecondaryThickness="0"/>        
 
                     </StackPanel>
 
@@ -254,7 +265,18 @@
                             Foreground="{StaticResource TextFillColorPrimaryBrush}"
                             UseSystemFocusVisuals="False"
                             FocusVisualPrimaryThickness="0"
-                            FocusVisualSecondaryThickness="0"/> 
+                            FocusVisualSecondaryThickness="0"/>
+                        <TextBox Text="{x:Bind stateApp.TotalPriceConceptMO, Mode=OneWay}" 
+                            IsReadOnly="True"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            TextAlignment="Center"
+                            Padding="0"
+                            FontSize="20"
+                            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                            UseSystemFocusVisuals="False"
+                            FocusVisualPrimaryThickness="0"
+                            FocusVisualSecondaryThickness="0"/>     
                         <TextBox Text="{x:Bind stateApp.ManPowerVM.SubTotalPriceFormatted, Mode=OneWay}" 
                     Background="Transparent" 
                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
@@ -329,20 +351,31 @@ Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
                             Foreground="{StaticResource TextFillColorPrimaryBrush}"
                             UseSystemFocusVisuals="False"
                             FocusVisualPrimaryThickness="0"
-                            FocusVisualSecondaryThickness="0"/>         
-                        <TextBox Text="{x:Bind stateApp.IndirectsVM.SubTotalPriceFormatted, Mode=OneWay}" 
-            Background="Transparent" 
-            Foreground="{StaticResource TextFillColorPrimaryBrush}"
-            FontSize="15"
-            BorderThickness="0"
-            Grid.Row="2"
-            IsReadOnly="True"
-            TextAlignment="Center"
-            VerticalAlignment="Top"
-            Visibility="Collapsed"                
-            UseSystemFocusVisuals="False"
-            FocusVisualPrimaryThickness="0"
-            FocusVisualSecondaryThickness="0"/>
+                            FocusVisualSecondaryThickness="0"/>
+                        <TextBox Text="{x:Bind stateApp.IndirectsVM.TotalPriceFormatted, Mode=OneWay}" 
+    IsReadOnly="True"
+    Background="Transparent"
+    BorderThickness="0"
+    TextAlignment="Center"
+    Padding="0"
+    FontSize="20"
+    Foreground="{StaticResource TextFillColorPrimaryBrush}"
+    UseSystemFocusVisuals="False"
+    FocusVisualPrimaryThickness="0"
+    FocusVisualSecondaryThickness="0"/>
+                        <TextBox Text="{x:Bind stateApp.TotalPriceConceptIndirect, Mode=OneWay}" 
+                        Background="Transparent" 
+                        Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                        FontSize="15"
+                        BorderThickness="0"
+                        Grid.Row="2"
+                        IsReadOnly="True"
+                        TextAlignment="Center"
+                        VerticalAlignment="Top"
+                        Visibility="Collapsed"                
+                        UseSystemFocusVisuals="False"
+                        FocusVisualPrimaryThickness="0"
+                        FocusVisualSecondaryThickness="0"/>
                     </StackPanel>
                 </Grid>
             </Border>

@@ -31,6 +31,17 @@ namespace Calculo_ductos_winUi_3.Models
         public TypeConcept Type { get; set; }
         public bool IsEditable { get; set; } = false;
 
+        private bool _IsSelected = true;
+        public bool IsSelected
+        {
+            get => _IsSelected;
+            set
+            {
+                if (!IsEditable) return;
+                SetProperty(ref _IsSelected, value);
+            }
+        }
+
         public void Initialize(int count)
         {
             MaxCount = count;
