@@ -343,7 +343,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
             ConceptModel concept = new ConceptModel
             {
-                UnitPrice = SubTotalPrice * SelectedRentability.Rentability,
+                UnitPrice = SubTotalPrice,
                 Description = "Despiece",
                 Type = ConceptModel.TypeConcept.duct,
             };
@@ -354,10 +354,6 @@ namespace Calculo_ductos_winUi_3.ViewModels
             //Componentes
             foreach (var component in componentVm.ComponentList)
             {
-                concept = new ConceptModel();
-                concept.IsEditable = true;
-                concept.Type = ConceptModel.TypeConcept.duct;
-
                 if (component.Type == Calculo_ductos.Params.Component.TypeComponent.Gate)
                 {
                     var kits = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).ToList();
@@ -365,26 +361,39 @@ namespace Calculo_ductos_winUi_3.ViewModels
                         if (kit != null)
                         {
                             int count = GetDoorCount(kit.Item, floorVm);
-
                             SubTotalPrice += (kit.Price * kit.ExchangeRate * count);
 
-                            concept.UnitPrice = kit.Price * kit.ExchangeRate * SelectedRentability.Rentability;
-                            concept.Description = kit.Description;
-                            concept.Initialize(count);                            
+                            if (count == 0) continue;
+
+                            var gateConcept = new ConceptModel
+                            {
+                                IsEditable = true,
+                                Type = ConceptModel.TypeConcept.duct,
+                                UnitPrice = kit.Price * kit.ExchangeRate,
+                                Description = kit.Description
+                            };
+                            gateConcept.Initialize(count);
+                            _addConcept(gateConcept);
                         }
                 }
-                else 
+                else
                 {
                     var kit = AvailableKits.Where(k => k.TypeKit.Equals(component.Type.ToString())).FirstOrDefault();
-                    if (kit != null)
-                    { 
+                    if (kit != null && component.Count > 0)
+                    {
                         SubTotalPrice += (kit.Price * kit.ExchangeRate * component.Count);
-                        concept.UnitPrice = kit.Price * kit.ExchangeRate * SelectedRentability.Rentability;
-                        concept.Description = kit.Description;
+
+                        concept = new ConceptModel
+                        {
+                            IsEditable = true,
+                            Type = ConceptModel.TypeConcept.duct,
+                            UnitPrice = kit.Price * kit.ExchangeRate,
+                            Description = kit.Description
+                        };
                         concept.Initialize(component.Count);
+                        _addConcept(concept);
                     }
                 }
-                _addConcept(concept);
             }
         }
         private void SetExchangeRate() {

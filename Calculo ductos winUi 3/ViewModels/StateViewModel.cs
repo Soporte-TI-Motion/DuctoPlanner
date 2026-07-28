@@ -121,6 +121,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
         {
             try
             {
+                Concepts.Clear();
                 await ShowLoader("Calculando despiece...");
 
                 DuctsVM.CalculateDuctsCommand.Execute(this.ToJsonString());
@@ -465,6 +466,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             FreightVM.New();
             ManPowerVM.New();
             IndirectsVM.New();
+            Concepts.Clear();
         }
         public async Task LoadQuote(int id)
         {

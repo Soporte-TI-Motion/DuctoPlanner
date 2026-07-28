@@ -335,13 +335,12 @@ namespace Calculo_ductos_winUi_3.ViewModels
 
             SumIndirect(1, IndirectsInstallers);
             SumIndirect(1, MinorTool);
-            //aqui se creara el concepto por indirectos de instaladores
+            SumIndirect(1, OtherIndirectsInstaller);
             ConceptModel concept = new ConceptModel {
                 Description = "Viaticos - Técnico instalador",
                 UnitPrice = SubTotalCostInstallers * rentability.Rentability,
                 IsEditable = true,
                 Type=ConceptModel.TypeConcept.indirect,
-
             };
             concept.Initialize(1);
             _addConcept(concept);
@@ -351,7 +350,6 @@ namespace Calculo_ductos_winUi_3.ViewModels
             SumIndirect(3, IndirectsSecurity);
             SumIndirect(4, IndirectsVisit);
 
-            SumIndirect(1, OtherIndirectsInstaller);
             SumIndirect(2, OtherIndirectsSupervisor);
             SumIndirect(3, OtherIndirectsSecurity);
             SumIndirect(4, OtherIndirectsVisit);
@@ -370,7 +368,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             SumConcept(3, TotalCostSecurity);
             SumConcept(4, TotalCostVisit);
             SumConcept(5, TotalPriceWC);
-            SumConcept(6, TotalCostSupervisor);
+            SumConcept(6, TotalPriceStore);
 
         }
         public void AddMajorTools(CatalogRentabilityModel rentability)
@@ -587,9 +585,11 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
         }
 
-        private void SumConcept(int type, decimal price) 
+        private void SumConcept(int type, decimal price)
         {
-            ConceptModel concept = new ConceptModel{ 
+            if (price <= 0) return;
+
+            ConceptModel concept = new ConceptModel{
                 UnitPrice = price,
                 IsEditable = true,
                 Type = ConceptModel.TypeConcept.indirect
@@ -597,7 +597,6 @@ namespace Calculo_ductos_winUi_3.ViewModels
             concept.Initialize(1);
             switch (type)
             {
-                
                 case 2: concept.Description = "Viaticos - Supervisor de obra"; break;
                 case 3: concept.Description = "Viaticos - Encargado de seguridad"; break;
                 case 4: concept.Description = "Viaticos - Visita técnica"; break;

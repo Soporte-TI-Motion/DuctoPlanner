@@ -265,7 +265,7 @@
                         <DataTemplate x:DataType="models:ConceptModel">
                             <Grid Padding="4,4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="24"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
@@ -275,7 +275,8 @@
                                           IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
                                           IsHitTestVisible="{x:Bind IsEditable}"
                                           Opacity="{x:Bind IsEditable, Converter={StaticResource BoolToOpacityConverter}}"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"
+                                          Padding="0" MinWidth="0"/>
 
                                 <!-- Descripción y precio -->
                                 <StackPanel Grid.Column="1" Margin="4,0" VerticalAlignment="Center">
