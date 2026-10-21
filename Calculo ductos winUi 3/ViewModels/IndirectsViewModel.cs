@@ -418,21 +418,40 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public void AddIndirect()
         {
-            var indirect = new IndirectsModel
+            OtherIndirectsInstaller.Add(new IndirectsModel
             {
                 Concepto = SelectedIndirect.Concept,
                 PrecioUnitario = Convert.ToDecimal(selectedUnitCost),
                 Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}i"),
                 PoliticaViaticosId = SelectedIndirect.Id,
-            };
+            });
 
-            OtherIndirectsInstaller.Add(indirect);
-            indirect.Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}s");
-            OtherIndirectsSupervisor.Add(indirect);
-            indirect.Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}se");
-            OtherIndirectsSecurity.Add(indirect);
-            indirect.Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}v");
-            OtherIndirectsVisit.Add(indirect);
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Supervisor de obra") == true)
+                OtherIndirectsSupervisor.Add(new IndirectsModel
+                {
+                    Concepto = SelectedIndirect.Concept,
+                    PrecioUnitario = Convert.ToDecimal(selectedUnitCost),
+                    Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}s"),
+                    PoliticaViaticosId = SelectedIndirect.Id,
+                });
+
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Encargado de seguridad") == true)
+                OtherIndirectsSecurity.Add(new IndirectsModel
+                {
+                    Concepto = SelectedIndirect.Concept,
+                    PrecioUnitario = Convert.ToDecimal(selectedUnitCost),
+                    Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}se"),
+                    PoliticaViaticosId = SelectedIndirect.Id,
+                });
+
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Visita técnica") == true)
+                OtherIndirectsVisit.Add(new IndirectsModel
+                {
+                    Concepto = SelectedIndirect.Concept,
+                    PrecioUnitario = Convert.ToDecimal(selectedUnitCost),
+                    Cantidad = ObtenerCantidad($"{SelectedIndirect.Concept}v"),
+                    PoliticaViaticosId = SelectedIndirect.Id,
+                });
         }
         public void AddTransport()
         {
@@ -467,9 +486,15 @@ namespace Calculo_ductos_winUi_3.ViewModels
                 PoliticaViaticosId = politicaViaticosId,
             };
             OtherIndirectsInstaller.Add(indirectInstaller);
-            OtherIndirectsSupervisor.Add(indirectSupervisor);
-            OtherIndirectsSecurity.Add(indirectSecurity);
-            OtherIndirectsVisit.Add(indirectVisit);
+
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Supervisor de obra") == true)
+                OtherIndirectsSupervisor.Add(indirectSupervisor);
+
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Encargado de seguridad") == true)
+                OtherIndirectsSecurity.Add(indirectSecurity);
+
+            if (_ManPowerVm?.ManPower?.Any(r => r.Recurso?.Description == "Visita técnica") == true)
+                OtherIndirectsVisit.Add(indirectVisit);
         }
         public void AddMajorTool(CatalogToolModel tool, CatalogRentabilityModel rentability )
         {

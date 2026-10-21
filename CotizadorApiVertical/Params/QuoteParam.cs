@@ -21,6 +21,7 @@ namespace CotizadorApiVertical.Params
         public int RentabilidadMOId { get; set; } = 0;
         public bool NecesitaIzaje { get; set; } = true;
         public int ZonaId { get; set; } = 1;
+        public int TipoContenedorId { get; set; } = 0;
         public List<LevelParam> Niveles { get; set; }
         public List<HumanResource> ManoDeObra { get; set; }
         public List<Viatico> Viaticos { get; set; }
@@ -35,7 +36,7 @@ namespace CotizadorApiVertical.Params
         public bool NecesitaAntiImpactos { get; set; } = false;
         public int TipoPuertaId { get; set; } = 0;
         public int TipoDescargaId { get; set; } = 0;
-
+        public int? TipoGuillotinaId { get; set; } = null;
     }
     public class HumanResource 
     {
@@ -49,6 +50,7 @@ namespace CotizadorApiVertical.Params
         public int Cantidad { get; set; } = 0;
         public decimal PrecioUnitario { get; set; } = 0;
         public int PoliticaViaticosId { get; set; } = 0;
+        public int TipoRecursoId { get; set; } = 0;
 
     }
     public class LogParam

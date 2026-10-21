@@ -215,9 +215,15 @@ namespace Calculo_ductos_winUi_3.ViewModels
         }
         public async Task CalculateIndirects(object sender, RoutedEventArgs e) {
             await ShowLoader("Calculando indirectos...");
+            ClearConceptsByType(ConceptModel.TypeConcept.indirect);
             await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
             await SaveLog("Se realizo calculo de indirectos", "");
             await HideLoader("Calculo terminado", 500);
+        }
+        private void ClearConceptsByType(ConceptModel.TypeConcept type)
+        {
+            var toRemove = Concepts.Where(c => c.Type == type).ToList();
+            foreach (var c in toRemove) Concepts.Remove(c);
         }
         private async Task InitializeAsync()
         {
@@ -242,6 +248,7 @@ namespace Calculo_ductos_winUi_3.ViewModels
             }
             if (IndirectsVM.IndirectsInstallers.Count > 0)
             {
+                ClearConceptsByType(ConceptModel.TypeConcept.indirect);
                 await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
             }
         }
@@ -376,15 +383,17 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     CompleteDuctVm.NeedDesinfectionSystem = quote.NecesitaSistemaDD;
                     CompleteDuctVm.SelectedRentability = selectedRentability;
                     FloorVM.FloorList = quote.MapQuoteDetailToFloorList(FloorVM);
+                    FloorVM.SelectedContainerType = FloorVM.AvailableCointainerTypes
+                        .FirstOrDefault(c => c.Id == quote.TipoContenedorId) ?? new();
                     FreightVM.SelectedState = selectedState;
                     FreightVM.SelectedMunicipality = selectedMunicipality;
                     FreightVM.SelectedLocality = selectedLocality;
                     IndirectsVM.SelectedIzaje = selectedIzaje;
                     IndirectsVM.SelectedZone = selectedZone;
-                    IndirectsVM.OtherIndirectsInstaller = quote.MapQuoteDetailToIndirects();
-                    IndirectsVM.OtherIndirectsSupervisor = quote.MapQuoteDetailToIndirects();
-                    IndirectsVM.OtherIndirectsSecurity = quote.MapQuoteDetailToIndirects();
-                    IndirectsVM.OtherIndirectsVisit = quote.MapQuoteDetailToIndirects();
+                    IndirectsVM.OtherIndirectsInstaller = quote.MapQuoteDetailToIndirects(1);
+                    IndirectsVM.OtherIndirectsSupervisor = quote.MapQuoteDetailToIndirects(2);
+                    IndirectsVM.OtherIndirectsSecurity = quote.MapQuoteDetailToIndirects(3);
+                    IndirectsVM.OtherIndirectsVisit = quote.MapQuoteDetailToIndirects(4);
                     
 
 
@@ -403,12 +412,13 @@ namespace Calculo_ductos_winUi_3.ViewModels
                     await ManPowerVM.CalculateManPower(CompleteDuctVm.SelectedRentability);
                     IndirectsVM.LoadTotals(DuctsVM.CompleteDuct);
 
-                    if (trasnportIndirect != null) 
+                    if (trasnportIndirect != null)
                     {
                         var typeTransport = idsAereos.Contains( trasnportIndirect.PoliticaViaticosId) ? 1 : 2;
                         var selectdTransport = IndirectsVM.AvailableTransportTypes.Where(t => t.Id == typeTransport).FirstOrDefault();
                         IndirectsVM.SelectedTransportType = selectdTransport;
                     }
+                        ClearConceptsByType(ConceptModel.TypeConcept.indirect);
                         await IndirectsVM.CalculateIndirects(CompleteDuctVm.SelectedRentability);
                 }
             }

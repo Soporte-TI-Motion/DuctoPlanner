@@ -34,6 +34,7 @@ namespace Calculo_ductos_winUi_3.Models
         public int RentabilidadMOId { get; set; } = 1;
         public bool NecesitaIzaje { get; set; } = true;
         public int ZonaId { get; set; } = 1;
+        public int TipoContenedorId { get; set; } = 0;
         public List<FloorDetailModel> Niveles { get; set; }
         public List<HumanResource> ManoDeObra { get; set; }
         public List<Viatico> Viaticos { get; set; }
@@ -50,7 +51,6 @@ namespace Calculo_ductos_winUi_3.Models
         public int TipoPuertaId {get;set;} = 0;
         public int TipoDescargaId { get; set; } = 0;
         public int TipoGuillotinaId { get; set; } = 0;
-        public int TipoContenedorId { get; set; } = 0;
     }
     public class HumanResource
     { 
@@ -63,6 +63,7 @@ namespace Calculo_ductos_winUi_3.Models
         public int Cantidad { get; set; } = 0;
         public decimal PrecioUnitario { get; set; } = 0;
         public int PoliticaViaticosId {get;set;} = 0;
+        public int TipoRecursoId { get; set; } = 0;
 
     }
     public class LogModel

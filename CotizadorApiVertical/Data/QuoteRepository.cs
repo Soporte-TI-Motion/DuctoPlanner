@@ -34,6 +34,7 @@ namespace CotizadorVerticalApi.Data
             parameters.Add("@RentabilidadMOId", quote.RentabilidadMOId);
             parameters.Add("@NecesitaIzaje", quote.NecesitaIzaje);
             parameters.Add("@ZonaId", quote.ZonaId);
+            parameters.Add("@TipoContenedorId", quote.TipoContenedorId);
 
             var quoteResult = connection.Query<QuoteInsertionResultModel>(
                 "Insertar_Cotizacion",
@@ -59,6 +60,8 @@ namespace CotizadorVerticalApi.Data
                 parameters.Add("@TipoPuertaId", level.TipoPuertaId);
                 parameters.Add("@TipoDescargaId", level.TipoDescargaId);
                 parameters.Add("@NecesitaAntiImpacto", level.NecesitaAntiImpactos);
+                if (level.TipoGuillotinaId.HasValue && level.TipoGuillotinaId > 0)
+                    parameters.Add("@TipoGuillotinaId", level.TipoGuillotinaId.Value);
 
                 connection.Execute(
                     "Insertar_Nivel",

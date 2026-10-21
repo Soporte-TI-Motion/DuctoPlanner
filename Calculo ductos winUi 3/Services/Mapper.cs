@@ -128,6 +128,7 @@ namespace Calculo_ductos_winUi_3.Services
 
                     NecesitaIzaje = (stateApp?.IndirectsVM?.SelectedIzaje?.Id ?? 0) == 1,
                     ZonaId = stateApp?.IndirectsVM?.SelectedZone?.Id ?? 0,
+                    TipoContenedorId = stateApp?.FloorVM?.SelectedContainerType?.Id ?? 0,
 
                     Niveles = stateApp?.FloorVM?.FloorList?
                     .Select(floor => new FloorDetailModel
@@ -140,8 +141,7 @@ namespace Calculo_ductos_winUi_3.Services
                         NecesitaAntiImpactos = floor?.NeedAntiImpact ?? false,
                         TipoPuertaId = floor?.TypeDoor?.Id ?? 0,
                         TipoDescargaId = Convert.ToInt32(floor?.Discharge ?? 0),
-                        TipoGuillotinaId = floor?.GuillotineTypeId ?? 0,
-                        TipoContenedorId = floor?.ContainerType?.Id ?? 0
+                        TipoGuillotinaId = floor?.GuillotineTypeId ?? 0
                     })
                     .ToList() ?? new List<FloorDetailModel>(),
 
@@ -154,15 +154,12 @@ namespace Calculo_ductos_winUi_3.Services
                     })
                     .ToList() ?? new List<HumanResource>(),
 
-                                Viaticos = stateApp?.IndirectsVM?.OtherIndirectsInstaller?
-                    .Select(viatico => new Viatico
-                    {
-                        Concepto = viatico?.Concepto ?? "",
-                        Cantidad = viatico?.Cantidad ?? 0,
-                        PrecioUnitario = viatico?.PrecioUnitario ?? 0,
-                        PoliticaViaticosId = viatico?.PoliticaViaticosId ?? 0
-                    })
-                    .ToList() ?? new List<Viatico>()
+                                Viaticos =
+                    (stateApp?.IndirectsVM?.OtherIndirectsInstaller?.Select(v => new Viatico { Concepto = v?.Concepto ?? "", Cantidad = v?.Cantidad ?? 0, PrecioUnitario = v?.PrecioUnitario ?? 0, PoliticaViaticosId = v?.PoliticaViaticosId ?? 0, TipoRecursoId = 1 }) ?? Enumerable.Empty<Viatico>())
+                    .Concat(stateApp?.IndirectsVM?.OtherIndirectsSupervisor?.Select(v => new Viatico { Concepto = v?.Concepto ?? "", Cantidad = v?.Cantidad ?? 0, PrecioUnitario = v?.PrecioUnitario ?? 0, PoliticaViaticosId = v?.PoliticaViaticosId ?? 0, TipoRecursoId = 2 }) ?? Enumerable.Empty<Viatico>())
+                    .Concat(stateApp?.IndirectsVM?.OtherIndirectsSecurity?.Select(v => new Viatico { Concepto = v?.Concepto ?? "", Cantidad = v?.Cantidad ?? 0, PrecioUnitario = v?.PrecioUnitario ?? 0, PoliticaViaticosId = v?.PoliticaViaticosId ?? 0, TipoRecursoId = 3 }) ?? Enumerable.Empty<Viatico>())
+                    .Concat(stateApp?.IndirectsVM?.OtherIndirectsVisit?.Select(v => new Viatico { Concepto = v?.Concepto ?? "", Cantidad = v?.Cantidad ?? 0, PrecioUnitario = v?.PrecioUnitario ?? 0, PoliticaViaticosId = v?.PoliticaViaticosId ?? 0, TipoRecursoId = 4 }) ?? Enumerable.Empty<Viatico>())
+                    .ToList()
                 };
             }
             catch (Exception ex)
@@ -186,7 +183,9 @@ namespace Calculo_ductos_winUi_3.Services
                     TypeDoor = floorVm.AllDoorType.Where(type => type.Id == floor.TipoPuertaId).FirstOrDefault(),
                     Discharge = (Floor.TypeDischarge)floor.TipoDescargaId,
                     GuillotineTypeId = floor.TipoGuillotinaId,
-                    ContainerType = floorVm.AvailableCointainerTypes.FirstOrDefault(c => c.Id == floor.TipoContenedorId) ?? new(),
+                    ContainerType = floor.TipoNivelId == 0
+                        ? floorVm.AvailableCointainerTypes.FirstOrDefault(c => c.Id == quote.TipoContenedorId) ?? new()
+                        : new(),
                     DischargeDescription = floorVm.AvailableGuillotineTypes.FirstOrDefault(g => g.Id == floor.TipoGuillotinaId)?.Description ?? string.Empty
                 }
             ).ToList();
@@ -214,18 +213,19 @@ namespace Calculo_ductos_winUi_3.Services
             return map;
         }
 
-        public static ObservableCollection<IndirectsModel> MapQuoteDetailToIndirects(this QuoteDetailModel quote)
-        { 
+        public static ObservableCollection<IndirectsModel> MapQuoteDetailToIndirects(this QuoteDetailModel quote, int tipoRecursoId)
+        {
             ObservableCollection<IndirectsModel> map = new ObservableCollection<IndirectsModel>();
-            var indirectsList = quote.Viaticos.Select(viatico =>
-                    new IndirectsModel
-                    { 
-                        Uuid = Guid.NewGuid(),
-                        Concepto = viatico.Concepto,
-                        Cantidad = viatico.Cantidad,
-                        PrecioUnitario = viatico.PrecioUnitario,
-                    }
-                ).ToList();
+            var indirectsList = quote.Viaticos
+                .Where(v => v.TipoRecursoId == tipoRecursoId)
+                .Select(viatico => new IndirectsModel
+                {
+                    Uuid = Guid.NewGuid(),
+                    Concepto = viatico.Concepto,
+                    Cantidad = viatico.Cantidad,
+                    PrecioUnitario = viatico.PrecioUnitario,
+                    PoliticaViaticosId = viatico.PoliticaViaticosId,
+                }).ToList();
             foreach(var indirect in indirectsList)
                 map.Add(indirect);
             return map;

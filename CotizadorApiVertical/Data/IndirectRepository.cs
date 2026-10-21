@@ -55,6 +55,7 @@ namespace CotizadorApiVertical.Data
                     parameters.Add("@Cantidad", viatico.Cantidad);
                     parameters.Add("@PrecioUnitario", viatico.PrecioUnitario);
                     parameters.Add("@PoliticaViaticosId", viatico.PoliticaViaticosId);
+                    parameters.Add("@TipoRecursoId", viatico.TipoRecursoId);
                     parameters.Add("@CotizacionId", cotizacionId);
 
                     connection.Execute(
